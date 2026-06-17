@@ -236,3 +236,19 @@ class NFLProvider(CsvSeasonProvider):
                 "total_tds": int(s["pass_td"] + s["rush_td"] + s["rec_td"]),
                 "sacks": round(s["sacks"], 1), "interceptions": int(s["interceptions"])}
         # position_group handled by load.derive_fields for NFL
+
+
+class NCAAFProvider(CsvSeasonProvider):
+    """College football. School is the players.csv `college` column (NCAAF
+    categories key off college, not pro-style teams). Honors (Heisman,
+    All-American) come from the curated awards/ncaaf.json overlay -- a CFBD
+    export carries stats but not those. Use cfbd_export.py to produce the
+    CSVs from the CollegeFootballData API with your key."""
+    sport = "NCAAF"
+    source_name = "cfbd"
+    SUM_COLS = ("g", "pass_yds", "rush_yds", "rec_yds", "tds", "sacks")
+
+    def stat_fields(self, s):
+        return {"ncaaf_pass_yds": int(s["pass_yds"]), "ncaaf_rush_yds": int(s["rush_yds"]),
+                "ncaaf_rec_yds": int(s["rec_yds"]), "ncaaf_tds": int(s["tds"]),
+                "ncaaf_sacks": round(s["sacks"], 1)}

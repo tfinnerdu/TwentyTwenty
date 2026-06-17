@@ -23,6 +23,15 @@ python -m data.etl.run_provider --provider wnba_csv --source-dir /path/to/wnba_c
 python -m data.etl.run_provider --provider nhl_api  --source-dir /path/to/nhl_csv
 python -m data.etl.run_provider --provider nflverse --source-dir /path/to/nfl_csv
 
+# NCAA: basketball (M/W) is hand-curated; football is curated by default but
+# can be upgraded to real College Football Data with your API key.
+python -m data.etl.run_provider --provider curated_ncaab
+python -m data.etl.run_provider --provider curated_ncaaw
+python -m data.etl.run_provider --provider curated_ncaaf
+# ...or real NCAAF via CFBD:
+CFBD_API_KEY=... python -m data.etl.providers.cfbd_export --start 2010 --end 2023 --out ./ncaaf_csv
+python -m data.etl.run_provider --provider ncaaf_csv --source-dir ./ncaaf_csv
+
 # Offline / firewalled: point --source-dir at a folder that already holds
 # the source files (works for any provider).
 python -m data.etl.run_provider --provider lahman_mlb --source-dir /path/to/csvs
@@ -40,6 +49,8 @@ python generate_puzzles.py --sport MLB --days 7 --force
 python -m data.etl.providers.smoke_test       # MLB (Lahman)
 python -m data.etl.providers.smoke_test_nba   # NBA + awards overlay
 python -m data.etl.providers.smoke_test_csv   # NHL, WNBA, NFL + awards overlay
+python -m data.etl.providers.smoke_test_ncaa  # NCAA F / B(M) / B(W), curated
+python -m data.etl.providers.smoke_test_all   # cross-sport ALL-mode chain
 ```
 
 Each builds a schema-faithful fixture, runs the real provider against it,
@@ -63,15 +74,22 @@ honors, so no `mlb.json` is needed.
 | WNBA  | `wnba_csv`   | wehoop data releases | `awards/wnba.json` |
 | NHL   | `nhl_api`    | api-web.nhle.com export | `awards/nhl.json` |
 | NFL   | `nflverse`   | nflverse / nfl_data_py | `awards/nfl.json` |
+| NCAAF | `curated_ncaaf` / `ncaaf_csv` | curated, or CollegeFootballData API | inline / `awards/ncaaf.json` |
+| NCAAB | `curated_ncaab` | curated (`curated/ncaab.json`) | inline |
+| NCAAW | `curated_ncaaw` | curated (`curated/ncaaw.json`) | inline |
 
-NBA, WNBA, NHL and NFL share `csv_season.py` — each is a ~20-line subclass
-declaring its team map, the season columns to sum, and how those map onto the
-stat columns. Point `--source-dir` at the two canonical CSVs (see the module
-docstring) produced from that sport's source.
+NBA, WNBA, NHL, NFL and NCAAF share `csv_season.py` — each is a ~20-line
+subclass declaring its team map, the season columns to sum, and how those map
+onto the stat columns. NCAA basketball is hand-curated via `CuratedProvider`,
+which *creates* full player rows from `curated/<sport>.json` (honors inline).
 
 - The wyattowalsh **nbadb** SQLite is game-level (team box + play-by-play) — no
   per-player career averages — so `nba_csv` reads a season-stats table instead.
+- **NCAA:** no clean free historical source, so basketball is curated and
+  football defaults to curated; `cfbd_export.py` upgrades NCAAF to real
+  CollegeFootballData with your key. A henrygd/ncaa-api instance is great for
+  *live* scores but isn't a historical player catalog, so it's not wired in here.
 - **Known gaps:** Lahman has no amateur-draft data or WAR; the non-MLB honors
-  come from the curated overlay (box scores carry no MVP/ring/All-NBA/Heisman).
-- **Remaining:** NCAA football + basketball (M/W) — the hard one: free
-  historical college data is thin, so expect a mostly curated dataset.
+  come from curated data (box scores carry no MVP/ring/All-NBA/Heisman).
+- **Cross-sport** `college` / birth / decade categories connect every sport in
+  ALL mode — see `smoke_test_all.py`.

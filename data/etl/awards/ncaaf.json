@@ -1,0 +1,20 @@
+[
+  {"name": "Tim Tebow",        "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Danny Wuerffel",   "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Herschel Walker",  "ncaaf_heisman": 1, "ncaaf_all_american": 3},
+  {"name": "Barry Sanders",    "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Bo Jackson",       "ncaaf_heisman": 1, "ncaaf_all_american": 2},
+  {"name": "Cam Newton",       "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Reggie Bush",      "ncaaf_heisman": 1, "ncaaf_all_american": 2},
+  {"name": "Marcus Allen",     "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Matt Leinart",     "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Charlie Ward",     "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Tim Brown",        "ncaaf_heisman": 1, "ncaaf_all_american": 2},
+  {"name": "Desmond Howard",   "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Charles Woodson",  "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Archie Griffin",   "ncaaf_heisman": 2, "ncaaf_all_american": 2},
+  {"name": "Eddie George",     "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Ricky Williams",   "ncaaf_heisman": 1, "ncaaf_all_american": 2},
+  {"name": "Baker Mayfield",   "ncaaf_heisman": 1, "ncaaf_all_american": 1},
+  {"name": "Derrick Henry",    "ncaaf_heisman": 1, "ncaaf_all_american": 1}
+]

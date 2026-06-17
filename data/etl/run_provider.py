@@ -24,8 +24,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from data.etl.providers.base import run_pipeline
 from data.etl.providers.lahman_mlb import LahmanMLBProvider
+from data.etl.providers.curated import CuratedProvider
 from data.etl.providers.csv_season import (
-    NBAProvider, WNBAProvider, NHLProvider, NFLProvider,
+    NBAProvider, WNBAProvider, NHLProvider, NFLProvider, NCAAFProvider,
 )
 
 logging.basicConfig(
@@ -49,6 +50,10 @@ PROVIDERS = {
     "wnba_csv": lambda a: WNBAProvider(source_dir=a.source_dir),
     "nhl_api":  lambda a: NHLProvider(source_dir=a.source_dir),
     "nflverse": lambda a: NFLProvider(source_dir=a.source_dir),
+    "ncaaf_csv": lambda a: NCAAFProvider(source_dir=a.source_dir),
+    "curated_ncaaf": lambda a: CuratedProvider("NCAAF"),
+    "curated_ncaab": lambda a: CuratedProvider("NCAAB"),
+    "curated_ncaaw": lambda a: CuratedProvider("NCAAW"),
 }
 
 
