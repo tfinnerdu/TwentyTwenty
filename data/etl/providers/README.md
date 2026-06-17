@@ -15,9 +15,13 @@ subclass and register it in `run_provider.py`.
 # once into data/cache/lahman/, then reuses them)
 python -m data.etl.run_provider --provider lahman_mlb
 
-# NBA from per-player season-stats CSVs (see nba_csv.py for the schema).
-# Honors come from the curated overlay automatically.
-python -m data.etl.run_provider --provider nba_csv --source-dir /path/to/nba_csv
+# NBA / WNBA / NHL / NFL from per-player season-stats CSVs
+# (see csv_season.py for the canonical schema). Honors are applied
+# automatically from the curated overlay.
+python -m data.etl.run_provider --provider nba_csv  --source-dir /path/to/nba_csv
+python -m data.etl.run_provider --provider wnba_csv --source-dir /path/to/wnba_csv
+python -m data.etl.run_provider --provider nhl_api  --source-dir /path/to/nhl_csv
+python -m data.etl.run_provider --provider nflverse --source-dir /path/to/nfl_csv
 
 # Offline / firewalled: point --source-dir at a folder that already holds
 # the source files (works for any provider).
@@ -33,13 +37,14 @@ python generate_puzzles.py --sport MLB --days 7 --force
 ## Prove it without network
 
 ```bash
-python -m data.etl.providers.smoke_test       # MLB
+python -m data.etl.providers.smoke_test       # MLB (Lahman)
 python -m data.etl.providers.smoke_test_nba   # NBA + awards overlay
+python -m data.etl.providers.smoke_test_csv   # NHL, WNBA, NFL + awards overlay
 ```
 
-Each builds a schema-faithful fixture (`_fixture_mlb.py` / `_fixture_nba.py`),
-runs the real provider against it, applies the awards overlay, and generates a
-chain — the exact production code path, just smaller data.
+Each builds a schema-faithful fixture, runs the real provider against it,
+applies the awards overlay, and generates a chain — the exact production code
+path, just smaller data.
 
 ## Curated awards overlay
 
@@ -51,15 +56,22 @@ honors, so no `mlb.json` is needed.
 
 ## Status / notes
 
-| Sport | Provider | Source | Honors |
-|-------|----------|--------|--------|
+| Sport | Provider | Recommended source | Honors |
+|-------|----------|--------------------|--------|
 | MLB   | `lahman_mlb` | Chadwick Baseball Databank (CC-BY-SA) | from data (Lahman) |
-| NBA   | `nba_csv`    | per-player season-stats CSV (Kaggle / nba_api export) | curated overlay (`awards/nba.json`) |
+| NBA   | `nba_csv`    | Kaggle season-stats / nba_api export | `awards/nba.json` |
+| WNBA  | `wnba_csv`   | wehoop data releases | `awards/wnba.json` |
+| NHL   | `nhl_api`    | api-web.nhle.com export | `awards/nhl.json` |
+| NFL   | `nflverse`   | nflverse / nfl_data_py | `awards/nfl.json` |
 
-- The wyattowalsh **nbadb** SQLite you may have seen is game-level (team box +
-  play-by-play) — it has no per-player career averages, so `nba_csv` reads a
-  season-stats table instead and rolls it up to career PPG/RPG/APG/games.
-- **Known gaps:** Lahman has no amateur-draft data or WAR; NBA honors are the
-  curated layer (box-score data carries no MVP/ring/All-NBA info).
-- **Next providers**, same pattern: `nhl_api` (api-web.nhle.com), `wnba_wehoop`
-  (wehoop data releases), nflverse for NFL — each with a curated `awards/<sport>.json`.
+NBA, WNBA, NHL and NFL share `csv_season.py` — each is a ~20-line subclass
+declaring its team map, the season columns to sum, and how those map onto the
+stat columns. Point `--source-dir` at the two canonical CSVs (see the module
+docstring) produced from that sport's source.
+
+- The wyattowalsh **nbadb** SQLite is game-level (team box + play-by-play) — no
+  per-player career averages — so `nba_csv` reads a season-stats table instead.
+- **Known gaps:** Lahman has no amateur-draft data or WAR; the non-MLB honors
+  come from the curated overlay (box scores carry no MVP/ring/All-NBA/Heisman).
+- **Remaining:** NCAA football + basketball (M/W) — the hard one: free
+  historical college data is thin, so expect a mostly curated dataset.

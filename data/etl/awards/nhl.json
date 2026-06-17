@@ -1,0 +1,20 @@
+[
+  {"name": "Wayne Gretzky",     "nhl_championships": 4, "nhl_mvps": 9, "nhl_all_star": 18},
+  {"name": "Gordie Howe",       "nhl_championships": 4, "nhl_mvps": 6, "nhl_all_star": 23},
+  {"name": "Mark Messier",      "nhl_championships": 6, "nhl_mvps": 2, "nhl_all_star": 15},
+  {"name": "Jaromir Jagr",      "nhl_championships": 2, "nhl_mvps": 1, "nhl_all_star": 7},
+  {"name": "Mario Lemieux",     "nhl_championships": 2, "nhl_mvps": 3, "nhl_all_star": 10},
+  {"name": "Bobby Orr",         "nhl_championships": 2, "nhl_mvps": 3, "nhl_all_star": 8},
+  {"name": "Steve Yzerman",     "nhl_championships": 3, "nhl_mvps": 0, "nhl_all_star": 11},
+  {"name": "Ray Bourque",       "nhl_championships": 1, "nhl_mvps": 0, "nhl_all_star": 19},
+  {"name": "Joe Sakic",         "nhl_championships": 2, "nhl_mvps": 1, "nhl_all_star": 13},
+  {"name": "Sidney Crosby",     "nhl_championships": 3, "nhl_mvps": 2, "nhl_all_star": 8},
+  {"name": "Alex Ovechkin",     "nhl_championships": 1, "nhl_mvps": 3, "nhl_all_star": 13},
+  {"name": "Patrick Roy",       "nhl_championships": 4, "nhl_mvps": 0, "nhl_all_star": 11},
+  {"name": "Martin Brodeur",    "nhl_championships": 3, "nhl_mvps": 0, "nhl_all_star": 10},
+  {"name": "Nicklas Lidstrom",  "nhl_championships": 4, "nhl_mvps": 0, "nhl_all_star": 12},
+  {"name": "Phil Esposito",     "nhl_championships": 2, "nhl_mvps": 2, "nhl_all_star": 10},
+  {"name": "Brett Hull",        "nhl_championships": 2, "nhl_mvps": 1, "nhl_all_star": 8},
+  {"name": "Paul Coffey",       "nhl_championships": 4, "nhl_mvps": 0, "nhl_all_star": 14},
+  {"name": "Chris Chelios",     "nhl_championships": 3, "nhl_mvps": 0, "nhl_all_star": 11}
+]

@@ -1,0 +1,16 @@
+[
+  {"name": "Diana Taurasi",        "wnba_championships": 3, "wnba_mvps": 1, "wnba_finals_mvps": 1, "wnba_all_star": 11},
+  {"name": "Sue Bird",             "wnba_championships": 4, "wnba_mvps": 0, "wnba_finals_mvps": 0, "wnba_all_star": 13},
+  {"name": "Lisa Leslie",          "wnba_championships": 2, "wnba_mvps": 3, "wnba_finals_mvps": 2, "wnba_all_star": 8},
+  {"name": "Tamika Catchings",     "wnba_championships": 1, "wnba_mvps": 1, "wnba_finals_mvps": 1, "wnba_all_star": 10},
+  {"name": "Maya Moore",           "wnba_championships": 4, "wnba_mvps": 1, "wnba_finals_mvps": 1, "wnba_all_star": 6},
+  {"name": "Candace Parker",       "wnba_championships": 3, "wnba_mvps": 2, "wnba_finals_mvps": 1, "wnba_all_star": 7},
+  {"name": "Sheryl Swoopes",       "wnba_championships": 4, "wnba_mvps": 3, "wnba_finals_mvps": 0, "wnba_all_star": 6},
+  {"name": "Cynthia Cooper",       "wnba_championships": 4, "wnba_mvps": 2, "wnba_finals_mvps": 4, "wnba_all_star": 2},
+  {"name": "Breanna Stewart",      "wnba_championships": 2, "wnba_mvps": 2, "wnba_finals_mvps": 2, "wnba_all_star": 5},
+  {"name": "A'ja Wilson",          "wnba_championships": 3, "wnba_mvps": 4, "wnba_finals_mvps": 2, "wnba_all_star": 6},
+  {"name": "Elena Delle Donne",    "wnba_championships": 1, "wnba_mvps": 2, "wnba_finals_mvps": 0, "wnba_all_star": 8},
+  {"name": "Lauren Jackson",       "wnba_championships": 2, "wnba_mvps": 3, "wnba_finals_mvps": 0, "wnba_all_star": 7},
+  {"name": "Sylvia Fowles",        "wnba_championships": 2, "wnba_mvps": 1, "wnba_finals_mvps": 2, "wnba_all_star": 8},
+  {"name": "Courtney Vandersloot", "wnba_championships": 1, "wnba_mvps": 0, "wnba_finals_mvps": 0, "wnba_all_star": 4}
+]

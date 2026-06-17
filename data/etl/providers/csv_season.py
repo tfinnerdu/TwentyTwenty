@@ -1,0 +1,238 @@
+"""
+data/etl/providers/csv_season.py
+================================
+Shared base for providers that ingest per-player *season* rows and roll them
+up into career lines. NBA, WNBA, NHL and NFL all share this machinery; each
+is a small subclass declaring its team map, the season columns to sum, and
+how those sums map onto the players-table stat columns.
+
+Honors (rings, MVP, All-Star, Heisman, ...) are not in box-score data and
+come from the curated awards overlay (data/etl/awards/<sport>.json).
+
+Canonical input files in --source-dir (produced from a Kaggle export, an
+nba_api/NHL-API dump, nflverse, wehoop, etc.):
+
+  <sport>_players.csv : player_id,name,position,college,birth_year,birth_city,
+                        birth_state,birth_country,height_inches,weight_lbs,
+                        draft_year,draft_round,draft_number
+  <sport>_seasons.csv : player_id,season,team,<stat columns...>
+"""
+
+import csv
+import logging
+import os
+import sys
+from typing import Iterable
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+from data.etl.providers.base import Provider
+
+log = logging.getLogger(__name__)
+
+
+def _f(s) -> float:
+    try:
+        return float(s)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _i(s) -> int:
+    return int(_f(s))
+
+
+def _year(s) -> int:
+    s = (s or "").strip()
+    return int(s[:4]) if s[:4].isdigit() else 0
+
+
+class CsvSeasonProvider(Provider):
+    # --- subclass declares these ---
+    TEAM_MAP: dict = {}        # team abbrev -> franchise nickname
+    SUM_COLS: tuple = ()       # season numeric columns to accumulate
+    GAMES_COL: str = "g"       # which summed column is games played
+
+    def __init__(self, source_dir: str | None = None, **_):
+        self.data_dir = source_dir or os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "cache", self.sport.lower())
+
+    # subclass: map accumulated sums -> {player_column: value}
+    def stat_fields(self, sums: dict) -> dict:
+        raise NotImplementedError
+
+    # subclass: return position_group, or None to let load.derive_fields set it
+    def position_group_value(self, position: str):
+        return None
+
+    # -- io --
+    def _file(self, suffix: str) -> str:
+        return os.path.join(self.data_dir, f"{self.sport.lower()}_{suffix}.csv")
+
+    def _rows(self, suffix: str):
+        path = self._file(suffix)
+        if not os.path.exists(path):
+            raise FileNotFoundError(
+                f"{path} not found. Supply {self.sport.lower()}_players.csv and "
+                f"{self.sport.lower()}_seasons.csv via --source-dir.")
+        with open(path, newline="", encoding="utf-8-sig") as fh:
+            yield from csv.DictReader(fh)
+
+    def inspect(self):
+        for suffix in ("players", "seasons"):
+            path = self._file(suffix)
+            if not os.path.exists(path):
+                print(f"{os.path.basename(path)}: MISSING")
+                continue
+            with open(path, newline="", encoding="utf-8-sig") as fh:
+                rdr = csv.reader(fh)
+                header = next(rdr, [])
+                n = sum(1 for _ in rdr)
+            print(f"{os.path.basename(path)}: {n} rows, columns={header}")
+
+    # -- parse + aggregate --
+    def fetch(self) -> Iterable[dict]:
+        agg: dict = {}
+        for r in self._rows("seasons"):
+            pid = r["player_id"]
+            a = agg.get(pid)
+            if a is None:
+                a = {"teams": [], "years": set()}
+                a.update({col: 0.0 for col in self.SUM_COLS})
+                agg[pid] = a
+            for col in self.SUM_COLS:
+                a[col] += _f(r.get(col))
+            a["years"].add(_year(r.get("season")))
+            nick = self.TEAM_MAP.get((r.get("team") or "").upper())
+            if nick and nick not in a["teams"]:
+                a["teams"].append(nick)
+
+        for r in self._rows("players"):
+            pid = r["player_id"]
+            a = agg.get(pid)
+            if not a or a.get(self.GAMES_COL, 0) == 0:
+                continue
+            years = {y for y in a["years"] if y}
+            payload = {
+                "sport": self.sport,
+                "sr_id": f"{self.sport.lower()}_{pid}",
+                "name": (r.get("name") or "").strip(),
+                "position": (r.get("position") or "").strip(),
+                "college": (r.get("college") or "").strip(),
+                "birth_year": _i(r.get("birth_year")) or None,
+                "birth_city": (r.get("birth_city") or "").strip(),
+                "birth_state": (r.get("birth_state") or "").strip(),
+                "birth_country": (r.get("birth_country") or "USA").strip() or "USA",
+                "height_inches": _i(r.get("height_inches")) or None,
+                "weight_lbs": _i(r.get("weight_lbs")) or None,
+                "draft_year": _i(r.get("draft_year")) or None,
+                "draft_round": _i(r.get("draft_round")) or None,
+                "draft_pick": _i(r.get("draft_number")) or None,
+                "teams": a["teams"],
+                "active_decades": sorted({f"{(y // 10) * 10}s" for y in years}),
+                "debut_year": min(years) if years else None,
+                "final_year": max(years) if years else None,
+            }
+            payload.update(self.stat_fields(a))
+            grp = self.position_group_value(payload["position"])
+            if grp is not None:
+                payload["position_group"] = grp
+            yield payload
+
+
+# ---------------------------------------------------------------------------
+# Per-sport subclasses
+# ---------------------------------------------------------------------------
+
+class NBAProvider(CsvSeasonProvider):
+    sport = "NBA"
+    source_name = "nba_csv"
+    SUM_COLS = ("g", "pts", "trb", "ast")
+    TEAM_MAP = {
+        "ATL": "Hawks", "BOS": "Celtics", "BKN": "Nets", "NJN": "Nets",
+        "CHA": "Hornets", "CHO": "Hornets", "CHI": "Bulls", "CLE": "Cavaliers",
+        "DAL": "Mavericks", "DEN": "Nuggets", "DET": "Pistons", "GSW": "Warriors",
+        "HOU": "Rockets", "IND": "Pacers", "LAC": "Clippers", "LAL": "Lakers",
+        "MEM": "Grizzlies", "MIA": "Heat", "MIL": "Bucks", "MIN": "Timberwolves",
+        "NOP": "Pelicans", "NYK": "Knicks", "OKC": "Thunder", "SEA": "SuperSonics",
+        "ORL": "Magic", "PHI": "76ers", "PHX": "Suns", "PHO": "Suns",
+        "POR": "Trail Blazers", "SAC": "Kings", "SAS": "Spurs", "TOR": "Raptors",
+        "UTA": "Jazz", "WAS": "Wizards",
+    }
+
+    def stat_fields(self, s):
+        g = s["g"] or 1
+        return {"nba_points": round(s["pts"] / g, 1), "nba_rebounds": round(s["trb"] / g, 1),
+                "nba_assists": round(s["ast"] / g, 1), "nba_games": int(s["g"])}
+        # position_group handled by load.derive_fields for NBA
+
+
+class WNBAProvider(CsvSeasonProvider):
+    sport = "WNBA"
+    source_name = "wnba_csv"
+    SUM_COLS = ("g", "pts", "reb", "ast")
+    TEAM_MAP = {
+        "PHX": "Mercury", "PHO": "Mercury", "SEA": "Storm", "LAS": "Sparks",
+        "IND": "Fever", "MIN": "Lynx", "HOU": "Comets", "NYL": "Liberty",
+        "LVA": "Aces", "CHI": "Sky", "WAS": "Mystics", "CON": "Sun",
+        "ATL": "Dream", "DAL": "Wings", "TUL": "Shock",
+    }
+    _GROUP = {"G": "G", "PG": "G", "SG": "G", "F": "F", "SF": "F", "PF": "F", "C": "C"}
+
+    def stat_fields(self, s):
+        g = s["g"] or 1
+        return {"wnba_points": round(s["pts"] / g, 1), "wnba_rebounds": round(s["reb"] / g, 1),
+                "wnba_assists": round(s["ast"] / g, 1), "wnba_games": int(s["g"])}
+
+    def position_group_value(self, position):
+        return self._GROUP.get(position.upper(), "")
+
+
+class NHLProvider(CsvSeasonProvider):
+    sport = "NHL"
+    source_name = "nhl_api"
+    SUM_COLS = ("g", "goals", "assists", "points")
+    TEAM_MAP = {
+        "MTL": "Canadiens", "MON": "Canadiens", "TOR": "Maple Leafs", "BOS": "Bruins",
+        "CHI": "Blackhawks", "NYR": "Rangers", "EDM": "Oilers", "PIT": "Penguins",
+        "DET": "Red Wings", "PHI": "Flyers", "COL": "Avalanche", "QUE": "Nordiques",
+        "NJD": "Devils", "WSH": "Capitals", "DAL": "Stars", "STL": "Blues",
+        "LAK": "Kings", "HFD": "Whalers", "BUF": "Sabres", "CGY": "Flames",
+        "VAN": "Canucks", "OTT": "Senators", "TBL": "Lightning", "FLA": "Panthers",
+        "NYI": "Islanders", "SJS": "Sharks", "ANA": "Ducks", "NSH": "Predators",
+        "CBJ": "Blue Jackets", "MIN": "Wild", "WPG": "Jets", "ARI": "Coyotes",
+        "CAR": "Hurricanes", "VGK": "Golden Knights",
+    }
+    _GROUP = {"C": "F", "LW": "F", "RW": "F", "W": "F", "F": "F", "D": "D", "G": "G"}
+
+    def stat_fields(self, s):
+        return {"nhl_goals": int(s["goals"]), "nhl_assists": int(s["assists"]),
+                "nhl_points": int(s["points"]), "nhl_games": int(s["g"])}
+
+    def position_group_value(self, position):
+        return self._GROUP.get(position.upper(), "")
+
+
+class NFLProvider(CsvSeasonProvider):
+    sport = "NFL"
+    source_name = "nflverse"
+    SUM_COLS = ("g", "pass_yds", "rush_yds", "rec_yds",
+                "pass_td", "rush_td", "rec_td", "sacks", "interceptions")
+    TEAM_MAP = {
+        "NWE": "Patriots", "DAL": "Cowboys", "SFO": "49ers", "DEN": "Broncos",
+        "PIT": "Steelers", "GNB": "Packers", "KAN": "Chiefs", "IND": "Colts",
+        "SDG": "Chargers", "LAC": "Chargers", "MIN": "Vikings", "LAR": "Rams",
+        "STL": "Rams", "BAL": "Ravens", "NYG": "Giants", "PHI": "Eagles",
+        "ARI": "Cardinals", "CHI": "Bears", "MIA": "Dolphins", "DET": "Lions",
+        "BUF": "Bills", "ATL": "Falcons", "NOR": "Saints", "SEA": "Seahawks",
+        "OAK": "Raiders", "LVR": "Raiders", "HOU": "Texans", "CIN": "Bengals",
+        "CLE": "Browns", "NYJ": "Jets", "CAR": "Panthers", "TEN": "Titans",
+        "TAM": "Buccaneers", "WAS": "Redskins", "JAX": "Jaguars",
+    }
+
+    def stat_fields(self, s):
+        return {"pass_yds": int(s["pass_yds"]), "rush_yds": int(s["rush_yds"]),
+                "rec_yds": int(s["rec_yds"]),
+                "total_tds": int(s["pass_td"] + s["rush_td"] + s["rec_td"]),
+                "sacks": round(s["sacks"], 1), "interceptions": int(s["interceptions"])}
+        # position_group handled by load.derive_fields for NFL
