@@ -173,6 +173,15 @@ body {
   font-size: 10px; color: var(--chalk-dim);
 }
 .card-count span { color: var(--gold); font-weight: 700; }
+/* Data-coverage caption (era of the answer pool) */
+.card-coverage {
+  font-family: var(--font-mono);
+  font-size: 9px; color: var(--chalk-faint);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 5px 14px; background: var(--bg3);
+  border-bottom: 1px solid var(--chalk-faint);
+}
+.card-coverage b { color: var(--chalk-dim); font-weight: 700; }
 
 /* Clue pair display */
 .clue-area { padding: 16px 14px 12px; }
@@ -756,9 +765,10 @@ function renderQ() {
   const card=`
     <div class="q-card" id="qCard">
       <div class="card-header">
-        <span class="card-series">Round ${currentQ+1} / 20 &bull; ${puzzle.sport_mode||'NFL'}</span>
+        <span class="card-series">Round ${currentQ+1} / ${puzzle.questions.length} &bull; ${puzzle.sport_mode||'NFL'}</span>
         <span class="card-count"><span>${q.answer_count}</span> valid answer${q.answer_count!==1?'s':''}</span>
       </div>
+      ${puzzle.coverage?`<div class="card-coverage">Eligible answers: <b>${puzzle.coverage}</b></div>`:''}
       <div class="clue-area">
         <div class="clue-pair">
           <div class="clue-badge ${currentQ===0?'new-clue':'carry'}">${q.left_label}</div>

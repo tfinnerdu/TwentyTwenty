@@ -103,6 +103,7 @@ def puzzle_response(d: date, chain: list, sport: str, difficulty: str) -> dict:
         "difficulty":    difficulty or default_difficulty(),
         "slug":          slug,
         "url":           f"{site_url()}/p/{slug}",
+        "coverage":      coverage_string(sport or default_sport_mode()),
         "questions":     strip_answers(chain),
     }
 
@@ -160,6 +161,47 @@ def default_chain_length():
         return int(os.environ.get("PUZZLE_CHAIN_LENGTH", "20"))
     except ValueError:
         return 20
+
+def _sport_floor(conn, sport):
+    """Earliest year of data we have for a sport (from debut_year, falling back
+    to the earliest active decade)."""
+    row = conn.execute(
+        "SELECT MIN(debut_year) FROM players WHERE sport=? AND debut_year IS NOT NULL AND debut_year>0",
+        (sport,)).fetchone()
+    yr = row[0] if row and row[0] else None
+    if not yr:
+        decades = []
+        for (ad,) in conn.execute("SELECT active_decades FROM players WHERE sport=?", (sport,)):
+            try:
+                decades += [int(d[:4]) for d in json.loads(ad or "[]") if d[:4].isdigit()]
+            except Exception:
+                pass
+        yr = min(decades) if decades else None
+    return yr
+
+
+def coverage_string(sport_mode):
+    """Short, data-derived coverage caption for the UI ('since 1996',
+    'all eras', or 'eras vary by league'). Reflects whatever year range was
+    actually loaded, so it stays honest as the data grows."""
+    try:
+        conn = get_conn()
+        if sport_mode == "ALL":
+            sports = [r[0] for r in conn.execute("SELECT DISTINCT sport FROM players")]
+        else:
+            sports = [s.strip().upper() for s in sport_mode.split(",")]
+        labels = set()
+        for sp in sports:
+            yr = _sport_floor(conn, sp)
+            if yr:
+                labels.add("all eras" if yr <= 1955 else f"since {yr}")
+        conn.close()
+        if not labels:
+            return None
+        return labels.pop() if len(labels) == 1 else "eras vary by league"
+    except Exception:
+        return None
+
 
 def site_url():
     """Base URL for share links. Set SITE_URL env var in production."""
