@@ -649,7 +649,7 @@ function getSelectedDifficulty() { return loadPrefs().difficulty || 'medium'; }
 function sportMode(sports)       { return sports.length === SPORT_DEFS.length ? 'ALL' : sports.join(','); }
 function modeLabel(sports)       { return sports.length === 1 ? sports[0] : sports.length === SPORT_DEFS.length ? 'ALL' : sports.slice(0,3).join('+') + (sports.length > 3 ? '…' : ''); }
 
-let puzzle=null, currentQ=0, results=[], usedPlayers=new Set(), acTimer=null, acIndex=-1;
+let puzzle=null, currentQ=0, results=[], usedPlayers=new Set(), acTimer=null, acIndex=-1, TOTAL=20;
 
 function saveState() {
   if(!puzzle) return;
@@ -698,14 +698,15 @@ async function boot(dateStr, skipLobby) {
   }
 
   puzzle = data;
+  TOTAL = (puzzle.questions || []).length || 20;
   document.getElementById('puzzleMeta').innerHTML =
     `<strong>#${puzzle.puzzle_number}</strong><br>${puzzle.date}`;
 
   buildPips(); buildProgress();
 
   const saved = loadState(puzzle.date, puzzle.sport_mode || mode);
-  if (saved && saved.currentQ >= 20) {
-    currentQ=20; results=saved.results||[]; usedPlayers=new Set(saved.usedPlayers||[]);
+  if (saved && saved.currentQ >= TOTAL) {
+    currentQ=TOTAL; results=saved.results||[]; usedPlayers=new Set(saved.usedPlayers||[]);
     rebuildPips(); renderEnd(true); return;
   }
   if (saved && saved.currentQ > 0) {
@@ -722,14 +723,14 @@ async function boot(dateStr, skipLobby) {
 
 function buildPips() {
   const g=document.getElementById('pipGrid'); g.innerHTML='';
-  for(let i=0;i<20;i++){
+  for(let i=0;i<TOTAL;i++){
     const d=document.createElement('div');
     d.className='pip'+(i===0?' active':''); d.id=`pip-${i}`; d.textContent=i+1; g.appendChild(d);
   }
 }
 function buildProgress() {
   const b=document.getElementById('progressBar'); b.innerHTML='';
-  for(let i=0;i<20;i++){
+  for(let i=0;i<TOTAL;i++){
     const d=document.createElement('div');
     d.className='seg'+(i===0?' active':''); d.id=`seg-${i}`; b.appendChild(d);
   }
@@ -742,7 +743,7 @@ function rebuildPips() {
     const p=document.getElementById(`pip-${r.q}`), s=document.getElementById(`seg-${r.q}`);
     if(p){p.className=`pip ${cls}`;p.innerHTML=sym;} if(s) s.className=`seg ${cls}`;
   });
-  if(currentQ<20){
+  if(currentQ<TOTAL){
     const p=document.getElementById(`pip-${currentQ}`), s=document.getElementById(`seg-${currentQ}`);
     if(p&&p.className==='pip'){p.className='pip active';}
     if(s&&s.className==='seg'){s.className='seg active';}
@@ -751,7 +752,7 @@ function rebuildPips() {
 function setPip(i, cls, sym) {
   const p=document.getElementById(`pip-${i}`), s=document.getElementById(`seg-${i}`);
   if(p){p.className=`pip ${cls}`;p.innerHTML=sym;} if(s) s.className=`seg ${cls}`;
-  if(i+1<20){
+  if(i+1<TOTAL){
     const np=document.getElementById(`pip-${i+1}`), ns=document.getElementById(`seg-${i+1}`);
     if(np&&np.className==='pip'){np.className='pip active';}
     if(ns&&ns.className==='seg'){ns.className='seg active';}
@@ -759,7 +760,7 @@ function setPip(i, cls, sym) {
 }
 
 function renderQ() {
-  if(currentQ>=20){renderEnd(false);return;}
+  if(currentQ>=TOTAL){renderEnd(false);return;}
   const q=puzzle.questions[currentQ];
   const area=document.getElementById('gameArea');
   const banner=document.getElementById('restBanner');
@@ -856,7 +857,7 @@ async function doSubmit(val) {
       usedPlayers.add(name); results.push({q:currentQ,player:name,correct:true});
       setPip(currentQ,'correct','&#10003;'); showFb('correct','&#9646; '+name.toUpperCase()+' &#9646;');
       currentQ++; saveState();
-      if(currentQ>=20) saveHistory(puzzle.date,results.filter(r=>r.correct).length,puzzle.puzzle_number,mode);
+      if(currentQ>=TOTAL) saveHistory(puzzle.date,results.filter(r=>r.correct).length,puzzle.puzzle_number,mode);
       setTimeout(renderQ,800);
     } else {
       showFb('wrong','WRONG CALL');
@@ -946,7 +947,7 @@ function makePerfectGraphic(score, modeDisplay, puzzleNum) {
 
 function makeBowlingGraphic(score, modeDisplay, puzzleNum) {
   const W = 660, H = 270;
-  const missed = 20 - score;
+  const missed = TOTAL - score;
 
   const PIN_POSITIONS = [
     [330,128],
@@ -971,8 +972,8 @@ function makeBowlingGraphic(score, modeDisplay, puzzleNum) {
       <ellipse cx="${px}" cy="${py-2}" rx="5" ry="5" fill="#F0EDE6"/>`;
   }).join('');
 
-  const ballX = score === 0 ? 120 : 80 + (score/20)*180;
-  const ballOnLane = score < 20;
+  const ballX = score === 0 ? 120 : 80 + (score/TOTAL)*180;
+  const ballOnLane = score < TOTAL;
 
   const labelStyle = `font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;letter-spacing:0.12em;`;
   const monoStyle  = `font-family:'Share Tech Mono',monospace;`;
@@ -996,7 +997,7 @@ function makeBowlingGraphic(score, modeDisplay, puzzleNum) {
     <div style="background:#0d0d0f;border:2px solid #3A3A3C;border-radius:14px;overflow:hidden;margin-bottom:1.25rem;">
       <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>Bowling scorecard</title>
-        <desc>You scored ${score} out of 20. ${missed} pins remain standing.</desc>
+        <desc>You scored ${score} out of ${TOTAL}. ${missed} pins remain standing.</desc>
 
         <rect width="${W}" height="${H}" fill="#0d0d0f"/>
 
@@ -1050,14 +1051,14 @@ function renderEnd(restored) {
 
   const modeDisplay=modeLabel(getSelectedSports());
   const emojis=results.map(r=>r.correct?'\uD83D\uDFE9':r.skipped?'\u2B1C':'\uD83D\uDFE5');
-  const tag=score===20?'PERFECT GAME. LEGENDARY.'
+  const tag=score===TOTAL?'PERFECT GAME. LEGENDARY.'
            :score>=18?'ELITE. YOU BARELY NEED HINDSIGHT.'
            :score>=15?'SOLID. MOST PEOPLE AREN\'T CLOSE.'
            :'HINDSIGHT IS 20/20 \uD83E\uDD37';
   const puzzleUrl = puzzle.slug ? `${SITE_URL}/p/${puzzle.slug}` : SITE_URL;
   const shareText=`20/20 #${puzzle.puzzle_number} [${modeDisplay}]\n${score}/20 — ${tag.replace(/\uD83E\uDD37/,'')}\n\n${emojis.slice(0,10).join('')}\n${emojis.slice(10).join('')}\n\n${puzzleUrl}`;
 
-  const graphic = score===20
+  const graphic = score===TOTAL
     ? makePerfectGraphic(score, modeDisplay, puzzle.puzzle_number)
     : makeBowlingGraphic(score, modeDisplay, puzzle.puzzle_number);
 
