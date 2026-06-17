@@ -53,10 +53,18 @@ NBA_POS_GROUPS = {
 
 
 def derive_fields(conn):
-    """Fill in position_group and any other derived fields."""
+    """
+    Fill in position_group for NFL/NBA from the raw `position` string.
+
+    Other sports (MLB/NHL/WNBA/NCAA*) compute position_group inside their
+    provider/scraper -- where the context to do it lives (e.g. starter vs
+    reliever for MLB pitchers) -- so we leave those rows untouched rather
+    than blanking them.
+    """
     c = conn.cursor()
     c.execute("SELECT id, sport, position FROM players")
     rows = c.fetchall()
+    updated = 0
     for row in rows:
         pid, sport, pos = row["id"], row["sport"], row["position"] or ""
         pos = pos.upper().strip()
@@ -65,10 +73,11 @@ def derive_fields(conn):
         elif sport == "NBA":
             grp = NBA_POS_GROUPS.get(pos, "")
         else:
-            grp = ""
+            continue  # provider already set position_group; don't clobber it
         c.execute("UPDATE players SET position_group=? WHERE id=?", (grp, pid))
+        updated += 1
     conn.commit()
-    log.info(f"Derived position_group for {len(rows)} players")
+    log.info(f"Derived position_group for {updated} NFL/NBA players")
 
 
 # -------------------------------------------------------------------------
