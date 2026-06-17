@@ -1,0 +1,116 @@
+"""
+data/etl/providers/nfl_export.py
+================================
+Pull NFL career data from nflverse (nfl_data_py) into the canonical
+nfl_players.csv / nfl_seasons.csv that NFLProvider ingests.
+
+    pip install nfl_data_py
+    python -m data.etl.providers.nfl_export --start 1999 --end 2023 --out ./nfl_csv
+    python -m data.etl.run_provider --provider nflverse --source-dir ./nfl_csv
+
+Coverage / caveats:
+  - nflverse seasonal data is offense-oriented: passing/rushing/receiving
+    yards + TDs + games come through cleanly. Defensive sacks/INTs are not in
+    the seasonal feed, so those stay 0 (defensive players still get bio +
+    position, and honors come from awards/nfl.json).
+  - Column names vary slightly across nfl_data_py versions, so fields are read
+    defensively. Verify against your installed version on first run.
+"""
+
+import argparse
+import csv
+import os
+
+
+def _val(rec, *names, default=""):
+    """First present, non-NaN value among candidate column names."""
+    for n in names:
+        if n in rec:
+            v = rec[n]
+            if v is not None and v == v:  # not NaN
+                return v
+    return default
+
+
+def _int(rec, *names):
+    v = _val(rec, *names, default=0)
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return 0
+
+
+def export(out_dir: str, start: int = 1999, end: int = 2023):
+    import nfl_data_py as nfl  # noqa: imported lazily so the app needn't have it
+    os.makedirs(out_dir, exist_ok=True)
+    years = list(range(start, end + 1))
+
+    seasonal = nfl.import_seasonal_data(years).to_dict("records")
+    rosters = nfl.import_seasonal_rosters(years).to_dict("records")
+    people = nfl.import_players().to_dict("records")
+
+    bio = {}
+    for p in people:
+        pid = _val(p, "gsis_id", "player_id")
+        if pid:
+            bio[pid] = p
+
+    team_by = {}            # (pid, season) -> team abbrev
+    for r in rosters:
+        pid = _val(r, "player_id", "gsis_id")
+        team_by[(pid, _int(r, "season"))] = _val(r, "team", "recent_team")
+
+    seasons, pids = [], set()
+    for s in seasonal:
+        pid = _val(s, "player_id", "gsis_id")
+        if not pid:
+            continue
+        yr = _int(s, "season")
+        seasons.append([pid, yr, team_by.get((pid, yr), ""),
+                        _int(s, "games", "g"),
+                        _int(s, "passing_yards"), _int(s, "rushing_yards"),
+                        _int(s, "receiving_yards"), _int(s, "passing_tds"),
+                        _int(s, "rushing_tds"), _int(s, "receiving_tds"),
+                        0, 0])   # sacks, interceptions (defensive; not in feed)
+        pids.add(pid)
+
+    players = []
+    for pid in pids:
+        b = bio.get(pid, {})
+        name = _val(b, "display_name", "football_name", "player_name") or pid
+        birth = str(_val(b, "birth_date", "birthdate"))
+        players.append([pid, name, _val(b, "position", "position_group"),
+                        _val(b, "college_name", "college"),
+                        birth[:4] if birth[:4].isdigit() else "",
+                        "", "", "USA", _int(b, "height"), _int(b, "weight"),
+                        _int(b, "entry_year", "rookie_year", "draft_year"),
+                        _int(b, "draft_round"), _int(b, "draft_number")])
+
+    _write(out_dir, "nfl",
+           ["player_id", "season", "team", "g", "pass_yds", "rush_yds", "rec_yds",
+            "pass_td", "rush_td", "rec_td", "sacks", "interceptions"], seasons,
+           ["player_id", "name", "position", "college", "birth_year", "birth_city",
+            "birth_state", "birth_country", "height_inches", "weight_lbs",
+            "draft_year", "draft_round", "draft_number"], players)
+    return len(players), len(seasons)
+
+
+def _write(out_dir, sport, season_hdr, season_rows, player_hdr, player_rows):
+    with open(os.path.join(out_dir, f"{sport}_players.csv"), "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f); w.writerow(player_hdr); w.writerows(player_rows)
+    with open(os.path.join(out_dir, f"{sport}_seasons.csv"), "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f); w.writerow(season_hdr); w.writerows(season_rows)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--start", type=int, default=1999)
+    ap.add_argument("--end", type=int, default=2023)
+    ap.add_argument("--out", default="./nfl_csv")
+    args = ap.parse_args()
+    p, s = export(args.out, args.start, args.end)
+    print(f"Wrote {p} players, {s} player-seasons to {args.out}")
+
+
+if __name__ == "__main__":
+    main()

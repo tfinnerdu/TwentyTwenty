@@ -43,6 +43,34 @@ python -m data.etl.apply_awards --sport NBA
 python generate_puzzles.py --sport MLB --days 7 --force
 ```
 
+## Full real run (all sports, one command)
+
+`run_full.py` (repo root) pulls real data for every sport and writes the DB +
+puzzles. Each pro sport has an **export helper** that fetches from its
+sanctioned source into the canonical CSVs, and `run_full` calls them
+automatically (falling back to the bundled fixture if a pull fails, so a run
+always finishes):
+
+| Sport | Export helper | Source |
+|-------|---------------|--------|
+| NFL  | `nfl_export.py`  | nflverse / `nfl_data_py` |
+| NBA  | `nba_export.py`  | stats.nba.com via `nba_api` |
+| NHL  | `nhl_export.py`  | official `api-web.nhle.com` (`requests`) |
+| WNBA | `wnba_export.py` | stats.wnba.com (experimental) |
+| NCAAF| `cfbd_export.py` | CollegeFootballData API (`CFBD_API_KEY`) |
+
+```bash
+pip install -r requirements.txt -r requirements-etl.txt   # adds nba_api, nfl_data_py
+echo 'CFBD_API_KEY=xxxx' >> .env
+python run_full.py                 # MLB+NCAA auto; NBA/NHL/WNBA/NFL via the helpers
+python run_full.py --fixtures      # offline: bundled fixtures for the four pro sports
+```
+
+The helpers can also be run standalone (`python -m data.etl.providers.nba_export
+--out ./nba_csv`) and ingested with `--source-dir`. They're written to each
+library's documented API with defensive parsing — verify on first run; column
+quirks are easy to adjust and don't affect the providers.
+
 ## Prove it without network
 
 ```bash

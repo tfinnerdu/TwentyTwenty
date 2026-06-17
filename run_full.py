@@ -4,26 +4,30 @@ run_full.py
 ===========
 One command for a full, real-data run across all sports, into data/nfl.db.
 
-Per sport it uses the best available source:
+Per sport it uses the best available source, and falls back to the bundled
+demo fixture if a real pull fails (so a run always completes):
+
   MLB              Lahman / Chadwick Baseball Databank   (auto-downloads)
-  NCAAF            CollegeFootballData API                (needs CFBD_API_KEY)
-                   -- falls back to the curated set if no key
-  NCAAB / NCAAW    curated datasets (data/etl/curated/)
-  NBA/NHL/WNBA/NFL your season-stats CSVs via --<sport>-dir
-                   -- falls back to the bundled demo fixtures if not supplied
+  NFL              nflverse / nfl_data_py
+  NBA              stats.nba.com via nba_api
+  NHL              official api-web.nhle.com
+  WNBA             stats.wnba.com  (experimental)
+  NCAAF            CollegeFootballData API  (needs CFBD_API_KEY; else curated)
+  NCAAB / NCAAW    curated datasets
 
-Your CFBD key is read from the environment OR a .env file in the repo root
-(KEY=VALUE lines), so:
+The CFBD key is read from the environment OR a .env file in the repo root.
 
-    echo 'CFBD_API_KEY=xxxxxxxx' >> .env
+    pip install -r requirements.txt -r requirements-etl.txt
+    echo 'CFBD_API_KEY=xxxx' >> .env
     python run_full.py
     FLASK_APP=api/app.py .venv/bin/flask run -p 5902
 
 Flags:
-    --mlb-fixture        use the bundled MLB fixture instead of downloading Lahman
+    --fixtures           use bundled fixtures for NBA/NHL/WNBA/NFL (skip real pulls)
+    --mlb-fixture        use the MLB fixture instead of downloading Lahman
     --ncaaf-curated      use the curated NCAAF set even if a CFBD key is present
-    --cfbd-start / --cfbd-end   CFBD season range (default 2005..2023)
-    --nba-dir / --nhl-dir / --wnba-dir / --nfl-dir   real season-stats CSVs
+    --cfbd-start/-end    CFBD season range (default 2005..2023)
+    --{nba,nhl,wnba,nfl}-dir   pre-exported season-stats CSVs to ingest directly
     --length N           puzzle length (default 20)   --days N  puzzle days (default 7)
     --skip-puzzles
 """
@@ -45,6 +49,10 @@ from data.etl.providers.curated import CuratedProvider
 from data.etl.providers._fixture_mlb import write_fixture as write_mlb
 from data.etl.providers._fixture_nba import write_fixture as write_nba
 from data.etl.providers._fixture_csv import write_fixture as write_csv
+from data.etl.providers.nfl_export import export as export_nfl
+from data.etl.providers.nba_export import export as export_nba
+from data.etl.providers.nhl_export import export as export_nhl
+from data.etl.providers.wnba_export import export as export_wnba
 from data.etl.schema import get_conn
 from generate_puzzles import generate_for_date
 
@@ -68,33 +76,46 @@ def load_dotenv(path: str):
         os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
-def csv_provider(cls, source_dir, sport_label, tmp):
-    """Real CSVs if given, else a bundled fixture (logged clearly)."""
+def resolve(sport, provider_cls, source_dir, exporter, fixture_fn, tmp, use_real):
+    """source_dir (real CSVs) -> live export -> bundled fixture, in that order."""
     if source_dir:
-        return cls(source_dir=source_dir)
-    d = os.path.join(tmp, sport_label.lower())
-    write_csv(sport_label, d)
-    log.warning(f"  {sport_label}: no --{sport_label.lower()}-dir given -> using bundled DEMO fixture")
-    return cls(source_dir=d)
+        log.info(f"  {sport}: ingesting --source-dir {source_dir}")
+        return provider_cls(source_dir=source_dir)
+    out = os.path.join(tmp, sport.lower())
+    if use_real:
+        try:
+            log.info(f"  {sport}: pulling real data (this can take a while)...")
+            np, ns = exporter(out)
+            log.info(f"  {sport}: exported {np} players / {ns} player-seasons")
+            return provider_cls(source_dir=out)
+        except Exception as e:
+            log.warning(f"  {sport}: real pull failed ({type(e).__name__}: {e}) -> demo fixture")
+    fixture_fn(out)
+    log.warning(f"  {sport}: using bundled DEMO fixture")
+    return provider_cls(source_dir=out)
 
 
 def ncaaf_provider(args, tmp):
     key = os.environ.get("CFBD_API_KEY")
     if args.ncaaf_curated or not key:
         if not key and not args.ncaaf_curated:
-            log.warning("  NCAAF: no CFBD_API_KEY found -> using curated set")
+            log.warning("  NCAAF: no CFBD_API_KEY found -> curated set")
         return CuratedProvider("NCAAF")
-    # Real CFBD: export to CSVs, then ingest with NCAAFProvider
-    from data.etl.providers.cfbd_export import export
-    out = os.path.join(tmp, "ncaaf_csv")
-    log.info(f"  NCAAF: exporting CollegeFootballData {args.cfbd_start}-{args.cfbd_end} ...")
-    export(args.cfbd_start, args.cfbd_end, out, key)
-    return NCAAFProvider(source_dir=out)
+    from data.etl.providers.cfbd_export import export as export_cfbd
+    out = os.path.join(tmp, "ncaaf")
+    try:
+        log.info(f"  NCAAF: exporting CollegeFootballData {args.cfbd_start}-{args.cfbd_end}...")
+        export_cfbd(args.cfbd_start, args.cfbd_end, out, key)
+        return NCAAFProvider(source_dir=out)
+    except Exception as e:
+        log.warning(f"  NCAAF: CFBD export failed ({e}) -> curated set")
+        return CuratedProvider("NCAAF")
 
 
 def main():
     ap = argparse.ArgumentParser(description="Full real-data run across all sports")
     ap.add_argument("--db", default=DB_PATH)
+    ap.add_argument("--fixtures", action="store_true", help="Fixtures for NBA/NHL/WNBA/NFL")
     ap.add_argument("--mlb-fixture", action="store_true")
     ap.add_argument("--ncaaf-curated", action="store_true")
     ap.add_argument("--cfbd-start", type=int, default=2005)
@@ -108,25 +129,24 @@ def main():
 
     load_dotenv(os.path.join(BASE_DIR, ".env"))
     tmp = tempfile.mkdtemp(prefix="2020_full_")
+    real = not args.fixtures
 
     if args.mlb_fixture:
         d = os.path.join(tmp, "mlb"); write_mlb(d); mlb = LahmanMLBProvider(data_dir=d)
     else:
-        log.info("  MLB: downloading Lahman / Baseball Databank ...")
+        log.info("  MLB: downloading Lahman / Baseball Databank...")
         mlb = LahmanMLBProvider()
-
-    nba_dir = args.nba_dir
-    if not nba_dir:
-        nba_dir = os.path.join(tmp, "nba"); write_nba(nba_dir)
-        log.warning("  NBA: no --nba-dir given -> using bundled DEMO fixture")
-    nba = NBAProvider(source_dir=nba_dir)
 
     providers = [
         mlb,
-        nba,
-        csv_provider(NHLProvider, args.nhl_dir, "NHL", tmp),
-        csv_provider(WNBAProvider, args.wnba_dir, "WNBA", tmp),
-        csv_provider(NFLProvider, args.nfl_dir, "NFL", tmp),
+        resolve("NFL", NFLProvider, args.nfl_dir, lambda o: export_nfl(o),
+                lambda o: write_csv("NFL", o), tmp, real),
+        resolve("NBA", NBAProvider, args.nba_dir, lambda o: export_nba(o),
+                lambda o: write_nba(o), tmp, real),
+        resolve("NHL", NHLProvider, args.nhl_dir, lambda o: export_nhl(o),
+                lambda o: write_csv("NHL", o), tmp, real),
+        resolve("WNBA", WNBAProvider, args.wnba_dir, lambda o: export_wnba(o),
+                lambda o: write_csv("WNBA", o), tmp, real),
         ncaaf_provider(args, tmp),
         CuratedProvider("NCAAB"),
         CuratedProvider("NCAAW"),
