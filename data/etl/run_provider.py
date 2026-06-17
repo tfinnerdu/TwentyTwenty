@@ -24,6 +24,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from data.etl.providers.base import run_pipeline
 from data.etl.providers.lahman_mlb import LahmanMLBProvider
+from data.etl.providers.nba_csv import NBACsvProvider
 
 logging.basicConfig(
     level=logging.INFO,
@@ -39,9 +40,14 @@ def _make_lahman(args):
     return LahmanMLBProvider(data_dir=args.source_dir, refresh=args.refresh)
 
 
+def _make_nba_csv(args):
+    return NBACsvProvider(source_dir=args.source_dir)
+
+
 # name -> factory(args) -> Provider
 PROVIDERS = {
     "lahman_mlb": _make_lahman,
+    "nba_csv": _make_nba_csv,
 }
 
 
@@ -58,12 +64,15 @@ def main():
                         help="Cap players ingested (testing)")
     parser.add_argument("--skip-load", action="store_true",
                         help="Skip the derive/category rebuild step")
+    parser.add_argument("--no-awards", action="store_true",
+                        help="Skip the curated awards overlay")
     args = parser.parse_args()
 
     provider = PROVIDERS[args.provider](args)
     log.info(f"=== 20/20 provider run: {args.provider} ({provider.sport}) ===")
 
-    summary = run_pipeline(provider, args.db, skip_load=args.skip_load, limit=args.limit)
+    summary = run_pipeline(provider, args.db, skip_load=args.skip_load,
+                           limit=args.limit, apply_award_overlay=not args.no_awards)
 
     log.info(f"Done: +{summary['added']} new, ~{summary['updated']} updated "
              f"({summary['sport']} via {summary['source']})")

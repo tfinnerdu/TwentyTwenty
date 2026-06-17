@@ -106,11 +106,12 @@ def upsert_players(conn, players: list, source: str, etl_run_id: int) -> tuple:
 # ---------------------------------------------------------------------------
 
 def run_pipeline(provider: Provider, db_path: str, skip_load: bool = False,
-                 limit: int | None = None) -> dict:
+                 limit: int | None = None, apply_award_overlay: bool = True) -> dict:
     """
     Full ingestion for one provider: register an etl_run, fetch + upsert,
-    then (unless skip_load) derive fields, rebuild that sport's categories,
-    and record the load. Returns a small summary dict.
+    overlay curated awards (rings/MVP/etc. the stat source lacks), then
+    (unless skip_load) derive fields, rebuild that sport's categories, and
+    record the load. Returns a small summary dict.
     """
     migrate(db_path)
     conn = get_conn(db_path)
@@ -146,6 +147,13 @@ def run_pipeline(provider: Provider, db_path: str, skip_load: bool = False,
     )
     conn.commit()
     log.info(f"[{provider.source_name}] upserted: {added} added, {updated} updated")
+
+    if apply_award_overlay:
+        from data.etl.apply_awards import apply_awards
+        matched, total, unmatched = apply_awards(conn, provider.sport)
+        if total:
+            log.info(f"[{provider.source_name}] awards overlay: {matched}/{total} matched"
+                     + (f" ({len(unmatched)} not in DB)" if unmatched else ""))
 
     if not skip_load:
         derive_fields(conn)

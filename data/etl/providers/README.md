@@ -15,8 +15,16 @@ subclass and register it in `run_provider.py`.
 # once into data/cache/lahman/, then reuses them)
 python -m data.etl.run_provider --provider lahman_mlb
 
-# Offline / firewalled: point at a folder that already holds the Lahman CSVs
+# NBA from per-player season-stats CSVs (see nba_csv.py for the schema).
+# Honors come from the curated overlay automatically.
+python -m data.etl.run_provider --provider nba_csv --source-dir /path/to/nba_csv
+
+# Offline / firewalled: point --source-dir at a folder that already holds
+# the source files (works for any provider).
 python -m data.etl.run_provider --provider lahman_mlb --source-dir /path/to/csvs
+
+# Re-apply curated honors after editing data/etl/awards/<sport>.json
+python -m data.etl.apply_awards --sport NBA
 
 # Then regenerate puzzles for the new data
 python generate_puzzles.py --sport MLB --days 7 --force
@@ -25,25 +33,33 @@ python generate_puzzles.py --sport MLB --days 7 --force
 ## Prove it without network
 
 ```bash
-python -m data.etl.providers.smoke_test
+python -m data.etl.providers.smoke_test       # MLB
+python -m data.etl.providers.smoke_test_nba   # NBA + awards overlay
 ```
 
-Builds a 30-player Lahman-schema fixture (`_fixture_mlb.py`), runs the real
-provider against it, and generates an MLB chain — the exact production code
-path, just smaller data.
+Each builds a schema-faithful fixture (`_fixture_mlb.py` / `_fixture_nba.py`),
+runs the real provider against it, applies the awards overlay, and generates a
+chain — the exact production code path, just smaller data.
+
+## Curated awards overlay
+
+Most stat sources ship stat lines but not honors. `data/etl/apply_awards.py`
+overlays a small hand-maintained award layer (`data/etl/awards/<sport>.json`),
+matching players by normalized name within a sport, and runs automatically in
+the pipeline after a provider loads. MLB is the exception — Lahman ships its
+honors, so no `mlb.json` is needed.
 
 ## Status / notes
 
-| Sport | Provider | Source | License |
-|-------|----------|--------|---------|
-| MLB   | `lahman_mlb` | Chadwick Baseball Databank | CC-BY-SA (own + redistribute) |
+| Sport | Provider | Source | Honors |
+|-------|----------|--------|--------|
+| MLB   | `lahman_mlb` | Chadwick Baseball Databank (CC-BY-SA) | from data (Lahman) |
+| NBA   | `nba_csv`    | per-player season-stats CSV (Kaggle / nba_api export) | curated overlay (`awards/nba.json`) |
 
-- **Awards included** for MLB: MVP, Cy Young, Gold Glove, All-Star, and World
-  Series titles (derived from `SeriesPost` × `Appearances`). Lahman is the one
-  source that ships honors for free.
-- **Two known data gaps** (Lahman core): no amateur-draft data (MLB players
-  are left un-tagged for draft categories rather than falsely "Undrafted"),
-  and no WAR (`mlb_war` stays 0 until supplemented).
-- **Next providers** to add the same way: `nba_kaggle` (Kaggle nbadb),
-  `nhl_api` (api-web.nhle.com), `wnba_wehoop` (wehoop data releases),
-  nflverse for NFL. Awards for those sports will need a small curated layer.
+- The wyattowalsh **nbadb** SQLite you may have seen is game-level (team box +
+  play-by-play) — it has no per-player career averages, so `nba_csv` reads a
+  season-stats table instead and rolls it up to career PPG/RPG/APG/games.
+- **Known gaps:** Lahman has no amateur-draft data or WAR; NBA honors are the
+  curated layer (box-score data carries no MVP/ring/All-NBA info).
+- **Next providers**, same pattern: `nhl_api` (api-web.nhle.com), `wnba_wehoop`
+  (wehoop data releases), nflverse for NFL — each with a curated `awards/<sport>.json`.
