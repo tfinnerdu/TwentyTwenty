@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20/20 — Sports Trivia</title>
+<meta name="description" content="Go 20 for 20. Name a player for every clue pair in the chain.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   DESIGN SYSTEM — game show x ESPN x arcade x trading card
+   ================================================================ */
+:root {
+  --bg:        #0d0d0f;
+  --bg2:       #141417;
+  --bg3:       #1c1c21;
+  --bg4:       #242429;
+  --gold:      #FFD700;
+  --gold-dim:  #9A8200;
+  --gold-dark: #2A2200;
+  --chalk:     #F0EDE6;
+  --chalk-dim: #8A8880;
+  --chalk-faint:#3A3A3C;
+  --green:     #00C853;
+  --green-dim: #003D18;
+  --red:       #E53E3E;
+  --red-dim:   #3D0000;
+  --blue:      #3B82F6;
+  --blue-dim:  #0C1E40;
+  --carry:     #C8860A;
+  --carry-bg:  #2A1A00;
+  --r:         6px;
+  --r-lg:      10px;
+  --r-card:    14px;
+  --font-display: 'Black Han Sans', 'Impact', sans-serif;
+  --font-condensed: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family: var(--font-condensed);
+  background: var(--bg);
+  color: var(--chalk);
+  min-height: 100vh;
+  letter-spacing: 0.01em;
+}
+
+/* ----------------------------------------------------------------
+   LAYOUT
+   ---------------------------------------------------------------- */
+.wrap { max-width: 660px; margin: 0 auto; padding: 0 1rem 5rem; }
+
+/* ----------------------------------------------------------------
+   HEADER — scoreboard strip
+   ---------------------------------------------------------------- */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0 10px;
+  border-bottom: 2px solid var(--gold-dim);
+  margin-bottom: 1rem;
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(255,215,0,0.3);
+}
+.logo-slash { color: var(--chalk-dim); }
+.header-right { display:flex; align-items:center; gap:8px; }
+.puzzle-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--chalk-dim);
+  text-align: right;
+  line-height: 1.5;
+}
+.puzzle-meta strong { color: var(--gold); }
+.hdr-btn {
+  font-family: var(--font-condensed);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1.5px solid var(--chalk-faint);
+  border-radius: var(--r);
+  background: transparent; color: var(--chalk-dim);
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.hdr-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+.mode-pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 3px 9px; border-radius: 20px;
+  background: var(--gold-dark);
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  cursor: pointer;
+  font-weight: 700; letter-spacing: 0.05em;
+}
+.mode-pill:hover { background: rgba(255,215,0,0.15); }
+
+/* ----------------------------------------------------------------
+   SCOREBOARD — LED pip row
+   ---------------------------------------------------------------- */
+.scoreboard {
+  display: flex; gap: 4px;
+  background: var(--bg2);
+  border: 1.5px solid var(--chalk-faint);
+  border-radius: var(--r-lg);
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.score-label {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--chalk-dim);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-right: 6px; white-space: nowrap;
+}
+.pip-grid { display:flex; gap:4px; flex:1; flex-wrap:wrap; }
+.pip {
+  width: 22px; height: 22px;
+  border-radius: 3px;
+  background: var(--bg4);
+  border: 1px solid var(--chalk-faint);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 9px; color: var(--chalk-faint);
+  transition: all .2s;
+}
+.pip.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dark); }
+.pip.correct { background: var(--green); border-color: var(--green); color: #fff; font-size: 11px; }
+.pip.wrong   { background: var(--red);   border-color: var(--red);   color: #fff; font-size: 11px; }
+.pip.skipped { background: var(--chalk-faint); border-color: var(--chalk-faint); color: var(--bg); font-size: 11px; }
+
+/* Progress bar */
+.progress-bar { display:flex; gap:2px; margin-bottom:1.25rem; }
+.seg { flex:1; height:4px; border-radius:2px; background: var(--bg4); transition: background .2s; }
+.seg.active  { background: var(--gold); }
+.seg.correct { background: var(--green); }
+.seg.wrong   { background: var(--red); }
+.seg.skipped { background: var(--chalk-faint); }
+
+/* ----------------------------------------------------------------
+   QUESTION CARD — trading card aesthetic
+   ---------------------------------------------------------------- */
+.q-card {
+  background: var(--bg2);
+  border: 2px solid var(--chalk-faint);
+  border-radius: var(--r-card);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.q-card:focus-within { border-color: var(--gold-dim); }
+
+/* Card header bar */
+.card-header {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--chalk-faint);
+  padding: 8px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-series {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--chalk-dim);
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+.card-count {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--chalk-dim);
+}
+.card-count span { color: var(--gold); font-weight: 700; }
+
+/* Clue pair display */
+.clue-area { padding: 16px 14px 12px; }
+.clue-pair { display:flex; align-items:stretch; gap:0; }
+
+.clue-badge {
+  flex: 1;
+  text-align: center;
+  padding: 12px 10px;
+  border-radius: var(--r);
+  font-family: var(--font-condensed);
+  font-size: 15px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+.clue-badge.carry {
+  background: var(--carry-bg);
+  border: 2px solid var(--carry);
+  color: var(--gold);
+}
+.clue-badge.carry::before {
+  display: block;
+  content: 'CARRIES OVER';
+  font-size: 8px; font-family: var(--font-mono);
+  color: var(--carry); letter-spacing: 0.15em;
+  margin-bottom: 5px; opacity: 0.8;
+}
+.clue-badge.new-clue {
+  background: var(--bg4);
+  border: 2px solid var(--chalk-faint);
+  color: var(--chalk);
+}
+.clue-badge.new-clue::before {
+  display: block;
+  content: 'NEW';
+  font-size: 8px; font-family: var(--font-mono);
+  color: var(--chalk-dim); letter-spacing: 0.15em;
+  margin-bottom: 5px;
+}
+.clue-divider {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 10px;
+  font-family: var(--font-display);
+  font-size: 22px; color: var(--gold);
+  flex-shrink: 0;
+}
+
+/* Input area */
+.card-input { padding: 0 14px 14px; }
+.input-row { display:flex; gap:6px; margin-bottom:8px; }
+.ac-wrap { flex:1; position:relative; }
+input[type=text] {
+  width: 100%; height: 44px;
+  background: var(--bg3);
+  border: 1.5px solid var(--chalk-faint);
+  border-radius: var(--r);
+  padding: 0 12px;
+  color: var(--chalk);
+  font-family: var(--font-condensed); font-size: 16px; font-weight: 600;
+  letter-spacing: 0.02em;
+  outline: none;
+  transition: border-color .15s;
+}
+input[type=text]:focus { border-color: var(--gold); }
+input[type=text]::placeholder { color: var(--chalk-faint); font-weight: 400; }
+input[type=text]:disabled { opacity: 0.4; }
+
+.ac-list {
+  position: absolute; top:calc(100% + 3px); left:0; right:0;
+  background: var(--bg3);
+  border: 1.5px solid var(--chalk-faint);
+  border-radius: var(--r);
+  overflow: hidden; z-index: 50;
+  max-height: 200px; overflow-y: auto; display: none;
+}
+.ac-item {
+  padding: 9px 12px;
+  font-family: var(--font-condensed); font-size: 14px; font-weight: 600;
+  color: var(--chalk); cursor: pointer;
+  border-bottom: 1px solid var(--chalk-faint);
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+.ac-item:last-child { border-bottom: none; }
+.ac-item:hover, .ac-item.hl { background: var(--gold-dark); color: var(--gold); }
+
+/* Buttons */
+.game-btn {
+  height: 44px; padding: 0 14px;
+  border: 1.5px solid var(--chalk-faint);
+  border-radius: var(--r);
+  background: var(--bg3); color: var(--chalk-dim);
+  font-family: var(--font-condensed); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; white-space: nowrap;
+  transition: all .15s;
+}
+.game-btn:hover { border-color: var(--chalk-dim); color: var(--chalk); }
+.game-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.game-btn.primary {
+  background: var(--gold); border-color: var(--gold); color: var(--bg);
+  font-weight: 700;
+}
+.game-btn.primary:hover { background: #FFE533; }
+
+/* Feedback flash */
+.feedback {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  padding: 10px 14px;
+  border-radius: var(--r);
+  text-align: center;
+  display: none;
+  text-transform: uppercase;
+}
+.feedback.correct {
+  background: var(--green-dim); color: var(--green);
+  border: 1.5px solid var(--green); display: block;
+}
+.feedback.wrong {
+  background: var(--red-dim); color: var(--red);
+  border: 1.5px solid var(--red); display: block;
+}
+
+/* Used players */
+.used-section { margin-bottom: 1.25rem; }
+.used-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--chalk-dim); letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.used-chips { display:flex; flex-wrap:wrap; gap:5px; min-height:18px; }
+.chip {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 3px 9px; border-radius: 3px;
+  background: var(--bg3); border: 1px solid var(--chalk-faint);
+  color: var(--chalk-dim); text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ----------------------------------------------------------------
+   LOADING
+   ---------------------------------------------------------------- */
+.loading { text-align:center; padding:4rem 0; color: var(--chalk-dim); }
+.spinner {
+  width:32px; height:32px;
+  border: 2px solid var(--chalk-faint); border-top-color: var(--gold);
+  border-radius: 50%; animation: spin .7s linear infinite;
+  margin: 0 auto 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Restored banner */
+.restored-banner {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--blue-dim); border: 1px solid var(--blue);
+  border-radius: var(--r); padding: 8px 14px;
+  color: var(--blue); margin-bottom: 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.restored-banner button { background:none; border:none; color:var(--blue); cursor:pointer; font-size:16px; }
+
+/* ----------------------------------------------------------------
+   END SCREEN
+   ---------------------------------------------------------------- */
+.end-wrap { padding: 1.5rem 0; }
+
+.final-score-card {
+  background: var(--bg2);
+  border: 2px solid var(--gold-dim);
+  border-radius: var(--r-card);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.final-score-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--chalk-dim); letter-spacing: 0.2em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.final-score-num {
+  font-family: var(--font-display);
+  font-size: 80px; line-height: 1;
+  letter-spacing: -2px;
+}
+.final-score-num.perfect { color: var(--gold); }
+.final-score-num.good    { color: var(--green); }
+.final-score-num.okay    { color: var(--blue); }
+.final-score-num.bad     { color: var(--red); }
+.final-tagline {
+  font-family: var(--font-condensed); font-size: 18px; font-weight: 600;
+  color: var(--chalk-dim); margin-top: 8px; text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Share card — monospace terminal style */
+.share-card {
+  background: var(--bg3);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--r);
+  padding: 1rem 1.25rem;
+  font-family: var(--font-mono); font-size: 12px;
+  line-height: 1.9; color: var(--chalk-dim);
+  white-space: pre-wrap; margin-bottom: 10px;
+}
+.share-row { display:flex; gap:8px; align-items:center; margin-bottom: 1.5rem; }
+.copy-ok { font-family:var(--font-mono); font-size:11px; color:var(--green); display:none; letter-spacing:0.05em; }
+
+/* Reveal table */
+.reveal-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--chalk-dim); letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.reveal-row {
+  display: grid; grid-template-columns: 28px 1fr auto;
+  gap: 10px; align-items: start;
+  padding: 8px 0; border-bottom: 1px solid var(--chalk-faint);
+  font-size: 13px;
+}
+.reveal-row:last-child { border-bottom: none; }
+.reveal-num  { font-family:var(--font-mono); font-size:10px; color:var(--chalk-dim); text-align:right; padding-top:2px; }
+.reveal-clue { font-family:var(--font-condensed); font-size:12px; font-weight:600;
+               color:var(--chalk-dim); line-height:1.5; text-transform:uppercase; letter-spacing:0.03em; }
+.reveal-answer { font-family:var(--font-condensed); font-size:13px; font-weight:700;
+                 text-align:right; white-space:nowrap; text-transform:uppercase; letter-spacing:0.03em; }
+.reveal-answer.c { color:var(--green); }
+.reveal-answer.w { color:var(--red); }
+.reveal-answer.s { color:var(--chalk-faint); }
+.end-actions { display:flex; gap:8px; margin-top:1.5rem; flex-wrap:wrap; }
+
+/* ----------------------------------------------------------------
+   LOBBY — draft board / pack selection
+   ---------------------------------------------------------------- */
+.lobby { padding: 1rem 0; }
+
+.lobby-header {
+  text-align: center;
+  padding: 1.5rem 0 1rem;
+  border-bottom: 1px solid var(--chalk-faint);
+  margin-bottom: 1.5rem;
+}
+.lobby-title {
+  font-family: var(--font-display);
+  font-size: 28px; color: var(--gold); letter-spacing: 0.02em;
+}
+.lobby-sub {
+  font-family: var(--font-condensed); font-size: 14px; font-weight: 400;
+  color: var(--chalk-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.sport-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px; margin-bottom: 1.5rem;
+}
+.sport-tile {
+  background: var(--bg2);
+  border: 2px solid var(--chalk-faint);
+  border-radius: var(--r-card);
+  padding: 14px 12px 12px;
+  cursor: pointer; text-align: center;
+  transition: border-color .15s, background .15s;
+  position: relative; overflow: hidden;
+}
+.sport-tile::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--chalk-faint);
+  transition: background .15s;
+}
+.sport-tile:hover { border-color: var(--gold-dim); background: var(--gold-dark); }
+.sport-tile:hover::before { background: var(--gold-dim); }
+.sport-tile.selected { border-color: var(--gold); background: var(--gold-dark); }
+.sport-tile.selected::before { background: var(--gold); }
+.sport-tile.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+.tile-sport-id {
+  font-family: var(--font-display); font-size: 20px; color: var(--gold);
+  line-height: 1; margin-bottom: 4px;
+}
+.tile-name {
+  font-family: var(--font-condensed); font-size: 12px; font-weight: 700;
+  color: var(--chalk); text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+.tile-sub {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--chalk-dim); letter-spacing: 0.05em;
+}
+.tile-badge {
+  font-family: var(--font-mono); font-size: 9px;
+  display: inline-block; margin-top: 6px;
+  padding: 2px 6px; border-radius: 3px;
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: #F59E0B; letter-spacing: 0.05em;
+}
+
+/* Difficulty selector */
+.diff-section { margin-bottom: 1.5rem; }
+.diff-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--chalk-dim); letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.diff-pills { display:flex; gap:8px; }
+.diff-pill {
+  flex: 1; height: 40px;
+  border: 1.5px solid var(--chalk-faint);
+  border-radius: var(--r);
+  background: var(--bg2); color: var(--chalk-dim);
+  font-family: var(--font-condensed); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; font-family: inherit;
+  transition: all .15s;
+}
+.diff-pill:hover { border-color: var(--chalk-dim); color: var(--chalk); }
+.diff-pill.selected { border-color: var(--gold); background: var(--gold-dark); color: var(--gold); }
+
+.lobby-note {
+  font-family: var(--font-mono); font-size: 10px; color: var(--chalk-dim);
+  line-height: 1.7; letter-spacing: 0.04em;
+  border-left: 2px solid var(--chalk-faint); padding-left: 10px; margin-bottom: 1.5rem;
+}
+.lobby-note strong { color: var(--gold); }
+
+.start-btn {
+  width: 100%; height: 52px;
+  background: var(--gold); border: none; border-radius: var(--r);
+  color: var(--bg);
+  font-family: var(--font-display); font-size: 20px; letter-spacing: 0.05em;
+  cursor: pointer; transition: background .15s;
+  text-transform: uppercase;
+}
+.start-btn:hover { background: #FFE533; }
+.start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ----------------------------------------------------------------
+   MODAL (shared)
+   ---------------------------------------------------------------- */
+.modal-overlay {
+  position: absolute; inset: 0;
+  min-height: 600px;
+  background: rgba(0,0,0,0.85);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 2rem 1rem; z-index: 200;
+}
+.modal {
+  background: var(--bg2);
+  border: 2px solid var(--gold-dim);
+  border-radius: var(--r-card);
+  width: 100%; max-width: 420px;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--chalk-faint);
+}
+.modal-title {
+  font-family: var(--font-display); font-size: 18px; color: var(--gold); letter-spacing: 0.03em;
+}
+.modal-close {
+  background: none; border: none; color: var(--chalk-dim);
+  font-size: 22px; cursor: pointer; line-height: 1; padding: 0;
+}
+.modal-close:hover { color: var(--chalk); }
+
+/* Archive */
+.archive-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 1.25rem;
+  border-bottom: 1px solid var(--chalk-faint); cursor: pointer;
+}
+.archive-row:last-child { border-bottom: none; }
+.archive-row:hover { background: var(--bg3); }
+.archive-row.today { background: var(--gold-dark); }
+.archive-date {
+  font-family: var(--font-mono); font-size: 12px; color: var(--chalk); letter-spacing: 0.05em;
+}
+.a-badge {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 3px; font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.a-badge.done  { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+.a-badge.today { background: var(--gold-dark);  color: var(--gold);  border: 1px solid var(--gold-dim); }
+.a-badge.avail { background: var(--bg4); color: var(--chalk-dim); border: 1px solid var(--chalk-faint); }
+
+/* Vintage footer */
+.vintage {
+  text-align: center; padding: 2rem 0 0;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--chalk-faint); letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* Mobile */
+@media (max-width:480px) {
+  .logo { font-size: 26px; }
+  .clue-badge { font-size: 13px; }
+  .sport-grid { grid-template-columns: 1fr 1fr; }
+  .final-score-num { font-size: 64px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="appWrap">
+  <div class="header">
+    <div class="logo"><span>20</span><span class="logo-slash">/</span><span>20</span></div>
+    <div class="header-right">
+      <span class="mode-pill" id="modePill" style="display:none" onclick="openSportSelector()">NFL</span>
+      <button class="hdr-btn" onclick="openArchive()">Archive</button>
+      <div class="puzzle-meta" id="puzzleMeta"></div>
+    </div>
+  </div>
+
+  <div class="scoreboard">
+    <span class="score-label">Score</span>
+    <div class="pip-grid" id="pipGrid"></div>
+  </div>
+  <div class="progress-bar" id="progressBar"></div>
+  <div id="gameArea">
+    <div class="loading"><div class="spinner"></div>Loading...</div>
+  </div>
+</div>
+
+<script>
+const API         = '';
+const STORAGE_KEY = 'twentytwenty_state';
+const HISTORY_KEY = 'twentytwenty_history';
+const PREFS_KEY   = 'twentytwenty_prefs';
+
+let SITE_URL = window.location.origin;  // fallback: current host
+
+async function loadConfig() {
+  try {
+    const res  = await fetch(`${API}/api/config`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.site_url) SITE_URL = data.site_url.replace(/\/+$/, '');
+  } catch { /* non-critical -- fallback stays */ }
+}
+
+const SPORT_DEFS = [
+  { id:'NFL',   label:'NFL',   name:'Pro Football',        needsData:false },
+  { id:'NBA',   label:'NBA',   name:'Pro Basketball (M)',  needsData:true  },
+  { id:'WNBA',  label:'WNBA',  name:'Pro Basketball (W)',  needsData:true  },
+  { id:'MLB',   label:'MLB',   name:'Pro Baseball',        needsData:true  },
+  { id:'NHL',   label:'NHL',   name:'Pro Hockey',          needsData:true  },
+  { id:'NCAAF', label:'NCAAF', name:'College Football',    needsData:true  },
+  { id:'NCAAB', label:'NCAAB', name:'College Hoops (M)',   needsData:true  },
+  { id:'NCAAW', label:'NCAAW', name:'College Hoops (W)',   needsData:true  },
+];
+const DIFF_DEFS = [
+  { id:'easy',   label:'Easy'   },
+  { id:'medium', label:'Medium' },
+  { id:'hard',   label:'Hard'   },
+];
+
+function loadPrefs()  { try { return JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'); } catch { return {}; } }
+function savePrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch {} }
+function getSelectedSports()     { return loadPrefs().sports || ['NFL']; }
+function getSelectedDifficulty() { return loadPrefs().difficulty || 'medium'; }
+function sportMode(sports)       { return sports.length === SPORT_DEFS.length ? 'ALL' : sports.join(','); }
+function modeLabel(sports)       { return sports.length === 1 ? sports[0] : sports.length === SPORT_DEFS.length ? 'ALL' : sports.slice(0,3).join('+') + (sports.length > 3 ? '…' : ''); }
+
+let puzzle=null, currentQ=0, results=[], usedPlayers=new Set(), acTimer=null, acIndex=-1;
+
+function saveState() {
+  if(!puzzle) return;
+  try { localStorage.setItem(STORAGE_KEY+'_'+puzzle.date+'_'+puzzle.sport_mode,
+    JSON.stringify({date:puzzle.date,puzzle_number:puzzle.puzzle_number,sport_mode:puzzle.sport_mode,
+                    currentQ,results,usedPlayers:[...usedPlayers]})); } catch {}
+}
+function loadState(date, mode) {
+  try { const r=localStorage.getItem(STORAGE_KEY+'_'+date+'_'+mode); return r?JSON.parse(r):null; }
+  catch { return null; }
+}
+function saveHistory(date, score, num, mode) {
+  try { const h=getHistory(); h[date+'_'+(mode||'NFL')]={score,puzzle_number:num,mode,completed_at:new Date().toISOString()};
+    localStorage.setItem(HISTORY_KEY,JSON.stringify(h)); } catch {}
+}
+function getHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}'); } catch { return {}; } }
+
+async function boot(dateStr, skipLobby) {
+  const prefs = loadPrefs();
+  if (!skipLobby && !prefs.sports) { renderLobby(); return; }
+
+  const sports = getSelectedSports();
+  const diff   = getSelectedDifficulty();
+  const mode   = sportMode(sports);
+
+  const pill = document.getElementById('modePill');
+  if (pill) { pill.textContent = modeLabel(sports); pill.style.display='inline'; }
+
+  const base = dateStr ? `${API}/api/puzzle/${dateStr}` : `${API}/api/puzzle/today`;
+  const url  = `${base}?sport=${encodeURIComponent(mode)}&difficulty=${diff}`;
+
+  document.getElementById('gameArea').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Loading puzzle...</div>';
+
+  let data;
+  try { const res=await fetch(url); if(!res.ok) throw new Error(res.status); data=await res.json(); }
+  catch {
+    document.getElementById('gameArea').innerHTML=`
+      <div style="text-align:center;padding:3rem 0;color:var(--chalk-dim)">
+        <div style="font-family:var(--font-display);font-size:28px;color:var(--red);margin-bottom:1rem">CONNECTION ERROR</div>
+        <button class="game-btn" onclick="renderLobby()">Change Sports</button>
+        &nbsp;
+        <button class="game-btn" onclick="boot(null,true)">Retry</button>
+      </div>`;
+    return;
+  }
+
+  puzzle = data;
+  document.getElementById('puzzleMeta').innerHTML =
+    `<strong>#${puzzle.puzzle_number}</strong><br>${puzzle.date}`;
+
+  buildPips(); buildProgress();
+
+  const saved = loadState(puzzle.date, puzzle.sport_mode || mode);
+  if (saved && saved.currentQ >= 20) {
+    currentQ=20; results=saved.results||[]; usedPlayers=new Set(saved.usedPlayers||[]);
+    rebuildPips(); renderEnd(true); return;
+  }
+  if (saved && saved.currentQ > 0) {
+    currentQ=saved.currentQ; results=saved.results||[]; usedPlayers=new Set(saved.usedPlayers||[]);
+    rebuildPips();
+    const area=document.getElementById('gameArea'); area.innerHTML='';
+    const b=document.createElement('div'); b.className='restored-banner'; b.id='restBanner';
+    b.innerHTML=`GAME RESTORED &mdash; ON Q${currentQ+1}
+      <button onclick="this.parentElement.remove()">&#x2715;</button>`;
+    area.appendChild(b); renderQ(); return;
+  }
+  currentQ=0; results=[]; usedPlayers=new Set(); renderQ();
+}
+
+function buildPips() {
+  const g=document.getElementById('pipGrid'); g.innerHTML='';
+  for(let i=0;i<20;i++){
+    const d=document.createElement('div');
+    d.className='pip'+(i===0?' active':''); d.id=`pip-${i}`; d.textContent=i+1; g.appendChild(d);
+  }
+}
+function buildProgress() {
+  const b=document.getElementById('progressBar'); b.innerHTML='';
+  for(let i=0;i<20;i++){
+    const d=document.createElement('div');
+    d.className='seg'+(i===0?' active':''); d.id=`seg-${i}`; b.appendChild(d);
+  }
+}
+function rebuildPips() {
+  buildPips(); buildProgress();
+  results.forEach(r=>{
+    const cls=r.correct?'correct':r.skipped?'skipped':'wrong';
+    const sym=r.correct?'&#10003;':r.skipped?'&#8722;':'&#10007;';
+    const p=document.getElementById(`pip-${r.q}`), s=document.getElementById(`seg-${r.q}`);
+    if(p){p.className=`pip ${cls}`;p.innerHTML=sym;} if(s) s.className=`seg ${cls}`;
+  });
+  if(currentQ<20){
+    const p=document.getElementById(`pip-${currentQ}`), s=document.getElementById(`seg-${currentQ}`);
+    if(p&&p.className==='pip'){p.className='pip active';}
+    if(s&&s.className==='seg'){s.className='seg active';}
+  }
+}
+function setPip(i, cls, sym) {
+  const p=document.getElementById(`pip-${i}`), s=document.getElementById(`seg-${i}`);
+  if(p){p.className=`pip ${cls}`;p.innerHTML=sym;} if(s) s.className=`seg ${cls}`;
+  if(i+1<20){
+    const np=document.getElementById(`pip-${i+1}`), ns=document.getElementById(`seg-${i+1}`);
+    if(np&&np.className==='pip'){np.className='pip active';}
+    if(ns&&ns.className==='seg'){ns.className='seg active';}
+  }
+}
+
+function renderQ() {
+  if(currentQ>=20){renderEnd(false);return;}
+  const q=puzzle.questions[currentQ];
+  const area=document.getElementById('gameArea');
+  const banner=document.getElementById('restBanner');
+
+  const card=`
+    <div class="q-card" id="qCard">
+      <div class="card-header">
+        <span class="card-series">Round ${currentQ+1} / 20 &bull; ${puzzle.sport_mode||'NFL'}</span>
+        <span class="card-count"><span>${q.answer_count}</span> valid answer${q.answer_count!==1?'s':''}</span>
+      </div>
+      <div class="clue-area">
+        <div class="clue-pair">
+          <div class="clue-badge ${currentQ===0?'new-clue':'carry'}">${q.left_label}</div>
+          <div class="clue-divider">+</div>
+          <div class="clue-badge new-clue">${q.right_label}</div>
+        </div>
+      </div>
+      <div class="card-input">
+        <div class="input-row">
+          <div class="ac-wrap">
+            <input type="text" id="pInput" placeholder="Name a player..." autocomplete="off" spellcheck="false">
+            <div class="ac-list" id="acList"></div>
+          </div>
+          <button class="game-btn" id="skipBtn">Skip</button>
+          <button class="game-btn primary" id="subBtn">Submit</button>
+        </div>
+        <div class="feedback" id="fb"></div>
+      </div>
+    </div>
+    <div class="used-section">
+      <div class="used-label">Used (${usedPlayers.size})</div>
+      <div class="used-chips" id="chips">${renderChips()}</div>
+    </div>`;
+
+  if(banner){
+    const old=area.querySelector('#qCard'); const oldU=area.querySelector('.used-section');
+    if(old)old.remove(); if(oldU)oldU.remove(); area.insertAdjacentHTML('beforeend',card);
+  } else { area.innerHTML=card; }
+
+  const inp=document.getElementById('pInput'), acl=document.getElementById('acList');
+  inp.focus();
+  inp.addEventListener('input',()=>{ clearTimeout(acTimer); acTimer=setTimeout(()=>fetchAC(inp.value.trim(),acl,inp),120); });
+  inp.addEventListener('keydown',e=>handleKey(e,inp,acl));
+  document.getElementById('subBtn').addEventListener('click',()=>{acl.style.display='none';doSubmit(inp.value.trim());});
+  document.getElementById('skipBtn').addEventListener('click',doSkip);
+}
+function renderChips() {
+  if(!usedPlayers.size) return `<span class="chip" style="font-style:italic">none yet</span>`;
+  return [...usedPlayers].map(p=>`<span class="chip">${p}</span>`).join('');
+}
+
+async function fetchAC(val, list, inp) {
+  if(val.length<2){list.style.display='none';return;}
+  try{
+    const res=await fetch(`${API}/api/players/search?q=${encodeURIComponent(val)}`);
+    const data=await res.json();
+    renderAC((data.players||[]).filter(p=>!usedPlayers.has(p)),list,inp);
+  } catch{list.style.display='none';}
+}
+function renderAC(players,list,inp){
+  list.innerHTML=''; acIndex=-1;
+  if(!players.length){list.style.display='none';return;}
+  players.forEach(p=>{
+    const item=document.createElement('div');
+    item.className='ac-item'; item.textContent=p.toUpperCase();
+    item.addEventListener('mousedown',e=>{e.preventDefault();inp.value=p;list.style.display='none';});
+    list.appendChild(item);
+  });
+  list.style.display='block';
+}
+function handleKey(e,inp,list){
+  const items=list.querySelectorAll('.ac-item');
+  if(list.style.display==='none'||!items.length){if(e.key==='Enter')doSubmit(inp.value.trim());return;}
+  if(e.key==='ArrowDown'){e.preventDefault();acIndex=Math.min(acIndex+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('hl',i===acIndex));if(acIndex>=0)inp.value=items[acIndex].textContent;}
+  else if(e.key==='ArrowUp'){e.preventDefault();acIndex=Math.max(acIndex-1,-1);items.forEach((el,i)=>el.classList.toggle('hl',i===acIndex));if(acIndex>=0)inp.value=items[acIndex].textContent;}
+  else if(e.key==='Enter'){list.style.display='none';doSubmit(inp.value.trim());}
+  else if(e.key==='Escape')list.style.display='none';
+}
+
+async function doSubmit(val) {
+  if(!val) return;
+  const btn=document.getElementById('subBtn'); btn.disabled=true;
+  const mode = puzzle.sport_mode || sportMode(getSelectedSports());
+  try {
+    const res=await fetch(`${API}/api/validate`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({date:puzzle.date,question_index:currentQ,player:val,sport:mode}),
+    });
+    const data=await res.json();
+    if(data.correct){
+      const name=data.canonical_name;
+      usedPlayers.add(name); results.push({q:currentQ,player:name,correct:true});
+      setPip(currentQ,'correct','&#10003;'); showFb('correct','&#9646; '+name.toUpperCase()+' &#9646;');
+      currentQ++; saveState();
+      if(currentQ>=20) saveHistory(puzzle.date,results.filter(r=>r.correct).length,puzzle.puzzle_number,mode);
+      setTimeout(renderQ,800);
+    } else {
+      showFb('wrong','WRONG CALL');
+      const inp=document.getElementById('pInput'); if(inp){inp.value='';inp.focus();}
+      btn.disabled=false;
+    }
+  } catch { showFb('wrong','CONNECTION ERROR'); btn.disabled=false; }
+}
+function doSkip(){
+  results.push({q:currentQ,player:null,correct:false,skipped:true});
+  setPip(currentQ,'skipped','&#8722;'); currentQ++; saveState(); renderQ();
+}
+function showFb(type,msg){
+  const el=document.getElementById('fb');
+  if(el){el.className=`feedback ${type}`;el.innerHTML=msg;}
+}
+
+
+function makePerfectGraphic(score, modeDisplay, puzzleNum) {
+  const W = 660, H = 240;
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+
+  const confettiLines = [];
+  const cols = ['#FFD700','#00C853','#3B82F6','#E53E3E','#FFD700','#F0EDE6'];
+  for(let i=0;i<28;i++){
+    const x=30+i*22, col=cols[i%cols.length];
+    confettiLines.push(
+      `<rect x="${x}" y="${8+Math.sin(i*1.3)*6}" width="3" height="${10+Math.cos(i*0.9)*5}" fill="${col}" opacity="${0.6+Math.sin(i)*0.3}" rx="1"/>`,
+      `<rect x="${x+8}" y="${4+Math.cos(i*1.7)*7}" width="4" height="${7+Math.sin(i*1.1)*4}" fill="${cols[(i+2)%cols.length]}" opacity="${0.5+Math.cos(i*0.7)*0.3}" rx="1"/>`,
+      `<rect x="${x+4}" y="${16+Math.sin(i*2.1)*4}" width="2" height="${12+Math.cos(i*1.3)*4}" fill="${cols[(i+4)%cols.length]}" opacity="0.7" rx="1"/>`
+    );
+  }
+
+  const lightBulbs = [];
+  for(let i=0;i<18;i++){
+    const x=20+i*36, lit=(i%3!==2);
+    lightBulbs.push(
+      `<circle cx="${x}" cy="42" r="7" fill="${lit?'#FFD700':'#2A2200'}" stroke="#9A8200" stroke-width="1.5"/>`,
+      `<rect x="${x-2}" y="49" width="4" height="3" fill="#9A8200"/>`
+    );
+  }
+
+  const digitStyle = `font-family:'Black Han Sans','Impact',sans-serif;font-size:88px;font-weight:900;letter-spacing:-3px;`;
+  const labelStyle = `font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;letter-spacing:0.15em;`;
+
+  return `
+    <div style="background:#0d0d0f;border:3px solid #FFD700;border-radius:14px;overflow:hidden;margin-bottom:1.25rem;position:relative;">
+      <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>Perfect game scoreboard</title>
+        <desc>You scored 20 out of 20. Perfect game.</desc>
+
+        <rect width="${W}" height="${H}" fill="#0d0d0f"/>
+
+        <rect width="${W}" height="30" fill="#1c1c21"/>
+        <rect width="${W}" height="1" y="30" fill="#9A8200" opacity="0.6"/>
+        <text x="20" y="20" fill="#9A8200" style="${labelStyle}font-size:10px;">FINAL SCORE</text>
+        <text x="${W/2}" y="20" text-anchor="middle" fill="#FFD700" style="${labelStyle}font-size:10px;">PUZZLE #${puzzleNum} &bull; ${modeDisplay}</text>
+        <text x="${W-20}" y="20" text-anchor="end" fill="#9A8200" style="${labelStyle}font-size:10px;">${dateStr}</text>
+
+        ${lightBulbs.join('')}
+
+        ${confettiLines.join('')}
+
+        <rect x="0" y="62" width="${W}" height="2" fill="#9A8200" opacity="0.4"/>
+
+        <text x="${W/2}" y="160" text-anchor="middle" fill="#FFD700"
+              style="${digitStyle}">20/20</text>
+
+        <rect x="0" y="172" width="${W}" height="2" fill="#9A8200" opacity="0.4"/>
+
+        <rect x="0" y="174" width="${W}" height="38" fill="#1c1c21"/>
+        <text x="${W/2}" y="200" text-anchor="middle" fill="#FFD700"
+              style="${labelStyle}font-size:18px;letter-spacing:0.25em;">PERFECT GAME</text>
+        <text x="${W/2}" y="214" text-anchor="middle" fill="#9A8200"
+              style="${labelStyle}font-size:10px;letter-spacing:0.2em;">CERTIFIED SPORTS HISTORIAN</text>
+
+        <rect x="0" y="212" width="${W}" height="28" fill="#0d0d0f"/>
+        <text x="${W/2}" y="231" text-anchor="middle" fill="#3A3A3C"
+              style="${labelStyle}font-size:9px;letter-spacing:0.2em;">GAME OVER &bull; ${timeStr}</text>
+
+        <rect x="0" y="236" width="${W}" height="4" fill="#FFD700"/>
+      </svg>
+    </div>`;
+}
+
+function makeBowlingGraphic(score, modeDisplay, puzzleNum) {
+  const W = 660, H = 270;
+  const missed = 20 - score;
+
+  const PIN_POSITIONS = [
+    [330,128],
+    [318,110],[342,110],
+    [306,92],[330,92],[354,92],
+    [294,74],[318,74],[342,74],[366,74]
+  ];
+
+  const knocked = new Set();
+  let k = 0;
+  for(let i=PIN_POSITIONS.length-1;i>=0&&k<missed;i--,k++) knocked.add(i);
+
+  const pinSVG = PIN_POSITIONS.map((pos,i)=>{
+    const [px,py]=pos, down=knocked.has(i);
+    if(down){
+      return `<ellipse cx="${px}" cy="${py+10}" rx="9" ry="4" fill="#3A3A3C" stroke="#2A2A2E" stroke-width="1"/>`;
+    }
+    return `
+      <ellipse cx="${px}" cy="${py+12}" rx="7" ry="3" fill="#1c1c21"/>
+      <rect x="${px-4}" y="${py-2}" width="8" height="16" fill="#F0EDE6" rx="4"/>
+      <rect x="${px-4}" y="${py+3}" width="8" height="4" fill="#E53E3E"/>
+      <ellipse cx="${px}" cy="${py-2}" rx="5" ry="5" fill="#F0EDE6"/>`;
+  }).join('');
+
+  const ballX = score === 0 ? 120 : 80 + (score/20)*180;
+  const ballOnLane = score < 20;
+
+  const labelStyle = `font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;letter-spacing:0.12em;`;
+  const monoStyle  = `font-family:'Share Tech Mono',monospace;`;
+  const bigStyle   = `font-family:'Black Han Sans','Impact',sans-serif;font-weight:900;`;
+
+  const frameBoxes = [];
+  for(let i=0;i<10;i++){
+    const fx=20+i*62, fy=196;
+    const got=Math.min(Math.max(score-i*2,0),2);
+    const fill=i<5?'#141417':'#1c1c21';
+    frameBoxes.push(
+      `<rect x="${fx}" y="${fy}" width="56" height="36" fill="${fill}" rx="2" stroke="#3A3A3C" stroke-width="1"/>`,
+      `<text x="${fx+28}" y="${fy+24}" text-anchor="middle" fill="${got>0?'#F0EDE6':'#3A3A3C'}" style="${monoStyle}font-size:15px;">${got>0?got:'·'}</text>`,
+      `<text x="${fx+4}" y="${fy+12}" fill="#3A3A3C" style="${monoStyle}font-size:8px;">${i+1}</text>`
+    );
+  }
+
+  const tagLine = score===0?'GUTTER BALL':score<=5?'ONE PIN STANDING':score<=10?'SPARE ATTEMPT':score<=15?'PICKING UP SPARES':'SO CLOSE!';
+
+  return `
+    <div style="background:#0d0d0f;border:2px solid #3A3A3C;border-radius:14px;overflow:hidden;margin-bottom:1.25rem;">
+      <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>Bowling scorecard</title>
+        <desc>You scored ${score} out of 20. ${missed} pins remain standing.</desc>
+
+        <rect width="${W}" height="${H}" fill="#0d0d0f"/>
+
+        <rect width="${W}" height="28" fill="#141417"/>
+        <text x="20" y="18" fill="#3A3A3C" style="${labelStyle}font-size:9px;letter-spacing:0.2em;">GAME OVER</text>
+        <text x="${W/2}" y="18" text-anchor="middle" fill="#8A8880" style="${labelStyle}font-size:9px;">PUZZLE #${puzzleNum} &bull; ${modeDisplay}</text>
+        <rect x="0" y="28" width="${W}" height="1" fill="#3A3A3C"/>
+
+        <rect x="180" y="36" width="300" height="120" fill="#1c1c21" rx="4"/>
+        <rect x="180" y="36" width="300" height="120" fill="none" stroke="#242429" stroke-width="1.5" rx="4"/>
+
+        <line x1="180" y1="120" x2="480" y2="120" stroke="#242429" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="330" y1="36" x2="330" y2="156" stroke="#242429" stroke-width="1" stroke-dasharray="3,8" opacity="0.4"/>
+
+        ${pinSVG}
+
+        ${ballOnLane?`
+          <circle cx="${ballX}" cy="138" r="13" fill="#1a1a2e" stroke="#3B82F6" stroke-width="2"/>
+          <circle cx="${ballX-4}" cy="133" r="2.5" fill="#3B82F6" opacity="0.6"/>
+          <circle cx="${ballX+2}" cy="131" r="2.5" fill="#3B82F6" opacity="0.6"/>
+          <circle cx="${ballX+4}" cy="136" r="2.5" fill="#3B82F6" opacity="0.6"/>
+        `:''}
+
+        <rect x="20" y="36" width="150" height="120" fill="#0d0d0f" rx="4"/>
+        <text x="95" y="88" text-anchor="middle" fill="#E53E3E" style="${bigStyle}font-size:60px;">${score}</text>
+        <rect x="40" y="98" width="110" height="2" fill="#3A3A3C"/>
+        <text x="95" y="120" text-anchor="middle" fill="#3A3A3C" style="${labelStyle}font-size:10px;">OUT OF 20</text>
+        <text x="95" y="148" text-anchor="middle" fill="#E53E3E" style="${labelStyle}font-size:11px;letter-spacing:0.2em;">${tagLine}</text>
+
+        <rect x="0" y="164" width="${W}" height="1" fill="#3A3A3C"/>
+
+        <rect x="0" y="165" width="${W}" height="18" fill="#141417"/>
+        <text x="${W/2}" y="178" text-anchor="middle" fill="#3A3A3C" style="${labelStyle}font-size:9px;letter-spacing:0.2em;">FRAME SCORECARD</text>
+
+        <rect x="0" y="183" width="${W}" height="1" fill="#3A3A3C"/>
+
+        ${frameBoxes.join('')}
+
+        <rect x="0" y="232" width="${W}" height="1" fill="#3A3A3C"/>
+        <rect x="0" y="233" width="${W}" height="37" fill="#141417"/>
+        <text x="${W/2}" y="252" text-anchor="middle" fill="#8A8880" style="${labelStyle}font-size:11px;letter-spacing:0.2em;">HINDSIGHT IS 20/20</text>
+        <text x="${W/2}" y="264" text-anchor="middle" fill="#3A3A3C" style="${labelStyle}font-size:9px;letter-spacing:0.15em;">BETTER LUCK NEXT TIME</text>
+      </svg>
+    </div>`;
+}
+
+function renderEnd(restored) {
+  const score=results.filter(r=>r.correct).length;
+  const mode=puzzle.sport_mode||sportMode(getSelectedSports());
+  if(!restored) saveHistory(puzzle.date,score,puzzle.puzzle_number,mode);
+
+  const modeDisplay=modeLabel(getSelectedSports());
+  const emojis=results.map(r=>r.correct?'\uD83D\uDFE9':r.skipped?'\u2B1C':'\uD83D\uDFE5');
+  const tag=score===20?'PERFECT GAME. LEGENDARY.'
+           :score>=18?'ELITE. YOU BARELY NEED HINDSIGHT.'
+           :score>=15?'SOLID. MOST PEOPLE AREN\'T CLOSE.'
+           :'HINDSIGHT IS 20/20 \uD83E\uDD37';
+  const puzzleUrl = puzzle.slug ? `${SITE_URL}/p/${puzzle.slug}` : SITE_URL;
+  const shareText=`20/20 #${puzzle.puzzle_number} [${modeDisplay}]\n${score}/20 — ${tag.replace(/\uD83E\uDD37/,'')}\n\n${emojis.slice(0,10).join('')}\n${emojis.slice(10).join('')}\n\n${puzzleUrl}`;
+
+  const graphic = score===20
+    ? makePerfectGraphic(score, modeDisplay, puzzle.puzzle_number)
+    : makeBowlingGraphic(score, modeDisplay, puzzle.puzzle_number);
+
+  const rows=puzzle.questions.map((q,i)=>{
+    const r=results.find(x=>x.q===i);
+    const c=r&&r.correct?'c':r&&r.skipped?'s':'w';
+    const ans=r&&r.correct?r.player.toUpperCase():r&&r.skipped?'---':'✗';
+    return `<div class="reveal-row">
+      <span class="reveal-num">${i+1}</span>
+      <span class="reveal-clue">${q.left_label}<br><span style="opacity:0.5">+ ${q.right_label}</span></span>
+      <span class="reveal-answer ${c}">${ans}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('gameArea').innerHTML=`
+    <div class="end-wrap">
+      ${graphic}
+      <div class="reveal-label">Share your result</div>
+      <div class="share-card" id="shareCard">${shareText}</div>
+      <div class="share-row">
+        <button class="game-btn primary" onclick="copyShare()">Copy Result</button>
+        <span class="copy-ok" id="copyOk">COPIED!</span>
+      </div>
+      <div class="reveal-label">Your answers</div>
+      ${rows}
+      <div class="end-actions">
+        <button class="game-btn" onclick="renderLobby()">Change Sports</button>
+        <button class="game-btn primary" onclick="boot(null,true)">Play Again</button>
+      </div>
+    </div>`;
+}
+function copyShare(){
+  const text=document.getElementById('shareCard').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const el=document.getElementById('copyOk');
+    if(el){el.style.display='inline';setTimeout(()=>el.style.display='none',2000);}
+  });
+}
+
+function renderLobby(inModal) {
+  if(inModal){openSportSelector();return;}
+  const sel=getSelectedSports(), diff=getSelectedDifficulty();
+  const tiles=SPORT_DEFS.map(s=>`
+    <div class="sport-tile ${sel.includes(s.id)?'selected':''} ${s.needsData?'':''}
+                 " data-sport="${s.id}" onclick="toggleSport('${s.id}',this)">
+      <div class="tile-sport-id">${s.label}</div>
+      <div class="tile-name">${s.name}</div>
+      ${s.needsData?'<span class="tile-badge">ETL required</span>':'<span class="tile-badge" style="background:rgba(0,200,83,0.1);border-color:rgba(0,200,83,0.3);color:#00C853">READY</span>'}
+    </div>`).join('');
+  const pills=DIFF_DEFS.map(d=>`
+    <button class="diff-pill ${d.id===diff?'selected':''}" onclick="selDiff('${d.id}',this)">${d.label}</button>`).join('');
+
+  document.getElementById('gameArea').innerHTML=`
+    <div class="lobby">
+      <div class="lobby-header">
+        <div class="lobby-title">SELECT YOUR SPORT</div>
+        <div class="lobby-sub">Pick one or more &mdash; clues will connect them</div>
+      </div>
+      <div class="sport-grid" id="sportGrid">${tiles}</div>
+      <div class="diff-section">
+        <div class="diff-label">Difficulty</div>
+        <div class="diff-pills">${pills}</div>
+      </div>
+      <div class="lobby-note">
+        <strong>READY</strong> = works now with hand-curated data.<br>
+        <strong>ETL REQUIRED</strong> = run <code style="color:var(--gold)">python data/etl/run_all.py</code> first.
+      </div>
+      <button class="start-btn" onclick="startFromLobby()">PLAY TODAY'S PUZZLE</button>
+    </div>`;
+}
+function toggleSport(id,el){
+  const prefs=loadPrefs(); let s=prefs.sports||['NFL'];
+  if(s.includes(id)){if(s.length===1)return;s=s.filter(x=>x!==id);el.classList.remove('selected');}
+  else{s.push(id);el.classList.add('selected');}
+  prefs.sports=s; savePrefs(prefs);
+}
+function selDiff(id,el){
+  document.querySelectorAll('.diff-pill').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  const prefs=loadPrefs(); prefs.difficulty=id; savePrefs(prefs);
+}
+function startFromLobby(){
+  const prefs=loadPrefs();
+  if(!prefs.sports)prefs.sports=['NFL'];
+  if(!prefs.difficulty)prefs.difficulty='medium';
+  savePrefs(prefs); boot(null,true);
+}
+
+function openSportSelector(){
+  const sel=getSelectedSports(), diff=getSelectedDifficulty();
+  const tiles=SPORT_DEFS.map(s=>`
+    <div class="sport-tile ${sel.includes(s.id)?'selected':''}"
+         data-sport="${s.id}" onclick="toggleSport('${s.id}',this)">
+      <div class="tile-sport-id">${s.label}</div>
+      <div class="tile-name">${s.name}</div>
+      ${s.needsData?'<span class="tile-badge">ETL required</span>':''}
+    </div>`).join('');
+  const pills=DIFF_DEFS.map(d=>`
+    <button class="diff-pill ${d.id===diff?'selected':''}" onclick="selDiff('${d.id}',this)">${d.label}</button>`).join('');
+
+  const wrap=document.getElementById('appWrap');
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay'; overlay.id='selModal';
+  overlay.innerHTML=`<div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">SPORT SETTINGS</span>
+      <button class="modal-close" onclick="document.getElementById('selModal').remove()">&#x2715;</button>
+    </div>
+    <div style="padding:1rem 1.25rem 1.5rem">
+      <div class="sport-grid" style="margin-bottom:1.25rem">${tiles}</div>
+      <div class="diff-section"><div class="diff-label">Difficulty</div><div class="diff-pills">${pills}</div></div>
+      <button class="start-btn" style="margin-top:1rem"
+              onclick="document.getElementById('selModal').remove();boot(null,true)">
+        APPLY &amp; NEW PUZZLE
+      </button>
+    </div>
+  </div>`;
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  wrap.appendChild(overlay);
+}
+
+function openArchive(){
+  const history=getHistory(), today=new Date().toISOString().slice(0,10);
+  const mode=sportMode(getSelectedSports());
+  const days=[];
+  for(let i=0;i<14;i++){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+  const rows=days.map(date=>{
+    const isToday=date===today;
+    const h=history[date+'_'+(puzzle?.sport_mode||mode)];
+    const badge=h?`<span class="a-badge done">${h.score}/20</span>`
+                :isToday?`<span class="a-badge today">TODAY</span>`
+                :`<span class="a-badge avail">PLAY</span>`;
+    return `<div class="archive-row ${isToday?'today':''}" onclick="closeArchive();boot('${date}',true)">
+      <span class="archive-date">${date}${isToday?' &mdash; TODAY':''}</span>${badge}</div>`;
+  }).join('');
+  const wrap=document.getElementById('appWrap');
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay'; overlay.id='archModal';
+  overlay.innerHTML=`<div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">ARCHIVE</span>
+      <button class="modal-close" onclick="closeArchive()">&#x2715;</button>
+    </div>
+    <div>${rows}</div>
+  </div>`;
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeArchive();});
+  wrap.appendChild(overlay);
+}
+function closeArchive(){const m=document.getElementById('archModal');if(m)m.remove();}
+
+async function loadVintage(){
+  try{
+    const res=await fetch(`${API}/api/vintage`);
+    if(!res.ok)return;
+    const data=await res.json();
+    if(data.as_of){
+      let el=document.getElementById('vintageFooter');
+      if(!el){el=document.createElement('div');el.id='vintageFooter';el.className='vintage';
+               document.querySelector('.wrap').appendChild(el);}
+      const sports=data.vintages.filter(v=>v.total>0).map(v=>v.sport).join(' / ');
+      el.textContent=`Stats as of ${data.as_of}${sports?' — '+sports:''}`;
+    }
+  } catch {}
+}
+
+(async () => {
+  await loadConfig();
+
+  // If the URL is /p/<slug>, resolve it and boot directly into that puzzle
+  const slugMatch = window.location.pathname.match(/^\/p\/([A-Za-z0-9_-]{6,10})$/);
+  if (slugMatch) {
+    const slug = slugMatch[1];
+    document.getElementById('gameArea').innerHTML =
+      '<div class="loading"><div class="spinner"></div>Loading puzzle...</div>';
+
+    try {
+      const res  = await fetch(`${API}/p/${slug}`);
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+
+      // Inject the slug-resolved puzzle and boot into it
+      puzzle = data;
+      const sports = getSelectedSports();
+      const pill   = document.getElementById('modePill');
+      if (pill) { pill.textContent = modeLabel(sports); pill.style.display = 'inline'; }
+      document.getElementById('puzzleMeta').innerHTML =
+        `<strong>#${puzzle.puzzle_number}</strong><br>${puzzle.date}`;
+      buildPips(); buildProgress();
+      currentQ = 0; results = []; usedPlayers = new Set();
+      renderQ();
+    } catch {
+      // Slug not found or network error -- fall through to normal boot
+      window.history.replaceState(null, '', '/');
+      boot();
+    }
+  } else {
+    boot();
+  }
+
+  loadVintage();
+})();
+</script>
+</body>
+</html>

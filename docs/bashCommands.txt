@@ -1,0 +1,232 @@
+20/20 Game -- Bash / Shell Command Reference
+============================================
+
+--- SETUP (first time) ---
+# Unblock web content
+Get-ChildItem -Path "C:\doane\Personal\TwentyTwenty" | Unblock-File
+
+# Create and activate venv
+python -m venv .venv
+source .venv/bin/activate          # Linux/Mac
+.venv\Scripts\activate             # Windows PowerShell
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Seed the NFL database (run once, or after adding players)
+python data/seed.py
+
+# Pre-generate puzzles for the next 7 days
+python generate_puzzles.py --days 7
+
+
+--- LOCAL DEV ---
+
+# Start the Flask API (Windows)
+.\start-local.ps1
+
+# Start the Flask API (Linux/Mac)
+FLASK_APP=api/app.py FLASK_ENV=development flask run --host 0.0.0.0 --port 5902
+
+# Game UI (served by Flask)
+http://localhost:5902
+
+# Health check
+curl http://localhost:5902/health
+
+# Today's puzzle (no answers)
+curl http://localhost:5902/api/puzzle/today
+
+# Validate an answer
+curl -X POST http://localhost:5902/api/validate \
+  -H "Content-Type: application/json" \
+  -d '{"date":"2026-06-17","question_index":0,"player":"Brett Favre"}'
+
+# Autocomplete search
+curl "http://localhost:5902/api/players/search?q=tom"
+
+
+--- PUZZLE MANAGEMENT ---
+
+# Generate today + 7 days ahead
+python generate_puzzles.py --days 7
+
+# Generate a specific date
+python generate_puzzles.py --date 2026-07-04
+
+# Force regenerate (overwrite existing)
+python generate_puzzles.py --days 7 --force
+
+# Generate with fixed seed (reproducible)
+python generate_puzzles.py --days 7 --seed 12345
+
+# Admin batch generate via API
+curl -X POST http://localhost:5902/api/generate/batch \
+  -H "Content-Type: application/json" \
+  -d '{"days":7,"secret":"dev_secret"}'
+
+
+--- DATABASE ---
+
+# Inspect the SQLite DB
+sqlite3 data/nfl.db
+
+# Useful queries
+.tables
+SELECT COUNT(*) FROM players;
+SELECT COUNT(*) FROM categories;
+SELECT COUNT(*) FROM player_categories;
+
+# See category sizes
+SELECT c.label, COUNT(pc.player_id) as players
+FROM categories c
+JOIN player_categories pc ON c.id = pc.category_id
+GROUP BY c.id ORDER BY players DESC;
+
+# See which players are in a category
+SELECT p.name FROM players p
+JOIN player_categories pc ON p.id = pc.player_id
+WHERE pc.category_id = 'team_patriots';
+
+# Re-seed after adding players (destroys and rebuilds)
+python data/seed.py
+
+
+--- PRODUCTION (Render.com) ---
+
+# Deploy: push to main branch -- render.yaml handles the rest
+
+# Cron: runs daily at 3am UTC automatically (see render.yaml)
+
+# Manual trigger via admin API
+curl -X POST https://your-app.onrender.com/api/generate/batch \
+  -H "Content-Type: application/json" \
+  -d '{"days":7,"secret":"YOUR_ADMIN_SECRET"}'
+
+
+--- TESTING ---
+
+# Run the generator standalone (prints chain + saves chain_sample.json)
+python engine/generator.py
+
+# Check puzzle file for a date
+cat puzzles/2026-06-17.json | python -m json.tool | head -40
+
+
+--- ETL PIPELINE (run from your machine, not a hosted server) ---
+
+# Full NFL scrape (first time -- takes ~10 min at 1 req/sec)
+python data/etl/run_etl.py --sport NFL
+
+# Quick test run (20 players only)
+python data/etl/run_etl.py --sport NFL --limit 20
+
+# Re-run from cached data (no HTTP requests)
+python data/etl/run_etl.py --sport NFL --from-cache
+
+# Add NBA data
+python data/etl/run_etl.py --sport NBA
+
+# Both sports
+python data/etl/run_etl.py --sport ALL
+
+# Force re-scrape (refresh cache)
+python data/etl/run_etl.py --sport NFL --refresh
+
+# After any ETL run, regenerate puzzles to pick up new players
+python generate_puzzles.py --days 7 --force
+
+# Check data vintage in the DB
+python data/etl/schema.py
+
+# Migrate from old hand-curated schema to new multi-sport schema (one time)
+python data/etl/schema.py   # creates new tables
+python data/etl/load.py     # rebuilds categories and memberships
+
+
+--- DATA VINTAGE API ---
+
+# Check what date the stats are current as of
+curl http://localhost:5902/api/vintage
+
+
+--- NEW SPORTS (WNBA, NCAAF, NCAAB, NCAAW) ---
+
+# WNBA  (~200 players, ~4 min)
+python data/etl/run_etl.py --sport WNBA
+
+# NCAAF  (~400 players, ~8 min)
+python data/etl/run_etl.py --sport NCAAF
+
+# NCAAB mens  (~300 players, ~6 min)
+python data/etl/scrape_ncaab.py --gender mens
+
+# NCAAW womens  (~200 players, ~4 min)
+python data/etl/scrape_ncaab.py --gender womens
+
+# After all college scrapers, reload categories
+python data/etl/load.py
+
+# Full everything
+python data/etl/run_etl.py --sport NFL
+python data/etl/run_etl.py --sport NBA
+python data/etl/run_etl.py --sport MLB
+python data/etl/run_etl.py --sport NHL
+python data/etl/run_etl.py --sport WNBA
+python data/etl/run_etl.py --sport NCAAF
+python data/etl/scrape_ncaab.py --gender mens
+python data/etl/scrape_ncaab.py --gender womens
+python data/etl/load.py
+python generate_puzzles.py --days 7 --force
+
+
+--- SPORT MODES FOR PUZZLE GENERATION ---
+
+# NFL only (default)
+python generate_puzzles.py --sport NFL --difficulty medium
+
+# WNBA only
+python generate_puzzles.py --sport WNBA --difficulty medium
+
+# College basketball (mens)
+python generate_puzzles.py --sport NCAAB --difficulty medium
+
+# College basketball (both)
+python generate_puzzles.py --sport NCAAB,NCAAW --difficulty medium
+
+# Cross-sport -- NFL + NBA + college
+python generate_puzzles.py --sport NFL,NBA,NCAAF,NCAAB --difficulty easy
+
+# Everything
+python generate_puzzles.py --sport ALL --difficulty easy
+
+
+--- RUN_ALL.PY (catch-all ETL -- single command for everything) ---
+
+# Full refresh of all 8 sports (~90 min, walk away)
+python data/etl/run_all.py
+
+# Test run -- 20 players per sport, ~5 minutes
+python data/etl/run_all.py --limit 20
+
+# From cache only (no HTTP, instant rebuild from saved JSON)
+python data/etl/run_all.py --from-cache
+
+# Specific sports only
+python data/etl/run_all.py --sports NFL NBA WNBA
+
+# Dry run -- show what would run without doing it
+python data/etl/run_all.py --dry-run
+
+# Be extra polite to the servers
+python data/etl/run_all.py --delay 2.0 --between-delay 10.0
+
+# After any ETL run, regenerate puzzles
+python generate_puzzles.py --days 7 --force
+
+
+--- SPORT MODE IN PUZZLE GENERATION ---
+# Sport selector in the UI persists preferences to localStorage.
+# To override the server default, set env vars:
+#   SPORT_MODE=NFL,NBA    (comma-separated sport codes)
+#   PUZZLE_DIFFICULTY=medium

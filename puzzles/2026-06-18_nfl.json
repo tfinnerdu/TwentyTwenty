@@ -1,0 +1,296 @@
+[
+  {
+    "left_category": "college_oklahoma",
+    "right_category": "round1",
+    "left_label": "Went to Oklahoma",
+    "right_label": "1st Round Pick",
+    "valid_players": [
+      "Adrian Peterson",
+      "CeeDee Lamb",
+      "Kyler Murray"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "round1",
+    "right_category": "team_eagles",
+    "left_label": "1st Round Pick",
+    "right_label": "Eagles",
+    "valid_players": [
+      "Donovan McNabb",
+      "Joe Flacco",
+      "Reggie White",
+      "Saquon Barkley"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_eagles",
+    "right_category": "decade_90s",
+    "left_label": "Eagles",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Cris Carter",
+      "Reggie White",
+      "Terrell Owens"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "team_raiders",
+    "left_label": "Played in 1990s",
+    "right_label": "Raiders",
+    "valid_players": [
+      "Eric Dickerson",
+      "Jerry Rice",
+      "Randy Moss",
+      "Ronnie Lott",
+      "Tim Brown"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_raiders",
+    "right_category": "td_50",
+    "left_label": "Raiders",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Antonio Brown",
+      "Davante Adams",
+      "Eric Dickerson",
+      "Jason Witten",
+      "Jerry Rice",
+      "Marshawn Lynch",
+      "Randy Moss",
+      "Tim Brown"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "team_seahawks",
+    "left_label": "50+ Career TDs",
+    "right_label": "Seahawks",
+    "valid_players": [
+      "Adrian Peterson",
+      "Edgerrin James",
+      "Jerry Rice",
+      "Jimmy Graham",
+      "Marshawn Lynch",
+      "Russell Wilson",
+      "Shaun Alexander"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_seahawks",
+    "right_category": "pb_5",
+    "left_label": "Seahawks",
+    "right_label": "5+ Pro Bowls",
+    "valid_players": [
+      "Adrian Peterson",
+      "Jerry Rice",
+      "Jimmy Graham",
+      "Marshawn Lynch",
+      "Richard Sherman",
+      "Russell Wilson"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "pb_5",
+    "right_category": "pass_50k",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "50,000+ Passing Yds",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Dan Marino",
+      "Drew Brees",
+      "John Elway",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Tom Brady"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "pass_50k",
+    "right_category": "round1",
+    "left_label": "50,000+ Passing Yds",
+    "right_label": "1st Round Pick",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Dan Marino",
+      "Eli Manning",
+      "John Elway",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Peyton Manning",
+      "Philip Rivers"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "round1",
+    "right_category": "team_lions",
+    "left_label": "1st Round Pick",
+    "right_label": "Lions",
+    "valid_players": [
+      "Adrian Peterson",
+      "Barry Sanders",
+      "Calvin Johnson",
+      "Matthew Stafford"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_lions",
+    "right_category": "round1",
+    "left_label": "Lions",
+    "right_label": "1st Round Pick",
+    "valid_players": [
+      "Adrian Peterson",
+      "Barry Sanders",
+      "Calvin Johnson",
+      "Matthew Stafford"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "round1",
+    "right_category": "team_chiefs",
+    "left_label": "1st Round Pick",
+    "right_label": "Chiefs",
+    "valid_players": [
+      "Darrelle Revis",
+      "Derrick Thomas",
+      "Patrick Mahomes",
+      "Ronnie Lott",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_chiefs",
+    "right_category": "decade_00s",
+    "left_label": "Chiefs",
+    "right_label": "Played in 2000s",
+    "valid_players": [
+      "Darrelle Revis",
+      "Priest Holmes",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "decade_00s",
+    "right_category": "team_cowboys",
+    "left_label": "Played in 2000s",
+    "right_label": "Cowboys",
+    "valid_players": [
+      "Deion Sanders",
+      "Emmitt Smith",
+      "Jason Witten",
+      "Terrell Owens",
+      "Tony Romo"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_cowboys",
+    "right_category": "decade_10s",
+    "left_label": "Cowboys",
+    "right_label": "Played in 2010s",
+    "valid_players": [
+      "Dak Prescott",
+      "Dez Bryant",
+      "Ezekiel Elliott",
+      "Jason Witten",
+      "Terrell Owens",
+      "Tony Romo"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "decade_10s",
+    "right_category": "sb_2",
+    "left_label": "Played in 2010s",
+    "right_label": "Multi SB Champion",
+    "valid_players": [
+      "Ben Roethlisberger",
+      "Eli Manning",
+      "Patrick Mahomes",
+      "Peyton Manning",
+      "Ray Lewis",
+      "Rob Gronkowski",
+      "Tom Brady",
+      "Travis Kelce",
+      "Troy Polamalu",
+      "Von Miller"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "sb_2",
+    "right_category": "pass_10k",
+    "left_label": "Multi SB Champion",
+    "right_label": "10,000+ Passing Yds",
+    "valid_players": [
+      "Ben Roethlisberger",
+      "Eli Manning",
+      "Joe Montana",
+      "John Elway",
+      "Patrick Mahomes",
+      "Peyton Manning",
+      "Roger Staubach",
+      "Terry Bradshaw",
+      "Tom Brady",
+      "Troy Aikman"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "pass_10k",
+    "right_category": "team_giants",
+    "left_label": "10,000+ Passing Yds",
+    "right_label": "Giants",
+    "valid_players": [
+      "Eli Manning",
+      "Fran Tarkenton",
+      "Kurt Warner"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_giants",
+    "right_category": "round1",
+    "left_label": "Giants",
+    "right_label": "1st Round Pick",
+    "valid_players": [
+      "Eli Manning",
+      "Lawrence Taylor",
+      "Odell Beckham Jr",
+      "Saquon Barkley"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "round1",
+    "right_category": "college_miami",
+    "left_label": "1st Round Pick",
+    "right_label": "Went to Miami",
+    "valid_players": [
+      "Andre Johnson",
+      "Ed Reed",
+      "Edgerrin James",
+      "Michael Irvin",
+      "Ray Lewis",
+      "Reggie Wayne"
+    ],
+    "answer_count": 6
+  }
+]

@@ -1,0 +1,312 @@
+[
+  {
+    "left_category": "pb_8",
+    "right_category": "college_usc",
+    "left_label": "8+ Pro Bowls",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Anthony Munoz",
+      "Ronnie Lott",
+      "Troy Polamalu"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "pb_5",
+    "left_label": "Went to USC",
+    "right_label": "5+ Pro Bowls",
+    "valid_players": [
+      "Anthony Munoz",
+      "OJ Simpson",
+      "Ronnie Lott",
+      "Troy Polamalu"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pb_5",
+    "right_category": "team_rams",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "Rams",
+    "valid_players": [
+      "Aaron Donald",
+      "Eric Dickerson",
+      "Marshall Faulk",
+      "Merlin Olsen",
+      "Orlando Pace",
+      "Torry Holt",
+      "Von Miller",
+      "Wes Welker"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_rams",
+    "right_category": "rush_5k",
+    "left_label": "Rams",
+    "right_label": "5,000+ Rushing Yds",
+    "valid_players": [
+      "Eric Dickerson",
+      "Marshall Faulk",
+      "Steven Jackson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "rush_5k",
+    "right_category": "team_broncos",
+    "left_label": "5,000+ Rushing Yds",
+    "right_label": "Broncos",
+    "valid_players": [
+      "Clinton Portis",
+      "Russell Wilson",
+      "Tony Dorsett"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_broncos",
+    "right_category": "sb_1",
+    "left_label": "Broncos",
+    "right_label": "Super Bowl Champion",
+    "valid_players": [
+      "Joe Flacco",
+      "John Elway",
+      "Peyton Manning",
+      "Russell Wilson",
+      "Shannon Sharpe",
+      "Tony Dorsett",
+      "Von Miller"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "sb_1",
+    "right_category": "td_400",
+    "left_label": "Super Bowl Champion",
+    "right_label": "400+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "td_400",
+    "right_category": "pass_30k",
+    "left_label": "400+ Career TDs",
+    "right_label": "30,000+ Passing Yds",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Dan Marino",
+      "Drew Brees",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Tom Brady"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "pass_30k",
+    "right_category": "pb_10",
+    "left_label": "30,000+ Passing Yds",
+    "right_label": "10+ Pro Bowls",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "pb_10",
+    "right_category": "rec_10k",
+    "left_label": "10+ Pro Bowls",
+    "right_label": "10,000+ Receiving Yds",
+    "valid_players": [
+      "Jason Witten",
+      "Jerry Rice",
+      "Larry Fitzgerald",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "rec_10k",
+    "right_category": "td_150",
+    "left_label": "10,000+ Receiving Yds",
+    "right_label": "150+ Career TDs",
+    "valid_players": [
+      "Jerry Rice",
+      "Randy Moss",
+      "Terrell Owens"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "td_150",
+    "right_category": "nfl_mvp",
+    "left_label": "150+ Career TDs",
+    "right_label": "NFL MVP",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Cam Newton",
+      "Dan Marino",
+      "Joe Montana",
+      "John Elway",
+      "Kurt Warner",
+      "LaDainian Tomlinson",
+      "Lamar Jackson",
+      "Matt Ryan",
+      "Patrick Mahomes",
+      "Peyton Manning",
+      "Steve Young",
+      "Tom Brady"
+    ],
+    "answer_count": 14
+  },
+  {
+    "left_category": "nfl_mvp",
+    "right_category": "decade_90s",
+    "left_label": "NFL MVP",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Barry Sanders",
+      "Brett Favre",
+      "Dan Marino",
+      "Joe Montana",
+      "John Elway",
+      "Lawrence Taylor",
+      "Marshall Faulk",
+      "Steve Young",
+      "Thurman Thomas"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "rec_10k",
+    "left_label": "Played in 1990s",
+    "right_label": "10,000+ Receiving Yds",
+    "valid_players": [
+      "Cris Carter",
+      "Isaac Bruce",
+      "Jerry Rice",
+      "Michael Irvin",
+      "Randy Moss",
+      "Shannon Sharpe",
+      "Terrell Owens",
+      "Tim Brown"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "rec_10k",
+    "right_category": "decade_20s",
+    "left_label": "10,000+ Receiving Yds",
+    "right_label": "Played in 2020s",
+    "valid_players": [
+      "Antonio Brown",
+      "Davante Adams",
+      "DeAndre Hopkins",
+      "Jason Witten",
+      "Julio Jones",
+      "Larry Fitzgerald",
+      "Travis Kelce",
+      "Tyreek Hill"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "decade_20s",
+    "right_category": "pos_rb",
+    "left_label": "Played in 2020s",
+    "right_label": "Running Back",
+    "valid_players": [
+      "Alvin Kamara",
+      "Christian McCaffrey",
+      "Derrick Henry",
+      "Ezekiel Elliott",
+      "Frank Gore",
+      "Nick Chubb",
+      "Saquon Barkley"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "pos_rb",
+    "right_category": "td_100",
+    "left_label": "Running Back",
+    "right_label": "100+ Career TDs",
+    "valid_players": [
+      "Adrian Peterson",
+      "Alvin Kamara",
+      "Barry Sanders",
+      "Christian McCaffrey",
+      "Derrick Henry",
+      "Emmitt Smith",
+      "Jim Brown",
+      "LaDainian Tomlinson",
+      "Marshall Faulk",
+      "Shaun Alexander",
+      "Walter Payton"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "td_100",
+    "right_category": "team_cardinals",
+    "left_label": "100+ Career TDs",
+    "right_label": "Cardinals",
+    "valid_players": [
+      "Adrian Peterson",
+      "Emmitt Smith",
+      "Kurt Warner",
+      "Kyler Murray",
+      "Larry Fitzgerald"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_cardinals",
+    "right_category": "pb_5",
+    "left_label": "Cardinals",
+    "right_label": "5+ Pro Bowls",
+    "valid_players": [
+      "AJ Green",
+      "Adrian Peterson",
+      "DeAndre Hopkins",
+      "Emmitt Smith",
+      "Larry Fitzgerald"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "pb_5",
+    "right_category": "pass_50k",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "50,000+ Passing Yds",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Dan Marino",
+      "Drew Brees",
+      "John Elway",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Tom Brady"
+    ],
+    "answer_count": 9
+  }
+]

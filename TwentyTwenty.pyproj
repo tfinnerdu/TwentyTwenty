@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>api\app.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888A0-9F3D-457C-B088-3A5042F75D52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <Description>20/20 -- NFL Hindsight Trivia Game</Description>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <Environment>
+FLASK_APP=api/app.py
+FLASK_ENV=development
+ADMIN_SECRET=dev_secret
+    </Environment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- API -->
+    <Compile Include="api\app.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <!-- Engine -->
+    <Compile Include="engine\generator.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <!-- Data - seed (hand-curated fallback) -->
+    <Compile Include="data\seed.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <!-- Data - ETL pipeline -->
+    <Compile Include="data\etl\schema.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\scrape_nfl.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\scrape_nba.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\scrape_mlb.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\scrape_nhl.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\scrape_wnba.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\scrape_ncaaf.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\scrape_ncaab.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\run_all.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\load.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data\etl\run_etl.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <!-- Root scripts -->
+    <Compile Include="generate_puzzles.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Frontend -->
+    <Content Include=".env" />
+    <Content Include="static\index.html" />
+    <!-- Config / deploy -->
+    <Content Include="requirements.txt" />
+    <Content Include="render.yaml" />
+    <Content Include=".env.example" />
+    <Content Include=".gitignore" />
+    <Content Include="start-local.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Solution Items folder for docs and workflow files -->
+    <Content Include="docs\bashCommands.txt" />
+    <Content Include=".github\workflows\generate-puzzles.yml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".github\" />
+    <Folder Include=".github\workflows\" />
+    <Folder Include="api\" />
+    <Folder Include="data\" />
+    <Folder Include="data\etl\" />
+    <Folder Include="docs\" />
+    <Folder Include="engine\" />
+    <Folder Include="static\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349C5851-65DF-11DA-9384-00065B846F21}" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

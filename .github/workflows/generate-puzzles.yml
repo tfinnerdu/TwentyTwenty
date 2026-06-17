@@ -1,0 +1,63 @@
+name: Daily Puzzle Generator
+
+on:
+  schedule:
+    - cron: '0 3 * * *'   # 3am UTC daily
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Days to generate ahead'
+        default: '7'
+      force:
+        description: 'Force regenerate existing puzzles'
+        type: boolean
+        default: false
+      sport:
+        description: 'Sport mode (NFL / NBA / ALL / NFL,NBA / ...)'
+        default: 'NFL'
+      difficulty:
+        description: 'Difficulty (easy / medium / hard / any)'
+        default: 'medium'
+
+jobs:
+  generate-puzzles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Migrate schema
+        run: python data/etl/schema.py
+
+      - name: Seed hand-curated NFL data (fallback if no ETL cache)
+        run: python data/seed.py
+
+      - name: Generate puzzles
+        run: |
+          SPORT="${{ github.event.inputs.sport || 'NFL' }}"
+          DIFF="${{ github.event.inputs.difficulty || 'medium' }}"
+          DAYS="${{ github.event.inputs.days || '7' }}"
+          FORCE_FLAG=""
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            FORCE_FLAG="--force"
+          fi
+          python generate_puzzles.py \
+            --days "$DAYS" \
+            --sport "$SPORT" \
+            --difficulty "$DIFF" \
+            $FORCE_FLAG
+
+      - name: Commit generated puzzles
+        run: |
+          git config user.name "puzzle-bot"
+          git config user.email "bot@2020game"
+          git add puzzles/
+          git diff --staged --quiet || git commit -m "chore: pre-generate puzzles $(date +%Y-%m-%d)"
+          git push

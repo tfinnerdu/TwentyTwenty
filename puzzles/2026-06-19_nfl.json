@@ -1,0 +1,313 @@
+[
+  {
+    "left_category": "round1",
+    "right_category": "team_browns",
+    "left_label": "1st Round Pick",
+    "right_label": "Browns",
+    "valid_players": [
+      "Andre Johnson",
+      "Jamal Lewis",
+      "Jim Brown",
+      "Joe Flacco",
+      "Justin Jefferson",
+      "Myles Garrett",
+      "Odell Beckham Jr",
+      "Ozzie Newsome"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_browns",
+    "right_category": "pb_3",
+    "left_label": "Browns",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Andre Johnson",
+      "Jim Brown",
+      "Justin Jefferson",
+      "Myles Garrett",
+      "Nick Chubb",
+      "Odell Beckham Jr",
+      "Ozzie Newsome"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "team_chiefs",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "Chiefs",
+    "valid_players": [
+      "Darrelle Revis",
+      "Derrick Thomas",
+      "Joe Montana",
+      "Patrick Mahomes",
+      "Priest Holmes",
+      "Ronnie Lott",
+      "Tony Gonzalez",
+      "Travis Kelce",
+      "Tyreek Hill"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_chiefs",
+    "right_category": "sb_2",
+    "left_label": "Chiefs",
+    "right_label": "Multi SB Champion",
+    "valid_players": [
+      "Joe Montana",
+      "Patrick Mahomes",
+      "Ronnie Lott",
+      "Travis Kelce"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "sb_2",
+    "right_category": "pb_10",
+    "left_label": "Multi SB Champion",
+    "right_label": "10+ Pro Bowls",
+    "valid_players": [
+      "Jerry Rice",
+      "Lawrence Taylor",
+      "Mean Joe Greene",
+      "Peyton Manning",
+      "Ray Lewis",
+      "Ronnie Lott",
+      "Tom Brady"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "pb_10",
+    "right_category": "decade_90s",
+    "left_label": "10+ Pro Bowls",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Anthony Munoz",
+      "Barry Sanders",
+      "Brett Favre",
+      "Bruce Smith",
+      "Jerry Rice",
+      "Lawrence Taylor",
+      "Reggie White",
+      "Ronnie Lott"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "pb_10",
+    "left_label": "Played in 1990s",
+    "right_label": "10+ Pro Bowls",
+    "valid_players": [
+      "Anthony Munoz",
+      "Barry Sanders",
+      "Brett Favre",
+      "Bruce Smith",
+      "Jerry Rice",
+      "Lawrence Taylor",
+      "Reggie White",
+      "Ronnie Lott"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "pb_10",
+    "right_category": "nfl_mvp",
+    "left_label": "10+ Pro Bowls",
+    "right_label": "NFL MVP",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Barry Sanders",
+      "Brett Favre",
+      "Lawrence Taylor",
+      "Peyton Manning",
+      "Ray Lewis",
+      "Tom Brady"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "nfl_mvp",
+    "right_category": "td_200",
+    "left_label": "NFL MVP",
+    "right_label": "200+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Cam Newton",
+      "Dan Marino",
+      "Joe Montana",
+      "John Elway",
+      "Kurt Warner",
+      "Lamar Jackson",
+      "Matt Ryan",
+      "Patrick Mahomes",
+      "Peyton Manning",
+      "Steve Young",
+      "Tom Brady"
+    ],
+    "answer_count": 13
+  },
+  {
+    "left_category": "td_200",
+    "right_category": "team_jets",
+    "left_label": "200+ Career TDs",
+    "right_label": "Jets",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Joe Flacco"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_jets",
+    "right_category": "decade_00s",
+    "left_label": "Jets",
+    "right_label": "Played in 2000s",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Curtis Martin",
+      "Darrelle Revis",
+      "Ed Reed",
+      "Frank Gore",
+      "Joe Flacco",
+      "LaDainian Tomlinson"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "decade_00s",
+    "right_category": "team_chargers",
+    "left_label": "Played in 2000s",
+    "right_label": "Chargers",
+    "valid_players": [
+      "Antonio Gates",
+      "Drew Brees",
+      "LaDainian Tomlinson",
+      "Philip Rivers"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_chargers",
+    "right_category": "td_50",
+    "left_label": "Chargers",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Antonio Gates",
+      "Drew Brees",
+      "LaDainian Tomlinson",
+      "Philip Rivers"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "team_dolphins",
+    "left_label": "50+ Career TDs",
+    "right_label": "Dolphins",
+    "valid_players": [
+      "Arian Foster",
+      "Cris Carter",
+      "Dan Marino",
+      "Frank Gore",
+      "Jimmy Graham",
+      "Odell Beckham Jr",
+      "Ricky Williams",
+      "Tyreek Hill",
+      "Wes Welker"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_dolphins",
+    "right_category": "pb_3",
+    "left_label": "Dolphins",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Arian Foster",
+      "Cris Carter",
+      "Dan Marino",
+      "Frank Gore",
+      "Jimmy Graham",
+      "Odell Beckham Jr",
+      "Tyreek Hill",
+      "Wes Welker"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "team_redskins",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "Redskins",
+    "valid_players": [
+      "Adrian Peterson",
+      "Bruce Smith",
+      "Deion Sanders",
+      "Donovan McNabb",
+      "Shaun Alexander"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_redskins",
+    "right_category": "td_50",
+    "left_label": "Redskins",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Adrian Peterson",
+      "Clinton Portis",
+      "Donovan McNabb",
+      "Shaun Alexander"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "team_eagles",
+    "left_label": "50+ Career TDs",
+    "right_label": "Eagles",
+    "valid_players": [
+      "Cris Carter",
+      "Donovan McNabb",
+      "Jalen Hurts",
+      "Joe Flacco",
+      "Saquon Barkley",
+      "Terrell Owens"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "team_eagles",
+    "right_category": "pb_3",
+    "left_label": "Eagles",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Cris Carter",
+      "Donovan McNabb",
+      "Jalen Hurts",
+      "Reggie White",
+      "Saquon Barkley",
+      "Terrell Owens"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "team_bengals",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "Bengals",
+    "valid_players": [
+      "AJ Green",
+      "Anthony Munoz",
+      "Terrell Owens"
+    ],
+    "answer_count": 3
+  }
+]

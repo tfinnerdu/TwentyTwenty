@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: 2020-game
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python data/etl/schema.py
+    startCommand: gunicorn api.app:app --bind 0.0.0.0:$PORT --workers 2
+    envVars:
+      - key: ADMIN_SECRET
+        generateValue: true
+      - key: SPORT_MODE
+        value: NFL
+      - key: PUZZLE_DIFFICULTY
+        value: medium
+      - key: SITE_URL
+        value: https://2020nfl.com
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    disk:
+      name: puzzles
+      mountPath: /opt/render/project/src/puzzles
+      sizeGB: 1
+
+  - type: cron
+    name: 2020-puzzle-generator
+    env: python
+    plan: free
+    schedule: "0 3 * * *"
+    buildCommand: pip install -r requirements.txt && python data/etl/schema.py
+    startCommand: python generate_puzzles.py --days 7 --sport NFL --difficulty medium
