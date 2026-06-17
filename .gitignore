@@ -6,6 +6,9 @@ venv/
 .venv/
 *.db
 *.db-journal
+*.db-shm
+*.db-wal
+.venv/
 .DS_Store
 
 # Cache files from ETL scrapers -- large, regenerable, not committed

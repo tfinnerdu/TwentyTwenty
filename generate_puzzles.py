@@ -51,6 +51,7 @@ def generate_for_date(
     force: bool = False,
     sport_mode: str = "NFL",
     difficulty: str = "medium",
+    chain_length: int = 20,
 ) -> bool:
     path = puzzle_path(d, sport_mode)
     if os.path.exists(path) and not force:
@@ -60,7 +61,7 @@ def generate_for_date(
     log.info(f"  {d.isoformat()} -- generating (sport={sport_mode}, difficulty={difficulty})...")
     try:
         chain = generate_chain(
-            chain_length=20,
+            chain_length=chain_length,
             seed=seed,
             sport_mode=sport_mode,
             difficulty=difficulty,
@@ -85,6 +86,7 @@ def main():
     parser.add_argument("--sport",      type=str,   default="NFL",    help="Sport mode: NFL / NBA / ALL / NFL,NBA / ...")
     parser.add_argument("--difficulty", type=str,   default="medium", choices=["easy","medium","hard","any"],
                         help="Target answer-count difficulty (default: medium)")
+    parser.add_argument("--length",     type=int,   default=20,       help="Chain length (default: 20)")
     args = parser.parse_args()
 
     log.info(f"20/20 puzzle generator -- sport={args.sport}  difficulty={args.difficulty}")
@@ -96,7 +98,8 @@ def main():
             log.error(f"Invalid date: {args.date}")
             sys.exit(1)
         generate_for_date(d, seed=args.seed, force=args.force,
-                          sport_mode=args.sport, difficulty=args.difficulty)
+                          sport_mode=args.sport, difficulty=args.difficulty,
+                          chain_length=args.length)
     else:
         log.info(f"Generating {args.days} day(s) starting from today...")
         generated = 0
@@ -104,7 +107,8 @@ def main():
             d    = date.today() + timedelta(days=i)
             seed = args.seed if args.seed is not None else int(d.strftime("%Y%m%d"))
             if generate_for_date(d, seed=seed, force=args.force,
-                                 sport_mode=args.sport, difficulty=args.difficulty):
+                                 sport_mode=args.sport, difficulty=args.difficulty,
+                          chain_length=args.length):
                 generated += 1
 
         log.info(f"Done -- {generated} new puzzle(s) generated")

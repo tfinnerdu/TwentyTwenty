@@ -125,7 +125,8 @@ def get_category_label(conn, cat_id: str) -> str:
 # Graph construction
 # ---------------------------------------------------------------------------
 
-def build_intersection_map(conn, categories: list, min_shared: int = 2) -> dict:
+def build_intersection_map(conn, categories: list, min_shared: int = 2,
+                           allowed_ids: Optional[set] = None) -> dict:
     """
     Precompute for each category which other categories share >= min_shared players.
     Returns: { cat_id -> { neighbor_cat_id -> frozenset(player_ids) } }
@@ -133,6 +134,11 @@ def build_intersection_map(conn, categories: list, min_shared: int = 2) -> dict:
     Also attaches metadata used for scoring:
       _size: total membership count for this category
       _scope: sport_scope string
+
+    allowed_ids: if given, only these player_ids count toward memberships. Used
+    to keep single-sport modes pure -- ALL-scope categories (college/draft/decade)
+    otherwise leak players from other sports into the pool. None = no restriction
+    (ALL mode keeps its cross-sport connections).
     """
     cat_ids   = [c["id"]          for c in categories]
     cat_scope = {c["id"]: c["sport_scope"] for c in categories}
@@ -146,7 +152,8 @@ def build_intersection_map(conn, categories: list, min_shared: int = 2) -> dict:
     )
     cat_players: dict[str, set] = {cid: set() for cid in cat_ids}
     for row in c.fetchall():
-        cat_players[row[0]].add(row[1])
+        if allowed_ids is None or row[1] in allowed_ids:
+            cat_players[row[0]].add(row[1])
 
     # Build adjacency
     graph: dict[str, dict] = {}
@@ -399,8 +406,17 @@ def generate_chain(
     print(f"[generator] sport_mode={sport_mode!r}  difficulty={difficulty!r}  "
           f"categories={len(categories)}  target_answers={target_min}-{target_max}")
 
+    # Restrict the player pool to the requested sport(s) so single-sport modes
+    # stay pure. ALL mode keeps every player (cross-sport connections intended).
+    allowed_ids = None
+    if sport_mode != "ALL":
+        requested = [s.strip().upper() for s in sport_mode.split(",")]
+        ph = ",".join("?" * len(requested))
+        allowed_ids = {row[0] for row in
+                       conn.execute(f"SELECT id FROM players WHERE sport IN ({ph})", requested)}
+
     # 2. Build intersection graph
-    graph = build_intersection_map(conn, categories, min_shared=min_shared)
+    graph = build_intersection_map(conn, categories, min_shared=min_shared, allowed_ids=allowed_ids)
     active = [c for c in graph if not c.startswith("_") and
               any(not k.startswith("_") for k in graph[c])]
     print(f"[generator] active categories with edges: {len(active)}")

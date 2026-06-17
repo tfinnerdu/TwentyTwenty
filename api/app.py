@@ -153,6 +153,14 @@ def default_sport_mode():
 def default_difficulty():
     return os.environ.get("PUZZLE_DIFFICULTY", "medium")
 
+def default_chain_length():
+    """Puzzle length. 20 in production; lower it (e.g. PUZZLE_CHAIN_LENGTH=10)
+    for an offline demo whose dataset is too small to fill a 20-link chain."""
+    try:
+        return int(os.environ.get("PUZZLE_CHAIN_LENGTH", "20"))
+    except ValueError:
+        return 20
+
 def site_url():
     """Base URL for share links. Set SITE_URL env var in production."""
     return os.environ.get("SITE_URL", "http://localhost:5902").rstrip("/")
@@ -163,7 +171,7 @@ def ensure_today_exists(sport=None, difficulty=None):
     if not os.path.exists(puzzle_path(today, sport)):
         try:
             chain = generate_chain(
-                chain_length=20,
+                chain_length=default_chain_length(),
                 sport_mode=sport or default_sport_mode(),
                 difficulty=difficulty or default_difficulty(),
             )
@@ -263,7 +271,7 @@ def puzzle_by_date(date_str):
         if (date.today() - d).days <= 7:
             try:
                 chain = generate_chain(
-                    chain_length=20,
+                    chain_length=default_chain_length(),
                     sport_mode=sport,
                     difficulty=difficulty,
                 )
@@ -394,7 +402,7 @@ def generate():
 
     sport_mode = body.get("sport", default_sport_mode())
     difficulty  = body.get("difficulty", default_difficulty())
-    chain = generate_chain(chain_length=20, sport_mode=sport_mode, difficulty=difficulty)
+    chain = generate_chain(chain_length=default_chain_length(), sport_mode=sport_mode, difficulty=difficulty)
     save_puzzle(d, chain, sport_mode)
 
     return jsonify({
@@ -428,7 +436,7 @@ def generate_batch():
             results.append({"date": d.isoformat(), "status": "already_exists"})
             continue
         try:
-            chain = generate_chain(chain_length=20, sport_mode=sport_mode, difficulty=difficulty)
+            chain = generate_chain(chain_length=default_chain_length(), sport_mode=sport_mode, difficulty=difficulty)
             save_puzzle(d, chain, sport_mode)
             results.append({"date": d.isoformat(), "status": "generated",
                             "sport_mode": sport_mode, "difficulty": difficulty})
