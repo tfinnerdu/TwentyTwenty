@@ -416,10 +416,22 @@ def search_players():
     if len(q) < 2:
         return jsonify({"players": []})
 
+    # Scope suggestions to the current sport mode so an NFL puzzle doesn't
+    # suggest, say, an NHL player. DISTINCT also dedupes a name that exists
+    # in two sports (e.g. a college + pro row).
+    sport = request.args.get("sport", "")
     conn = get_conn()
     c = conn.cursor()
-    c.execute("SELECT name FROM players WHERE LOWER(name) LIKE ? ORDER BY name LIMIT 10",
-              (f"%{q.lower()}%",))
+    if sport and sport.upper() != "ALL":
+        sports = [s.strip().upper() for s in sport.split(",")]
+        ph = ",".join("?" * len(sports))
+        c.execute(
+            f"SELECT DISTINCT name FROM players WHERE sport IN ({ph}) "
+            f"AND LOWER(name) LIKE ? ORDER BY name LIMIT 10",
+            (*sports, f"%{q.lower()}%"))
+    else:
+        c.execute("SELECT DISTINCT name FROM players WHERE LOWER(name) LIKE ? ORDER BY name LIMIT 10",
+                  (f"%{q.lower()}%",))
     names = [r[0] for r in c.fetchall()]
     conn.close()
     return jsonify({"players": names})

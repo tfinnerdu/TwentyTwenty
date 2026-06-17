@@ -151,7 +151,7 @@ body {
   border: 2px solid var(--chalk-faint);
   border-radius: var(--r-card);
   margin-bottom: 1rem;
-  overflow: hidden;
+  overflow: visible;  /* let the autocomplete dropdown escape the card */
   transition: border-color .2s;
 }
 .q-card:focus-within { border-color: var(--gold-dim); }
@@ -160,6 +160,7 @@ body {
 .card-header {
   background: var(--bg3);
   border-bottom: 1px solid var(--chalk-faint);
+  border-radius: 12px 12px 0 0;   /* keep rounded top now that card overflow is visible */
   padding: 8px 14px;
   display: flex; align-items: center; justify-content: space-between;
 }
@@ -254,8 +255,9 @@ input[type=text]:disabled { opacity: 0.4; }
   background: var(--bg3);
   border: 1.5px solid var(--chalk-faint);
   border-radius: var(--r);
-  overflow: hidden; z-index: 50;
+  overflow: hidden; z-index: 100;
   max-height: 200px; overflow-y: auto; display: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.55);
 }
 .ac-item {
   padding: 9px 12px;
@@ -812,8 +814,9 @@ function renderChips() {
 
 async function fetchAC(val, list, inp) {
   if(val.length<2){list.style.display='none';return;}
+  const mode=(puzzle&&puzzle.sport_mode)||sportMode(getSelectedSports());
   try{
-    const res=await fetch(`${API}/api/players/search?q=${encodeURIComponent(val)}`);
+    const res=await fetch(`${API}/api/players/search?q=${encodeURIComponent(val)}&sport=${encodeURIComponent(mode)}`);
     const data=await res.json();
     renderAC((data.players||[]).filter(p=>!usedPlayers.has(p)),list,inp);
   } catch{list.style.display='none';}
