@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+*.db
+*.db-journal
+.DS_Store
+
+# Cache files from ETL scrapers -- large, regenerable, not committed
+data/cache/
+
+# DO commit: puzzles/ JSON files (pre-generated, served by the app)
+# DO commit: data/seed.py (hand-curated fallback)
+# DO NOT commit: data/nfl.db (binary, regenerated from seed or ETL)
+/.vs/TwentyTwenty/v18
+/.vs/TwentyTwenty/FileContentIndex
