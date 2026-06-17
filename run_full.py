@@ -125,9 +125,16 @@ def main():
     ap.add_argument("--length", type=int, default=20)
     ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--skip-puzzles", action="store_true")
+    ap.add_argument("--keep-db", action="store_true",
+                    help="Append to an existing DB instead of a clean rebuild")
     args = ap.parse_args()
 
     load_dotenv(os.path.join(BASE_DIR, ".env"))
+    if not args.keep_db:
+        for f in (args.db, args.db + "-wal", args.db + "-shm"):
+            if os.path.exists(f):
+                os.remove(f)
+        log.info("Cleared existing database for a clean rebuild")
     tmp = tempfile.mkdtemp(prefix="2020_full_")
     real = not args.fixtures
 

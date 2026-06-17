@@ -43,7 +43,20 @@ log = logging.getLogger("demo")
 DB_PATH = os.path.join(os.path.dirname(__file__), "data", "nfl.db")
 
 
-def build(db_path: str, real_mlb: bool):
+def clean_db(db_path: str):
+    """Remove an existing DB (+ WAL/SHM sidecars) for a clean rebuild, so stale
+    rows from an earlier seed/run don't mix with this one."""
+    removed = False
+    for f in (db_path, db_path + "-wal", db_path + "-shm"):
+        if os.path.exists(f):
+            os.remove(f); removed = True
+    if removed:
+        log.info("Cleared existing database for a clean rebuild")
+
+
+def build(db_path: str, real_mlb: bool, keep_db: bool = False):
+    if not keep_db:
+        clean_db(db_path)
     tmp = tempfile.mkdtemp(prefix="2020_demo_")
 
     # MLB
@@ -108,9 +121,11 @@ def main():
     ap.add_argument("--length", type=int, default=10, help="Puzzle chain length for the demo (default 10)")
     ap.add_argument("--days", type=int, default=3, help="Days of puzzles to pre-generate")
     ap.add_argument("--skip-puzzles", action="store_true")
+    ap.add_argument("--keep-db", action="store_true",
+                    help="Append to an existing DB instead of a clean rebuild")
     args = ap.parse_args()
 
-    build(args.db, args.real_mlb)
+    build(args.db, args.real_mlb, keep_db=args.keep_db)
     if not args.skip_puzzles:
         gen_puzzles(args.days, args.length)
     log.info("=" * 48)
