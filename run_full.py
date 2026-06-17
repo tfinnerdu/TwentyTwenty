@@ -76,21 +76,29 @@ def load_dotenv(path: str):
         os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
-def resolve(sport, provider_cls, source_dir, exporter, fixture_fn, tmp, use_real):
-    """source_dir (real CSVs) -> live export -> bundled fixture, in that order."""
+def resolve(sport, provider_cls, source_dir, exporter, fixture_fn, tmp, use_real, refresh=False):
+    """--source-dir -> cached export -> live export -> bundled fixture, in order.
+    Real exports are cached under data/cache/exports/<sport>/ and reused so the
+    slow pulls (NHL especially) only happen once. --refresh forces a re-pull."""
     if source_dir:
         log.info(f"  {sport}: ingesting --source-dir {source_dir}")
         return provider_cls(source_dir=source_dir)
-    out = os.path.join(tmp, sport.lower())
+
+    cache = os.path.join(BASE_DIR, "data", "cache", "exports", sport.lower())
+    cached_csv = os.path.join(cache, f"{sport.lower()}_players.csv")
     if use_real:
+        if os.path.exists(cached_csv) and not refresh:
+            log.info(f"  {sport}: reusing cached export ({cache}) -- use --refresh to re-pull")
+            return provider_cls(source_dir=cache)
         try:
             log.info(f"  {sport}: pulling real data (this can take a while)...")
-            np, ns = exporter(out)
+            np, ns = exporter(cache)
             log.info(f"  {sport}: exported {np} players / {ns} player-seasons")
-            return provider_cls(source_dir=out)
+            return provider_cls(source_dir=cache)
         except Exception as e:
             hint = "  [install: pip install -r requirements-etl.txt]" if isinstance(e, ImportError) else ""
             log.warning(f"  {sport}: real pull failed ({type(e).__name__}: {e}) -> demo fixture{hint}")
+    out = os.path.join(tmp, sport.lower())
     fixture_fn(out)
     log.warning(f"  {sport}: using bundled DEMO fixture")
     return provider_cls(source_dir=out)
@@ -128,6 +136,8 @@ def main():
     ap.add_argument("--skip-puzzles", action="store_true")
     ap.add_argument("--keep-db", action="store_true",
                     help="Append to an existing DB instead of a clean rebuild")
+    ap.add_argument("--refresh", action="store_true",
+                    help="Force re-pull of cached exports (data/cache/exports/)")
     args = ap.parse_args()
 
     load_dotenv(os.path.join(BASE_DIR, ".env"))
@@ -148,13 +158,13 @@ def main():
     providers = [
         mlb,
         resolve("NFL", NFLProvider, args.nfl_dir, lambda o: export_nfl(o),
-                lambda o: write_csv("NFL", o), tmp, real),
+                lambda o: write_csv("NFL", o), tmp, real, args.refresh),
         resolve("NBA", NBAProvider, args.nba_dir, lambda o: export_nba(o),
-                lambda o: write_nba(o), tmp, real),
+                lambda o: write_nba(o), tmp, real, args.refresh),
         resolve("NHL", NHLProvider, args.nhl_dir, lambda o: export_nhl(o),
-                lambda o: write_csv("NHL", o), tmp, real),
+                lambda o: write_csv("NHL", o), tmp, real, args.refresh),
         resolve("WNBA", WNBAProvider, args.wnba_dir, lambda o: export_wnba(o),
-                lambda o: write_csv("WNBA", o), tmp, real),
+                lambda o: write_csv("WNBA", o), tmp, real, args.refresh),
         ncaaf_provider(args, tmp),
         CuratedProvider("NCAAB"),
         CuratedProvider("NCAAW"),

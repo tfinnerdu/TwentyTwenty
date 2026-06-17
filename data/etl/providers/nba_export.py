@@ -20,8 +20,11 @@ Coverage / caveats:
 
 import argparse
 import csv
+import logging
 import os
 import time
+
+log = logging.getLogger("nba_export")
 
 
 def _season_str(y: int) -> str:
@@ -37,16 +40,28 @@ def _height_in(h) -> int:
 
 
 def export(out_dir: str, start: int = 1996, end: int = 2024,
-           enrich: bool = False, delay: float = 0.6):
+           enrich: bool = False, delay: float = 0.6, timeout: int = 90, retries: int = 4):
     from nba_api.stats.endpoints import leaguedashplayerstats
     os.makedirs(out_dir, exist_ok=True)
 
     seasons, pids = [], {}     # pid -> name
     for y in range(start, end + 1):
         ss = _season_str(y)
-        df = leaguedashplayerstats.LeagueDashPlayerStats(
-            season=ss, per_mode_detailed="Totals",
-            season_type_all_star="Regular Season").get_data_frames()[0]
+        df = None
+        for attempt in range(1, retries + 1):
+            try:
+                df = leaguedashplayerstats.LeagueDashPlayerStats(
+                    season=ss, per_mode_detailed="Totals",
+                    season_type_all_star="Regular Season",
+                    timeout=timeout).get_data_frames()[0]
+                break
+            except Exception as e:
+                log.warning(f"  NBA {ss}: attempt {attempt}/{retries} failed "
+                            f"({type(e).__name__}); retrying...")
+                time.sleep(3 * attempt)
+        if df is None:
+            log.warning(f"  NBA {ss}: giving up after {retries} tries")
+            continue
         for r in df.to_dict("records"):
             pid = r["PLAYER_ID"]
             pids[pid] = r.get("PLAYER_NAME", "")
@@ -55,6 +70,10 @@ def export(out_dir: str, start: int = 1996, end: int = 2024,
                             int(r.get("REB", 0) or 0), int(r.get("AST", 0) or 0)])
         time.sleep(delay)
 
+    # if stats.nba.com was fully unreachable, raise so run_full uses the fixture
+    if not pids:
+        raise RuntimeError("stats.nba.com returned no data (unreachable / rate-limited)")
+
     players = []
     for pid, name in pids.items():
         pos = college = birth_year = height = weight = ""
@@ -62,7 +81,7 @@ def export(out_dir: str, start: int = 1996, end: int = 2024,
         if enrich:
             try:
                 from nba_api.stats.endpoints import commonplayerinfo
-                info = commonplayerinfo.CommonPlayerInfo(player_id=pid).get_data_frames()[0].to_dict("records")[0]
+                info = commonplayerinfo.CommonPlayerInfo(player_id=pid, timeout=timeout).get_data_frames()[0].to_dict("records")[0]
                 raw = (info.get("POSITION", "") or "").split("-")[0]
                 pos = {"Guard": "G", "Forward": "F", "Center": "C"}.get(raw, "")
                 college = info.get("SCHOOL", "") or ""
@@ -96,8 +115,11 @@ def main():
     ap.add_argument("--end", type=int, default=2024)
     ap.add_argument("--out", default="./nba_csv")
     ap.add_argument("--enrich", action="store_true", help="Add bio via CommonPlayerInfo (slow)")
+    ap.add_argument("--timeout", type=int, default=90, help="Per-request timeout (stats.nba.com is slow)")
+    ap.add_argument("--retries", type=int, default=4)
     args = ap.parse_args()
-    p, s = export(args.out, args.start, args.end, args.enrich)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+    p, s = export(args.out, args.start, args.end, args.enrich, timeout=args.timeout, retries=args.retries)
     print(f"Wrote {p} players, {s} player-seasons to {args.out}")
 
 
