@@ -89,7 +89,8 @@ def resolve(sport, provider_cls, source_dir, exporter, fixture_fn, tmp, use_real
             log.info(f"  {sport}: exported {np} players / {ns} player-seasons")
             return provider_cls(source_dir=out)
         except Exception as e:
-            log.warning(f"  {sport}: real pull failed ({type(e).__name__}: {e}) -> demo fixture")
+            hint = "  [install: pip install -r requirements-etl.txt]" if isinstance(e, ImportError) else ""
+            log.warning(f"  {sport}: real pull failed ({type(e).__name__}: {e}) -> demo fixture{hint}")
     fixture_fn(out)
     log.warning(f"  {sport}: using bundled DEMO fixture")
     return provider_cls(source_dir=out)
