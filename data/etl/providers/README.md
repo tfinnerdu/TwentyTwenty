@@ -71,6 +71,24 @@ The helpers can also be run standalone (`python -m data.etl.providers.nba_export
 library's documented API with defensive parsing — verify on first run; column
 quirks are easy to adjust and don't affect the providers.
 
+## Secondary: Sports-Reference backfill (opt-in, slow)
+
+`data/etl/backfill_sr.py` is a **separate, manual** tool that fills bio gaps
+the sanctioned sources don't carry (college, birthplace, draft, height/weight)
+by looking up *existing* players on the Sports-Reference sites. It is **not**
+part of run_full / build_demo_db.
+
+It's deliberately polite so you don't get jailed: ~12 req/min default, honors
+`Retry-After`, aborts on a 403 streak, caches every page, unwraps SR's
+comment-hidden tables, and only fills **empty** fields (never overwrites).
+
+```bash
+python -m data.etl.backfill_sr --sport NBA --fields college,draft_round,draft_pick --limit 50
+python -m data.etl.backfill_sr --sport MLB --fields college --dry-run
+```
+Run it from a residential IP, in small batches. Treat it as backfill — a real
+refresh cadence is a separate design.
+
 ## Prove it without network
 
 ```bash
