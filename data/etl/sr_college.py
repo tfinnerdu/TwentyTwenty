@@ -32,6 +32,7 @@ import logging
 import os
 import re
 import sys
+from urllib.parse import urljoin
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, ROOT)
@@ -88,16 +89,22 @@ def _honor_cols(award_url, honor_map):
     return {col for key, col in honor_map if key in low}
 
 
+def _award_links(soup, base, awards):
+    """Absolute award-page URLs on a page (resolves relative hrefs)."""
+    for a in soup.find_all("a", href=True):
+        full = urljoin(base, a["href"]).split("#")[0]
+        if awards in full and full.endswith(".html"):
+            yield full
+
+
 def discover_award_pages(session, cfg, delay):
     """Hub -> the individual award pages (one level deep, skipping per-year noise)."""
     pages, seen = [], set()
     hub = get_page(session, cfg["hub"], delay)
     frontier = []
     if hub is not None:
-        for a in hub.select(f"a[href*='{cfg['awards']}']"):
-            href = a.get("href", "")
-            full = href if href.startswith("http") else cfg["domain"] + href
-            if full.endswith(".html") and full not in seen:
+        for full in _award_links(hub, cfg["hub"], cfg["awards"]):
+            if full not in seen and not _is_year_page(full):
                 seen.add(full)
                 frontier.append(full)
     # follow each award page one level (to reach the per-decade All-America lists)
@@ -106,10 +113,8 @@ def discover_award_pages(session, cfg, delay):
         soup = get_page(session, url, delay)
         if soup is None:
             continue
-        for a in soup.select(f"a[href*='{cfg['awards']}']"):
-            href = a.get("href", "")
-            full = href if href.startswith("http") else cfg["domain"] + href
-            if full.endswith(".html") and full not in seen and not _is_year_page(full):
+        for full in _award_links(soup, url, cfg["awards"]):
+            if full not in seen and not _is_year_page(full):
                 seen.add(full)
                 pages.append(full)
     log.info(f"  discovered {len(pages)} award pages")
@@ -124,11 +129,10 @@ def collect_players(session, pages, cfg, delay):
         if soup is None:
             continue
         cols = _honor_cols(url, cfg["honor_map"])
-        for a in soup.select(f"a[href*='{cfg['players']}']"):
-            href = a.get("href", "")
-            if not href.endswith(".html"):
+        for a in soup.find_all("a", href=True):
+            full = urljoin(url, a["href"]).split("#")[0]
+            if cfg["players"] not in full or not full.endswith(".html"):
                 continue
-            full = href if href.startswith("http") else cfg["domain"] + href
             name = a.get_text(strip=True)
             if not name:
                 continue
