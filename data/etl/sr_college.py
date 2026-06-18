@@ -39,6 +39,7 @@ sys.path.insert(0, ROOT)
 
 from data.etl.backfill_sr import make_session, get_page, parse_meta, Jailed, _load_env_file, _cell
 from data.etl.providers.base import upsert_players
+from data.etl.providers.csv_season import NFLProvider
 from data.etl.load import derive_fields, rebuild_categories
 from data.etl.schema import get_conn, migrate
 
@@ -88,6 +89,24 @@ HONORS = {
         # weekly/monthly "3 stars" nods would flag thousands as All-Stars -- skip
         "skip": ("weekly", "monthly", "3star"),
     },
+    "NFL": {
+        # pre-1999 history = award winners only (Pro Bowl / All-Pro / MVP / HOF,
+        # All-Pro back to 1922). create=True with the PRO parser (teams, .htm,
+        # mixed-case ids). Modern NFL keeps its full nflverse heft separately.
+        "hub": "https://www.pro-football-reference.com/awards/",
+        "domain": "https://www.pro-football-reference.com",
+        # named awards live in /awards/; All-Pro teams (back to 1922) at
+        # /years/YYYY/allpro.htm -- match both. The hub links every leaf page, so
+        # don't follow, and keep the per-year pages (they ARE the lists).
+        "awards": ("/awards/", "/allpro.htm"), "players": "/players/",
+        "create": True, "parser": "pro", "team_map": NFLProvider.TEAM_MAP,
+        "follow": False, "skip_years": False,
+        # players/rookies of the week/month would flag thousands -- skip
+        "skip": ("of-the-week", "of-the-month"),
+        "honor_map": [("mvp", "nfl_mvps"), ("all-pro", "ap_all_pro"),
+                      ("allpro", "ap_all_pro"), ("super-bowl", "super_bowls")],
+        "default_honor": None,             # include all awards; flag specific ones
+    },
 }
 
 
@@ -97,8 +116,8 @@ def _slug(s):
 
 def _is_year_page(url):
     """True for noisy per-year pages (heisman-2024.html) but not decade ranges
-    (all-america-1980-1989.html)."""
-    return bool(re.search(r"-\d{4}\.html$", url)) and not re.search(r"\d{4}-\d{4}", url)
+    (all-america-1980-1989.html). .htm? covers PFR's .htm."""
+    return bool(re.search(r"-\d{4}\.html?$", url)) and not re.search(r"\d{4}-\d{4}", url)
 
 
 def _honor_cols(award_url, honor_map, default_honor=None):
@@ -110,36 +129,47 @@ def _honor_cols(award_url, honor_map, default_honor=None):
 
 
 def _award_links(soup, base, awards):
-    """Absolute award-page URLs on a page (resolves relative hrefs)."""
+    """Absolute award-page URLs on a page (resolves relative hrefs). `awards` is
+    a path substring or tuple of them; match any. Allows .htm (PFR)."""
+    aw = (awards,) if isinstance(awards, str) else awards
     for a in soup.find_all("a", href=True):
         full = urljoin(base, a["href"]).split("#")[0]
-        if awards in full and full.endswith(".html"):
+        if full.endswith((".htm", ".html")) and any(s in full for s in aw):
             yield full
 
 
 def discover_award_pages(session, cfg, delay):
-    """Hub -> the individual award pages (one level deep, skipping per-year noise)."""
+    """Hub -> the individual award pages. `follow` (default True) chases one
+    level to reach college decade lists; `skip_years` (default True) drops the
+    redundant per-year pages -- both off for NFL, whose per-year /allpro/ pages
+    ARE the lists."""
     pages, seen = [], set()
-    hub = get_page(session, cfg["hub"], delay)
     skip = cfg.get("skip", ())
+    skip_years = cfg.get("skip_years", True)
+    awards = cfg["awards"]
+
     def _ok(u):
-        return u not in seen and not _is_year_page(u) and not any(s in u for s in skip)
+        if u in seen or any(s in u for s in skip):
+            return False
+        return not (skip_years and _is_year_page(u))
+
+    hub = get_page(session, cfg["hub"], delay)
     frontier = []
     if hub is not None:
-        for full in _award_links(hub, cfg["hub"], cfg["awards"]):
+        for full in _award_links(hub, cfg["hub"], awards):
             if _ok(full):
                 seen.add(full)
                 frontier.append(full)
-    # follow each award page one level (to reach the per-decade All-America lists)
-    for url in list(frontier):
-        pages.append(url)
-        soup = get_page(session, url, delay)
-        if soup is None:
-            continue
-        for full in _award_links(soup, url, cfg["awards"]):
-            if _ok(full):
-                seen.add(full)
-                pages.append(full)
+    pages.extend(frontier)
+    if cfg.get("follow", True):
+        for url in frontier:
+            soup = get_page(session, url, delay)
+            if soup is None:
+                continue
+            for full in _award_links(soup, url, awards):
+                if _ok(full):
+                    seen.add(full)
+                    pages.append(full)
     log.info(f"  discovered {len(pages)} award pages")
     return pages
 
@@ -154,7 +184,7 @@ def collect_players(session, pages, cfg, delay):
         cols = _honor_cols(url, cfg["honor_map"], cfg.get("default_honor"))
         for a in soup.find_all("a", href=True):
             full = urljoin(url, a["href"]).split("#")[0]
-            if cfg["players"] not in full or not full.endswith(".html"):
+            if cfg["players"] not in full or not full.endswith((".htm", ".html")):
                 continue
             name = a.get_text(strip=True)
             if not name:
@@ -265,7 +295,11 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
             soup = get_page(session, url, delay)
             if soup is None:
                 continue
-            rec = parse_college_player(soup, sport)
+            if cfg.get("parser") == "pro":     # NFL: teams (not schools) via the history parser
+                from data.etl.sr_history import parse_player_history
+                rec = parse_player_history(soup, cfg.get("team_map", {}))
+            else:
+                rec = parse_college_player(soup, sport)
             rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{_sr_id(url)}", "name": name})
             for c in cols:
                 rec[c] = 1
@@ -293,7 +327,8 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
 
 
 def _sr_id(url):
-    m = re.search(r"/([a-z0-9-]+)\.html", url or "")
+    # cbb/cfb: lowercase-slug.html ; PFR: mixed-case .htm (MahoPa00.htm)
+    m = re.search(r"/([A-Za-z0-9.-]+)\.html?$", url or "")
     return m.group(1) if m else _slug(url)
 
 
