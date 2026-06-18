@@ -65,8 +65,15 @@ HONORS = {
         "hub": "https://www.sports-reference.com/cfb/awards/",
         "domain": "https://www.sports-reference.com",
         "awards": "/cfb/awards/", "players": "/cfb/players/", "create": True,
-        "honor_map": [("heisman", "ncaaf_heisman"), ("all-america", "ncaaf_all_american")],
-        "default_honor": "ncaaf_all_american",   # keep every award-list player (incl. conference)
+        # cfb has a single consensus all-america.html (no source split, and no
+        # 'all-american' conference trap -- the American Athletic uses
+        # 'american-poy'). Match it + heisman by exact slug; every other award
+        # (national position/POY trophies + conference POY/OPOY/DPOY/...) falls to
+        # the all-conference keeper so its players are kept without claiming a
+        # national All-American / Heisman they didn't earn.
+        "honor_map": [],
+        "slug_honors": {"all-america": "ncaaf_all_american", "heisman": "ncaaf_heisman"},
+        "default_honor": "ncaaf_all_conference",
     },
     "NCAAB": {
         "hub": "https://www.sports-reference.com/cbb/awards/",

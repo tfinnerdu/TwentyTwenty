@@ -153,6 +153,7 @@ def migrate(path=None):
             ncaaf_sacks       REAL DEFAULT 0,
             ncaaf_all_american INTEGER DEFAULT 0,
             ncaaf_heisman     INTEGER DEFAULT 0,
+            ncaaf_all_conference INTEGER DEFAULT 0,   -- all-conference / minor-award keeper
 
             -- ---- NCAAB / NCAAW stats (shared columns) ----
             ncaab_points      REAL DEFAULT 0,
@@ -174,7 +175,8 @@ def migrate(path=None):
     # Additive migration: CREATE TABLE IF NOT EXISTS won't add columns to an
     # already-existing players table, so ALTER in any a newer schema introduced.
     existing = {r[1] for r in c.execute("PRAGMA table_info(players)")}
-    for col, decl in (("ncaab_all_conference", "INTEGER DEFAULT 0"),):
+    for col, decl in (("ncaab_all_conference", "INTEGER DEFAULT 0"),
+                      ("ncaaf_all_conference", "INTEGER DEFAULT 0")):
         if col not in existing:
             c.execute(f"ALTER TABLE players ADD COLUMN {col} {decl}")
 

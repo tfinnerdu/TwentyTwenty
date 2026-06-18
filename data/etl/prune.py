@@ -49,7 +49,7 @@ PRUNE = {
                          "ncaab_all_conference"],
               "min_season_games": None},
     "NCAAF": {"source": "cfbd",
-              "honors": ["ncaaf_all_american", "ncaaf_heisman"],
+              "honors": ["ncaaf_all_american", "ncaaf_heisman", "ncaaf_all_conference"],
               "min_season_games": None},
     "WNBA":  {"source": "wnba_csv",
               "honors": ["wnba_championships", "wnba_mvps", "wnba_finals_mvps", "wnba_all_star"],

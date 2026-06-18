@@ -325,6 +325,7 @@ def get_categories():
         {"id": "ncaaf_td30",    "label": "30+ College TDs",          "scope": "NCAAF", "field": "ncaaf_tds",         "op": "gte", "value": 30},
         {"id": "ncaaf_heisman", "label": "Heisman Trophy Winner",    "scope": "NCAAF", "field": "ncaaf_heisman",     "op": "gte", "value": 1},
         {"id": "ncaaf_aa",      "label": "College All-American (Football)","scope": "NCAAF", "field": "ncaaf_all_american", "op": "gte", "value": 1},
+        {"id": "ncaaf_allconf", "label": "All-Conference (CFB)",       "scope": "NCAAF", "field": "ncaaf_all_conference","op": "gte", "value": 1},
         # NCAAF by school (these are the big cross-sport connectors)
         {"id": "ncaaf_alabama",  "label": "Played at Alabama (CFB)",   "scope": "NCAAF", "field": "college", "op": "eq", "value": "Alabama"},
         {"id": "ncaaf_ohio_st",  "label": "Played at Ohio State (CFB)","scope": "NCAAF", "field": "college", "op": "eq", "value": "Ohio State"},
