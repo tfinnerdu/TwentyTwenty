@@ -22,6 +22,8 @@ on:
 jobs:
   generate-puzzles:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write        # allow the auto GITHUB_TOKEN to push the puzzles
     steps:
       - uses: actions/checkout@v4
 
