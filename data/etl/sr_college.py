@@ -118,8 +118,19 @@ HONORS = {
 }
 
 
+_SUFFIX = re.compile(r"\s+(?:jr|sr|ii|iii|iv|v)\.?$", re.I)
+
+
 def _slug(s):
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def _base_slug(s):
+    """Slug with a trailing generational suffix dropped. SR award pages render
+    'Greg Oden Jr' where the bulk has 'Greg Oden'; matching on the base too stops
+    us creating a duplicate. The exact slug is always tried first, so genuine
+    father/son pairs (Gary Payton vs Gary Payton II) still resolve separately."""
+    return _slug(_SUFFIX.sub("", (s or "").strip()))
 
 
 def _is_year_page(url):
@@ -183,22 +194,26 @@ def discover_award_pages(session, cfg, delay):
 
 
 def collect_players(session, pages, cfg, delay):
-    """award pages -> {player_url: (name, {honor_cols})}."""
+    """award pages -> {player_url: (name, {honor_cols})}. Only links inside the
+    stat TABLES count: SR pages carry sidebar 'trending / recent searches' widgets
+    that link to arbitrary players (incl. women on a men's award page, or NBA
+    pros) -- those sit outside any table, so scoping to tables drops them."""
     found = {}
     for url in pages:
         soup = get_page(session, url, delay)
         if soup is None:
             continue
         cols = _honor_cols(url, cfg["honor_map"], cfg.get("default_honor"))
-        for a in soup.find_all("a", href=True):
-            full = urljoin(url, a["href"]).split("#")[0]
-            if cfg["players"] not in full or not full.endswith((".htm", ".html")):
-                continue
-            name = a.get_text(strip=True)
-            if not name:
-                continue
-            nm, hc = found.get(full, (name, set()))
-            found[full] = (nm or name, hc | cols)
+        for table in soup.find_all("table"):
+            for a in table.find_all("a", href=True):
+                full = urljoin(url, a["href"]).split("#")[0]
+                if cfg["players"] not in full or not full.endswith((".htm", ".html")):
+                    continue
+                name = a.get_text(strip=True)
+                if not name:
+                    continue
+                nm, hc = found.get(full, (name, set()))
+                found[full] = (nm or name, hc | cols)
     return found
 
 
@@ -226,8 +241,13 @@ def parse_college_player(soup, sport):
 
 
 def existing_by_name(conn, sport):
-    return {_slug(r[1]): r[0] for r in conn.execute(
-        "SELECT id, name FROM players WHERE sport=?", (sport,)) if r[1]}
+    have = {}
+    for pid, name in conn.execute("SELECT id, name FROM players WHERE sport=?", (sport,)):
+        if not name:
+            continue
+        have.setdefault(_slug(name), pid)        # exact name wins
+        have.setdefault(_base_slug(name), pid)   # suffix-stripped fallback (won't clobber exact)
+    return have
 
 
 def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
@@ -249,7 +269,7 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
     # split: already in DB (honor-flag only) vs new (fetch + create)
     flag, fetch = [], []
     for url, (name, cols) in found.items():
-        pid = have.get(_slug(name))
+        pid = have.get(_slug(name)) or have.get(_base_slug(name))
         if pid:
             flag.append((pid, name, cols))
         else:
