@@ -8,11 +8,12 @@ ones, which is backfill_sr.py's job).
 Coverage gaps it targets (everything earlier than each bulk source's start):
     NBA   pre-1999   (jacobbaruch GitHub set starts 1999)  <- the marquee gap
     WNBA  pre-2003   (wehoop starts 2003)
-    NHL   pre-1918+  (fills older seasons the NHL API thins out)
-    NFL   pre-1999   (nflverse modern era)
 MLB is already complete back to 1871 via Lahman, so it's intentionally absent.
-NCAAF/NCAAB live on sports-reference.com with a different index layout and far
-larger volume -- configured but flagged; validate those separately.
+NHL, NFL and the college sports fill their pre-bulk eras from AWARD winners only
+(sr_college), NOT this alpha index. Two reasons: an all-time alpha crawl is
+thousands of non-notable names, and rows created here carry data_source
+'sr_history', which prune.py never touches -- so they'd be permanent. For those
+sports we create only the honored players instead.
 
 How it works (reusing backfill_sr's polite, cookie-aware, cached session):
   1. enumerate every player from SR's alphabetical index (/players/a/ ...),
@@ -44,7 +45,7 @@ sys.path.insert(0, ROOT)
 from data.etl.backfill_sr import (make_session, get_page, _soup, parse_meta, Jailed,
                                   _load_env_file, _cell)
 from data.etl.providers.base import upsert_players
-from data.etl.providers.csv_season import (NBAProvider, WNBAProvider, NHLProvider)
+from data.etl.providers.csv_season import (NBAProvider, WNBAProvider)
 from data.etl.load import derive_fields, rebuild_categories
 from data.etl.schema import get_conn, migrate
 
@@ -58,27 +59,27 @@ CHECKPOINT = 50        # upsert+commit every N parsed players (durable progress)
 
 # Per-sport crawl config. `alpha` is the per-letter index; `cutoff` is the first
 # year the bulk source covers (we keep players whose career starts before it);
-# `team_map` reuses the provider's abbrev->nickname table (fallback: the abbrev).
+# `team_map` reuses the provider's abbrev->nickname table (fallback: the abbrev);
+# `players` is the path every real player link sits under -- used to reject the
+# cross-sport "featured players" widget basketball-reference embeds (the WNBA
+# index links out to NBA stars, and "/players/" is a substring of
+# "/wnba/players/", so NBA additionally rejects any "/wnba/" href).
 HISTORY = {
     "NBA": {
         "domain": "https://www.basketball-reference.com",
         "alpha":  "https://www.basketball-reference.com/players/{letter}/",
+        "players": "/players/",
         "cutoff": 1999, "team_map": NBAProvider.TEAM_MAP,
     },
     "WNBA": {
         "domain": "https://www.basketball-reference.com",
         "alpha":  "https://www.basketball-reference.com/wnba/players/{letter}/",
+        "players": "/wnba/players/",
         "cutoff": 2003, "team_map": WNBAProvider.TEAM_MAP,
     },
-    "NHL": {
-        "domain": "https://www.hockey-reference.com",
-        "alpha":  "https://www.hockey-reference.com/players/{letter}/",
-        # NHL is small (~7.5k all-time); pull everything the API missed and let
-        # the name-dedup drop the ~4.2k already loaded. Tune with --cutoff.
-        "cutoff": 2026, "team_map": NHLProvider.TEAM_MAP,
-    },
-    # NFL history is handled by the AWARDS crawl (sr_college --sport NFL), not the
-    # alpha index -- pulling all ~15k pre-1999 players isn't worth it. See sr_college.
+    # NHL and NFL history are handled by the AWARDS crawl (sr_college), not the
+    # alpha index -- an all-time crawl is thousands of non-notable names, and rows
+    # created here are immune to prune. See sr_college (both create=True there).
 }
 
 
@@ -89,12 +90,27 @@ def _slug(s):
 def _sr_id_from_href(href):
     """/players/j/jordami01.html -> jordami01 ; /players/A/AbduKa00.html -> AbduKa00
     (PFR player ids are mixed-case)."""
-    m = re.search(r"/([A-Za-z0-9.-]+)\.html$", href or "")
+    m = re.search(r"/([A-Za-z0-9.'-]+)\.html?$", href or "")   # char class matches PLAYER_HREF
     return m.group(1) if m else ""
 
 
-# player page: lowercase ids end .html; PFR ids are mixed-case and end .htm
-PLAYER_HREF = re.compile(r"/players/[A-Za-z]/[A-Za-z0-9.'-]+\.html?$")
+# A real player id always carries a digit (jordami01, wembavi01, aaltoju01); the
+# per-letter register pages (index.html / skaters.html / goalies.html) do NOT --
+# requiring a digit in the slug excludes them.
+PLAYER_HREF = re.compile(r"/players/[A-Za-z]/[A-Za-z0-9.'-]*\d[A-Za-z0-9.'-]*\.html?$")
+
+
+def _href_in_sport(href, cfg):
+    """Keep only links under this sport's player path, so the basketball-reference
+    WNBA index's NBA 'featured players' widget (and vice-versa) is dropped."""
+    path = cfg["players"]
+    if path not in href:
+        return False
+    # "/players/" is a substring of "/wnba/players/": an NBA crawl must still
+    # reject a WNBA href that happens to contain it.
+    if path == "/players/" and "/wnba/" in href:
+        return False
+    return True
 
 
 def parse_alpha_index(soup):
@@ -171,6 +187,8 @@ def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
             continue
         n_letter = 0
         for name, href, ymin, ymax in parse_alpha_index(soup):
+            if not _href_in_sport(href, cfg):    # drop cross-sport widget links
+                continue
             srid = _sr_id_from_href(href)
             if not srid or srid in seen:
                 continue
@@ -267,7 +285,7 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=Non
 
 def main():
     ap = argparse.ArgumentParser(description="Targeted Sports-Reference historical backfill")
-    ap.add_argument("--sport", required=True, help="NBA / WNBA / NHL / NFL / ALL")
+    ap.add_argument("--sport", required=True, help="NBA / WNBA / ALL")
     ap.add_argument("--db", default=DB_PATH)
     ap.add_argument("--limit", type=int, default=None, help="Cap players per sport (validation)")
     ap.add_argument("--delay", type=float, default=5.0)

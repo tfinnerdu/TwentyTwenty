@@ -39,7 +39,7 @@ sys.path.insert(0, ROOT)
 
 from data.etl.backfill_sr import make_session, get_page, parse_meta, Jailed, _load_env_file, _cell
 from data.etl.providers.base import upsert_players
-from data.etl.providers.csv_season import NFLProvider
+from data.etl.providers.csv_season import NFLProvider, NHLProvider
 from data.etl.load import derive_fields, rebuild_categories
 from data.etl.schema import get_conn, migrate
 
@@ -50,9 +50,11 @@ log = logging.getLogger("sr_college")
 DB_PATH = os.path.join(ROOT, "data", "nfl.db")
 CHECKPOINT = 50
 
-# create=True: award winners not already loaded are fetched + created (college
-#   legends pre-date the bulk pull). create=False: only flag existing rows by
-#   name (NHL players already come from the bulk + history crawl).
+# create=True: award winners not already loaded are fetched + created (the
+#   college/NHL/NFL legends that pre-date each bulk pull). create=False: only
+#   flag existing rows by name.
+# parser="pro": player pages carry pro teams, not schools -- parse with
+#   sr_history.parse_player_history + a tricode->nickname team_map (NHL, NFL).
 # default_honor: column to flag when no honor_map key matches (so every award
 #   page still marks its players notable).
 HONORS = {
@@ -81,9 +83,15 @@ HONORS = {
         "default_honor": "ncaab_all_american",   # keep every award-list player
     },
     "NHL": {
+        # pre-bulk history = award winners only. The nhl_api bulk crawls
+        # present-day rosters (~2000+), so pre-2000 legends on relocated/defunct
+        # teams are missing -- create=True with the PRO parser (teams, tricode
+        # ->nickname) builds them from the award lists. Modern players already
+        # loaded are flag-only.
         "hub": "https://www.hockey-reference.com/awards/",
         "domain": "https://www.hockey-reference.com",
-        "awards": "/awards/", "players": "/players/", "create": False,
+        "awards": "/awards/", "players": "/players/", "create": True,
+        "parser": "pro", "team_map": NHLProvider.TEAM_MAP,
         "honor_map": [("hart", "nhl_mvps"), ("stanley", "nhl_championships")],
         "default_honor": "nhl_all_star",   # Norris/Vezina/HHOF/Top-100/... -> notable
         # weekly/monthly "3 stars" nods would flag thousands as All-Stars -- skip
@@ -273,9 +281,9 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
         flagged += 1
     conn.commit()
 
-    # 2) fetch + create the pre-bulk honored players. Flag-only sports (NHL)
-    #    skip this -- their players already come from the bulk + history crawl,
-    #    so an award winner not found above just stays unflagged.
+    # 2) fetch + create the pre-bulk honored players. A flag-only sport
+    #    (create=False) skips this -- an award winner not already loaded just
+    #    stays unflagged rather than being created.
     if not cfg.get("create", True):
         fetch = []
     if limit:
