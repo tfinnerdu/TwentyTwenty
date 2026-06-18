@@ -5,8 +5,9 @@ Targeted Sports-Reference HISTORICAL backfill -- pulls the pre-coverage eras the
 bulk/GitHub sources miss, as full new player rows (not just gap-filling existing
 ones, which is backfill_sr.py's job).
 
-Coverage gaps it targets (everything earlier than each bulk source's start):
-    NBA   pre-1999   (jacobbaruch GitHub set starts 1999)  <- the marquee gap
+Coverage gaps it targets (the eras each bulk source misses):
+    NBA   pre-1999 AND post-2020  (jacobbaruch GitHub set is 1999-2020, so both
+          the early legends and the recent rookies stats.nba.com would supply)
     WNBA  pre-2003   (wehoop starts 2003)
 MLB is already complete back to 1871 via Lahman, so it's intentionally absent.
 NHL, NFL and the college sports fill their pre-bulk eras from AWARD winners only
@@ -69,7 +70,10 @@ HISTORY = {
         "domain": "https://www.basketball-reference.com",
         "alpha":  "https://www.basketball-reference.com/players/{letter}/",
         "players": "/players/",
-        "cutoff": 1999, "team_map": NBAProvider.TEAM_MAP,
+        # The jacobbaruch bulk covers 1999-2020, so BOTH ends are gaps: players
+        # who debuted before 1999 and those who debuted after 2020 (the recent
+        # rookies stats.nba.com would supply but is network-blocked).
+        "cutoff": 1999, "recent_after": 2020, "team_map": NBAProvider.TEAM_MAP,
     },
     "WNBA": {
         "domain": "https://www.basketball-reference.com",
@@ -185,6 +189,7 @@ def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
         if soup is None:
             log.warning(f"  {sport}: index /{letter}/ unavailable -- skipping")
             continue
+        recent_after = cfg.get("recent_after")
         n_letter = 0
         for name, href, ymin, ymax in parse_alpha_index(soup):
             if not _href_in_sport(href, cfg):    # drop cross-sport widget links
@@ -192,9 +197,13 @@ def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
             srid = _sr_id_from_href(href)
             if not srid or srid in seen:
                 continue
-            # in the gap = career began before the bulk source's coverage
-            if ymin is not None and ymin >= cutoff:
-                continue
+            # in a gap = career began BEFORE the bulk's coverage (< cutoff) or, if
+            # the bulk also has a recent ceiling, AFTER it (> recent_after). When
+            # the year is unknown, keep it and let the name-dedup decide.
+            if ymin is not None:
+                in_gap = ymin < cutoff or (recent_after is not None and ymin > recent_after)
+                if not in_gap:
+                    continue
             if _slug(name) in have_slugs:        # already in DB from a bulk source
                 continue
             seen.add(srid)
@@ -274,6 +283,15 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=Non
     flush()                                   # persist the final partial batch
     if added or updated:
         derive_fields(conn)
+        # Overlay curated honors (awards/<sport>.json) by name -- the alpha-index
+        # parse carries no honors, so this is how pre-1999 legends and recent
+        # rookies alike pick up their MVP / All-NBA / championship flags.
+        try:
+            from data.etl.apply_awards import apply_awards
+            m, t, _ = apply_awards(conn, sport)
+            log.info(f"  {sport}: awards overlay -- {m}/{t} matched")
+        except Exception as e:
+            log.warning(f"  {sport}: awards overlay skipped ({e})")
         rebuild_categories(conn, sport)       # so the partial data is usable now
     cur.execute("UPDATE etl_runs SET players_added=?, players_updated=?, status='ok', notes=? WHERE id=?",
                 (added, updated, stopped or f"history pre-{cutoff} ({parsed} parsed)", run_id))
