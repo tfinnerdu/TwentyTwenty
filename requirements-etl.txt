@@ -1,7 +1,10 @@
 # Optional dependencies for the real-data run (run_full.py export helpers).
 # Not needed to run the app or the offline demo (build_demo_db.py).
 #   pip install -r requirements-etl.txt
-nba_api==1.5.2          # NBA + (indirectly) the stats.* request shape
+nba_api==1.5.2          # only for --nba-live (stats.nba.com); default NBA is GitHub
 nfl_data_py==0.3.3      # NFL / nflverse
-# NHL (api-web.nhle.com) and WNBA (stats.wnba.com) use `requests`, already
-# in requirements.txt. NCAAF uses the CollegeFootballData API (urllib).
+pandas>=1.5             # WNBA wehoop parquet aggregation (also pulled by nfl_data_py)
+pyarrow>=10.0           # read the wehoop .parquet box scores
+# Default NBA/WNBA pull GitHub CSV/parquet (urllib + pandas) -- no host that
+# campus/corporate networks tend to block. NHL (api-web.nhle.com) uses
+# `requests` (in requirements.txt). NCAAF uses CollegeFootballData (urllib).

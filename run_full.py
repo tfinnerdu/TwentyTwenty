@@ -9,9 +9,11 @@ demo fixture if a real pull fails (so a run always completes):
 
   MLB              Lahman / Chadwick Baseball Databank   (auto-downloads)
   NFL              nflverse / nfl_data_py
-  NBA              stats.nba.com via nba_api
+  NBA              GitHub season-stats dataset (1999-2020)  -- reliable when
+                   stats.nba.com is blocked; --nba-live forces stats.nba.com
   NHL              official api-web.nhle.com
-  WNBA             stats.wnba.com  (experimental)
+  WNBA             wehoop GitHub dataset (2003-present)  -- reliable when
+                   stats.wnba.com is blocked; --wnba-live forces stats.wnba.com
   NCAAF            CollegeFootballData API  (needs CFBD_API_KEY; else curated)
   NCAAB / NCAAW    curated datasets
 
@@ -50,9 +52,11 @@ from data.etl.providers._fixture_mlb import write_fixture as write_mlb
 from data.etl.providers._fixture_nba import write_fixture as write_nba
 from data.etl.providers._fixture_csv import write_fixture as write_csv
 from data.etl.providers.nfl_export import export as export_nfl
-from data.etl.providers.nba_export import export as export_nba
+from data.etl.providers.nba_github_export import export as export_nba_github
+from data.etl.providers.nba_export import export as export_nba_live
 from data.etl.providers.nhl_export import export as export_nhl
-from data.etl.providers.wnba_export import export as export_wnba
+from data.etl.providers.wnba_github_export import export as export_wnba_github
+from data.etl.providers.wnba_export import export as export_wnba_live
 from data.etl.schema import get_conn
 from generate_puzzles import generate_for_date
 
@@ -160,6 +164,12 @@ def main():
     ap.add_argument("--cfbd-end", type=int, default=2023)
     ap.add_argument("--nba-dir"); ap.add_argument("--nhl-dir")
     ap.add_argument("--wnba-dir"); ap.add_argument("--nfl-dir")
+    ap.add_argument("--nba-live", action="store_true",
+                    help="Pull NBA from stats.nba.com instead of the GitHub dataset "
+                         "(only if your network can reach stats.nba.com)")
+    ap.add_argument("--wnba-live", action="store_true",
+                    help="Pull WNBA from stats.wnba.com instead of the wehoop GitHub "
+                         "dataset (only if your network can reach stats.wnba.com)")
     ap.add_argument("--length", type=int, default=20)
     ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--skip-puzzles", action="store_true")
@@ -194,11 +204,13 @@ def main():
         mlb,
         resolve("NFL", NFLProvider, args.nfl_dir, lambda o: export_nfl(o),
                 lambda o: write_csv("NFL", o), tmp, real, args.refresh),
-        resolve("NBA", NBAProvider, args.nba_dir, lambda o: export_nba(o),
+        resolve("NBA", NBAProvider, args.nba_dir,
+                (lambda o: export_nba_live(o)) if args.nba_live else (lambda o: export_nba_github(o)),
                 lambda o: write_nba(o), tmp, real, args.refresh),
         resolve("NHL", NHLProvider, args.nhl_dir, lambda o: export_nhl(o),
                 lambda o: write_csv("NHL", o), tmp, real, args.refresh),
-        resolve("WNBA", WNBAProvider, args.wnba_dir, lambda o: export_wnba(o),
+        resolve("WNBA", WNBAProvider, args.wnba_dir,
+                (lambda o: export_wnba_live(o)) if args.wnba_live else (lambda o: export_wnba_github(o)),
                 lambda o: write_csv("WNBA", o), tmp, real, args.refresh),
         ncaaf_provider(args, tmp),
         CuratedProvider("NCAAB"),

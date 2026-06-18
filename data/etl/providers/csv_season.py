@@ -172,10 +172,18 @@ class WNBAProvider(CsvSeasonProvider):
     source_name = "wnba_csv"
     SUM_COLS = ("g", "pts", "reb", "ast")
     TEAM_MAP = {
+        # abbreviations (bundled fixture)
         "PHX": "Mercury", "PHO": "Mercury", "SEA": "Storm", "LAS": "Sparks",
         "IND": "Fever", "MIN": "Lynx", "HOU": "Comets", "NYL": "Liberty",
         "LVA": "Aces", "CHI": "Sky", "WAS": "Mystics", "CON": "Sun",
         "ATL": "Dream", "DAL": "Wings", "TUL": "Shock",
+        # franchise nicknames (wehoop GitHub export emits these directly)
+        "MERCURY": "Mercury", "STORM": "Storm", "SPARKS": "Sparks",
+        "FEVER": "Fever", "LYNX": "Lynx", "COMETS": "Comets", "LIBERTY": "Liberty",
+        "ACES": "Aces", "SKY": "Sky", "MYSTICS": "Mystics", "SUN": "Sun",
+        "DREAM": "Dream", "WINGS": "Wings", "SHOCK": "Shock", "STING": "Sting",
+        "ROCKERS": "Rockers", "MONARCHS": "Monarchs", "STARS": "Stars",
+        "VALKYRIES": "Valkyries",
     }
     _GROUP = {"G": "G", "PG": "G", "SG": "G", "F": "F", "SF": "F", "PF": "F", "C": "C"}
 
