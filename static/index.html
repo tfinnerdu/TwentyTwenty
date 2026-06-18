@@ -459,6 +459,16 @@ input[type=text]:disabled { opacity: 0.4; }
 .sport-tile.selected { border-color: var(--gold); background: var(--gold-dark); }
 .sport-tile.selected::before { background: var(--gold); }
 .sport-tile.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+.all-tile { grid-column: 1 / -1; }
+.tile-info {
+  position: absolute; top: 6px; right: 7px;
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 1px solid var(--chalk-dim); color: var(--chalk-dim);
+  font: 700 10px/13px var(--font-mono); text-align: center; cursor: help;
+}
+.sport-tile:hover .tile-info { border-color: var(--gold); color: var(--gold); }
+.mode-pill .tile-info { position: static; display: inline-flex; align-items: center;
+  justify-content: center; vertical-align: middle; margin-left: 5px; }
 
 .tile-sport-id {
   font-family: var(--font-display); font-size: 20px; color: var(--gold);
@@ -627,15 +637,24 @@ async function loadConfig() {
 }
 
 const SPORT_DEFS = [
-  { id:'NFL',   label:'NFL',   name:'Pro Football',        needsData:false },
-  { id:'NBA',   label:'NBA',   name:'Pro Basketball (M)',  needsData:true  },
-  { id:'WNBA',  label:'WNBA',  name:'Pro Basketball (W)',  needsData:true  },
-  { id:'MLB',   label:'MLB',   name:'Pro Baseball',        needsData:true  },
-  { id:'NHL',   label:'NHL',   name:'Pro Hockey',          needsData:true  },
-  { id:'NCAAF', label:'NCAAF', name:'College Football',    needsData:true  },
-  { id:'NCAAB', label:'NCAAB', name:'College Hoops (M)',   needsData:true  },
-  { id:'NCAAW', label:'NCAAW', name:'College Hoops (W)',   needsData:true  },
+  { id:'NFL',   label:'NFL',   name:'Pro Football',        needsData:false,
+    coverage:'Modern era (nflverse) plus pre-1999 award winners — Pro Bowl, All-Pro (back to 1922), MVP.' },
+  { id:'NBA',   label:'NBA',   name:'Pro Basketball (M)',  needsData:true,
+    coverage:'1999–2020 seasons plus pre-1999 history. Full player pool.' },
+  { id:'WNBA',  label:'WNBA',  name:'Pro Basketball (W)',  needsData:true,
+    coverage:'2003–present. Players who had at least one 25+ game season.' },
+  { id:'MLB',   label:'MLB',   name:'Pro Baseball',        needsData:true,
+    coverage:'All-time, 1871–present (Lahman). Full player pool.' },
+  { id:'NHL',   label:'NHL',   name:'Pro Hockey',          needsData:true,
+    coverage:'Modern plus history. Kept if they won an award or had a 50+ game season.' },
+  { id:'NCAAF', label:'NCAAF', name:'College Football',    needsData:true,
+    coverage:'Award winners only — All-America, Heisman, national & conference honors.' },
+  { id:'NCAAB', label:'NCAAB', name:'College Hoops (M)',   needsData:true,
+    coverage:'Award winners only — All-America, AP / Naismith / Wooden POY, tourney honors.' },
+  { id:'NCAAW', label:'NCAAW', name:'College Hoops (W)',   needsData:true,
+    coverage:'Award winners only — All-America, national POY, tournament honors.' },
 ];
+const ALL_COVERAGE = 'Every sport at once — chain clues cross leagues. The eligible-answer pool is each sport’s coverage combined.';
 const DIFF_DEFS = [
   { id:'easy',   label:'Easy'   },
   { id:'medium', label:'Medium' },
@@ -676,7 +695,11 @@ async function boot(dateStr, skipLobby) {
   const mode   = sportMode(sports);
 
   const pill = document.getElementById('modePill');
-  if (pill) { pill.textContent = modeLabel(sports); pill.style.display='inline'; }
+  if (pill) {
+    pill.innerHTML = modeLabel(sports) + ' <span class="tile-info">i</span>';
+    pill.title = 'Eligible answers — ' + coverageFor(sports) + '\n(tap to change sports)';
+    pill.style.display='inline';
+  }
 
   const base = dateStr ? `${API}/api/puzzle/${dateStr}` : `${API}/api/puzzle/today`;
   const url  = `${base}?sport=${encodeURIComponent(mode)}&difficulty=${diff}`;
@@ -1098,16 +1121,32 @@ function copyShare(){
   });
 }
 
-function renderLobby(inModal) {
-  if(inModal){openSportSelector();return;}
-  const sel=getSelectedSports(), diff=getSelectedDifficulty();
-  const tiles=SPORT_DEFS.map(s=>`
-    <div class="sport-tile ${sel.includes(s.id)?'selected':''} ${s.needsData?'':''}
-                 " data-sport="${s.id}" onclick="toggleSport('${s.id}',this)">
+function sportTilesHTML(sel){
+  const all = sel.length === SPORT_DEFS.length;
+  const allTile = `
+    <div class="sport-tile all-tile ${all?'selected':''}" onclick="selectAllSports()" title="${ALL_COVERAGE}">
+      <span class="tile-info" onclick="event.stopPropagation()">i</span>
+      <div class="tile-sport-id">ALL</div>
+      <div class="tile-name">Every Sport &mdash; clues cross over</div>
+    </div>`;
+  const tiles = SPORT_DEFS.map(s=>`
+    <div class="sport-tile ${sel.includes(s.id)?'selected':''}" data-sport="${s.id}"
+         onclick="toggleSport('${s.id}',this)" title="${s.coverage}">
+      <span class="tile-info" onclick="event.stopPropagation()">i</span>
       <div class="tile-sport-id">${s.label}</div>
       <div class="tile-name">${s.name}</div>
       ${s.needsData?'<span class="tile-badge">ETL required</span>':'<span class="tile-badge" style="background:rgba(0,200,83,0.1);border-color:rgba(0,200,83,0.3);color:#00C853">READY</span>'}
     </div>`).join('');
+  return allTile + tiles;
+}
+function selectAllSports(){
+  const prefs=loadPrefs(); prefs.sports=SPORT_DEFS.map(s=>s.id); savePrefs(prefs);
+  document.querySelectorAll('.sport-tile').forEach(t=>t.classList.add('selected'));
+}
+function renderLobby(inModal) {
+  if(inModal){openSportSelector();return;}
+  const sel=getSelectedSports(), diff=getSelectedDifficulty();
+  const tiles=sportTilesHTML(sel);
   const pills=DIFF_DEFS.map(d=>`
     <button class="diff-pill ${d.id===diff?'selected':''}" onclick="selDiff('${d.id}',this)">${d.label}</button>`).join('');
 
@@ -1134,6 +1173,12 @@ function toggleSport(id,el){
   if(s.includes(id)){if(s.length===1)return;s=s.filter(x=>x!==id);el.classList.remove('selected');}
   else{s.push(id);el.classList.add('selected');}
   prefs.sports=s; savePrefs(prefs);
+  document.querySelectorAll('.all-tile').forEach(t=>t.classList.toggle('selected', s.length===SPORT_DEFS.length));
+}
+// One-line coverage summary for the current selection (top-right pill tooltip).
+function coverageFor(sports){
+  if(sports.length===SPORT_DEFS.length) return ALL_COVERAGE;
+  return sports.map(id=>{const d=SPORT_DEFS.find(x=>x.id===id);return d?d.label+': '+d.coverage:id;}).join('  •  ');
 }
 function selDiff(id,el){
   document.querySelectorAll('.diff-pill').forEach(p=>p.classList.remove('selected'));
@@ -1149,13 +1194,7 @@ function startFromLobby(){
 
 function openSportSelector(){
   const sel=getSelectedSports(), diff=getSelectedDifficulty();
-  const tiles=SPORT_DEFS.map(s=>`
-    <div class="sport-tile ${sel.includes(s.id)?'selected':''}"
-         data-sport="${s.id}" onclick="toggleSport('${s.id}',this)">
-      <div class="tile-sport-id">${s.label}</div>
-      <div class="tile-name">${s.name}</div>
-      ${s.needsData?'<span class="tile-badge">ETL required</span>':''}
-    </div>`).join('');
+  const tiles=sportTilesHTML(sel);
   const pills=DIFF_DEFS.map(d=>`
     <button class="diff-pill ${d.id===diff?'selected':''}" onclick="selDiff('${d.id}',this)">${d.label}</button>`).join('');
 
