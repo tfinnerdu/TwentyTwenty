@@ -49,27 +49,44 @@ log = logging.getLogger("sr_college")
 DB_PATH = os.path.join(ROOT, "data", "nfl.db")
 CHECKPOINT = 50
 
+# create=True: award winners not already loaded are fetched + created (college
+#   legends pre-date the bulk pull). create=False: only flag existing rows by
+#   name (NHL players already come from the bulk + history crawl).
+# default_honor: column to flag when no honor_map key matches (so every award
+#   page still marks its players notable).
 HONORS = {
     "NCAAF": {
         "hub": "https://www.sports-reference.com/cfb/awards/",
         "domain": "https://www.sports-reference.com",
-        "awards": "/cfb/awards/", "players": "/cfb/players/",
+        "awards": "/cfb/awards/", "players": "/cfb/players/", "create": True,
         "honor_map": [("heisman", "ncaaf_heisman"), ("all-america", "ncaaf_all_american")],
+        "default_honor": None,
     },
     "NCAAB": {
         "hub": "https://www.sports-reference.com/cbb/awards/",
         "domain": "https://www.sports-reference.com",
-        "awards": "/cbb/awards/men/", "players": "/cbb/players/",
+        "awards": "/cbb/awards/men/", "players": "/cbb/players/", "create": True,
         "honor_map": [("all-america", "ncaab_all_american"),
                       ("poy", "ncaab_player_of_year"), ("naismith", "ncaab_player_of_year"),
                       ("wooden", "ncaab_player_of_year")],
+        "default_honor": None,
     },
     "NCAAW": {
         "hub": "https://www.sports-reference.com/cbb/awards/",
         "domain": "https://www.sports-reference.com",
-        "awards": "/cbb/awards/women/", "players": "/cbb/players/",
+        "awards": "/cbb/awards/women/", "players": "/cbb/players/", "create": True,
         "honor_map": [("all-america", "ncaab_all_american"),
                       ("poy", "ncaab_player_of_year"), ("mop", "ncaab_player_of_year")],
+        "default_honor": None,
+    },
+    "NHL": {
+        "hub": "https://www.hockey-reference.com/awards/",
+        "domain": "https://www.hockey-reference.com",
+        "awards": "/awards/", "players": "/players/", "create": False,
+        "honor_map": [("hart", "nhl_mvps"), ("stanley", "nhl_championships")],
+        "default_honor": "nhl_all_star",   # Norris/Vezina/HHOF/Top-100/... -> notable
+        # weekly/monthly "3 stars" nods would flag thousands as All-Stars -- skip
+        "skip": ("weekly", "monthly", "3star"),
     },
 }
 
@@ -84,9 +101,12 @@ def _is_year_page(url):
     return bool(re.search(r"-\d{4}\.html$", url)) and not re.search(r"\d{4}-\d{4}", url)
 
 
-def _honor_cols(award_url, honor_map):
+def _honor_cols(award_url, honor_map, default_honor=None):
     low = award_url.lower()
-    return {col for key, col in honor_map if key in low}
+    cols = {col for key, col in honor_map if key in low}
+    if not cols and default_honor:
+        cols = {default_honor}      # any award page still marks its players notable
+    return cols
 
 
 def _award_links(soup, base, awards):
@@ -101,10 +121,13 @@ def discover_award_pages(session, cfg, delay):
     """Hub -> the individual award pages (one level deep, skipping per-year noise)."""
     pages, seen = [], set()
     hub = get_page(session, cfg["hub"], delay)
+    skip = cfg.get("skip", ())
+    def _ok(u):
+        return u not in seen and not _is_year_page(u) and not any(s in u for s in skip)
     frontier = []
     if hub is not None:
         for full in _award_links(hub, cfg["hub"], cfg["awards"]):
-            if full not in seen and not _is_year_page(full):
+            if _ok(full):
                 seen.add(full)
                 frontier.append(full)
     # follow each award page one level (to reach the per-decade All-America lists)
@@ -114,7 +137,7 @@ def discover_award_pages(session, cfg, delay):
         if soup is None:
             continue
         for full in _award_links(soup, url, cfg["awards"]):
-            if full not in seen and not _is_year_page(full):
+            if _ok(full):
                 seen.add(full)
                 pages.append(full)
     log.info(f"  discovered {len(pages)} award pages")
@@ -128,7 +151,7 @@ def collect_players(session, pages, cfg, delay):
         soup = get_page(session, url, delay)
         if soup is None:
             continue
-        cols = _honor_cols(url, cfg["honor_map"])
+        cols = _honor_cols(url, cfg["honor_map"], cfg.get("default_honor"))
         for a in soup.find_all("a", href=True):
             full = urljoin(url, a["href"]).split("#")[0]
             if cfg["players"] not in full or not full.endswith(".html"):
@@ -220,7 +243,11 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
         flagged += 1
     conn.commit()
 
-    # 2) fetch + create the pre-bulk honored players
+    # 2) fetch + create the pre-bulk honored players. Flag-only sports (NHL)
+    #    skip this -- their players already come from the bulk + history crawl,
+    #    so an award winner not found above just stays unflagged.
+    if not cfg.get("create", True):
+        fetch = []
     if limit:
         fetch = fetch[:limit]
     batch, added, updated, parsed, stopped = [], 0, 0, 0, None
@@ -272,7 +299,7 @@ def _sr_id(url):
 
 def main():
     ap = argparse.ArgumentParser(description="College honors crawler (SR award pages)")
-    ap.add_argument("--sport", required=True, help="NCAAF / NCAAB / NCAAW / ALL")
+    ap.add_argument("--sport", required=True, help="NCAAF / NCAAB / NCAAW / NHL / ALL")
     ap.add_argument("--db", default=DB_PATH)
     ap.add_argument("--limit", type=int, default=None, help="Cap NEW players fetched (validation)")
     ap.add_argument("--delay", type=float, default=5.0)
