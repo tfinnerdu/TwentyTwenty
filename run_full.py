@@ -15,7 +15,7 @@ demo fixture if a real pull fails (so a run always completes):
   WNBA             wehoop GitHub dataset (2003-present)  -- reliable when
                    stats.wnba.com is blocked; --wnba-live forces stats.wnba.com
   NCAAF            CollegeFootballData API  (needs CFBD_API_KEY; else curated)
-  NCAAB / NCAAW    curated datasets
+  NCAAB / NCAAW    hoopR / wehoop GitHub data (2003/2004+) + curated honors overlay
 
 The CFBD key is read from the environment OR a .env file in the repo root.
 
@@ -46,7 +46,8 @@ sys.path.insert(0, BASE_DIR)
 
 from data.etl.providers.base import run_pipeline
 from data.etl.providers.lahman_mlb import LahmanMLBProvider
-from data.etl.providers.csv_season import NBAProvider, WNBAProvider, NHLProvider, NFLProvider, NCAAFProvider
+from data.etl.providers.csv_season import (NBAProvider, WNBAProvider, NHLProvider,
+                                           NFLProvider, NCAAFProvider, NCAABProvider, NCAAWProvider)
 from data.etl.providers.curated import CuratedProvider
 from data.etl.providers._fixture_mlb import write_fixture as write_mlb
 from data.etl.providers._fixture_nba import write_fixture as write_nba
@@ -128,6 +129,36 @@ def ncaaf_provider(args, tmp):
         return CuratedProvider("NCAAF")
 
 
+def ncaa_hoops_providers(args):
+    """Bulk college hoops (hoopR men's / wehoop women's, bot-safe GitHub) plus
+    the curated honors overlay. Returns providers in load order: bulk first
+    (builds the pool), curated after (adds the pre-2003 legends + their
+    championships/All-American/POY). Falls back to curated-only if a bulk pull
+    fails, so NCAAB/NCAAW always load something."""
+    from data.etl.providers.ncaa_hoops_export import export as export_hoops
+    out = []
+    for sport, cls, src_dir in (("NCAAB", NCAABProvider, args.ncaab_dir),
+                                ("NCAAW", NCAAWProvider, args.ncaaw_dir)):
+        cache = os.path.join(BASE_DIR, "data", "cache", "exports", sport.lower())
+        cached = os.path.join(cache, f"{sport.lower()}_players.csv")
+        try:
+            if src_dir:
+                log.info(f"  {sport}: ingesting --{sport.lower()}-dir {src_dir}")
+                out.append(cls(source_dir=src_dir))
+            elif os.path.exists(cached) and not args.refresh:
+                log.info(f"  {sport}: reusing cached export ({cache}) -- use --refresh to re-pull")
+                out.append(cls(source_dir=cache))
+            else:
+                log.info(f"  {sport}: pulling bulk college hoops (this can take a while)...")
+                np, ns = export_hoops(sport, cache)
+                log.info(f"  {sport}: exported {np} players / {ns} player-seasons")
+                out.append(cls(source_dir=cache))
+        except Exception as e:
+            log.warning(f"  {sport}: bulk pull failed ({type(e).__name__}: {e}) -> curated only")
+        out.append(CuratedProvider(sport))   # overlay honors + pre-2003 legends
+    return out
+
+
 def generate_all_puzzles(db, length, days):
     """Generate puzzles for every mode, sizing each sport's chain to how many
     players it actually has (so a fixture-backed sport doesn't try -- and hang
@@ -164,6 +195,7 @@ def main():
     ap.add_argument("--cfbd-end", type=int, default=2023)
     ap.add_argument("--nba-dir"); ap.add_argument("--nhl-dir")
     ap.add_argument("--wnba-dir"); ap.add_argument("--nfl-dir")
+    ap.add_argument("--ncaab-dir"); ap.add_argument("--ncaaw-dir")
     ap.add_argument("--nba-live", action="store_true",
                     help="Pull NBA from stats.nba.com instead of the GitHub dataset "
                          "(only if your network can reach stats.nba.com)")
@@ -213,8 +245,7 @@ def main():
                 (lambda o: export_wnba_live(o)) if args.wnba_live else (lambda o: export_wnba_github(o)),
                 lambda o: write_csv("WNBA", o), tmp, real, args.refresh),
         ncaaf_provider(args, tmp),
-        CuratedProvider("NCAAB"),
-        CuratedProvider("NCAAW"),
+        *ncaa_hoops_providers(args),
     ]
     for p in providers:
         try:

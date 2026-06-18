@@ -49,6 +49,8 @@ def _year(s) -> int:
 class CsvSeasonProvider(Provider):
     # --- subclass declares these ---
     TEAM_MAP: dict = {}        # team abbrev -> franchise nickname
+    PASSTHROUGH_TEAMS = False  # if True, use the raw team value when not in TEAM_MAP
+                               # (college: the school IS the team, no fixed map)
     SUM_COLS: tuple = ()       # season numeric columns to accumulate
     GAMES_COL: str = "g"       # which summed column is games played
 
@@ -103,7 +105,8 @@ class CsvSeasonProvider(Provider):
             for col in self.SUM_COLS:
                 a[col] += _f(r.get(col))
             a["years"].add(_year(r.get("season")))
-            nick = self.TEAM_MAP.get((r.get("team") or "").upper())
+            raw_team = (r.get("team") or "").strip()
+            nick = self.TEAM_MAP.get(raw_team.upper()) or (raw_team if self.PASSTHROUGH_TEAMS else None)
             if nick and nick not in a["teams"]:
                 a["teams"].append(nick)
 
@@ -260,3 +263,25 @@ class NCAAFProvider(CsvSeasonProvider):
         return {"ncaaf_pass_yds": int(s["pass_yds"]), "ncaaf_rush_yds": int(s["rush_yds"]),
                 "ncaaf_rec_yds": int(s["rec_yds"]), "ncaaf_tds": int(s["tds"]),
                 "ncaaf_sacks": round(s["sacks"], 1)}
+
+
+class NCAABProvider(CsvSeasonProvider):
+    sport = "NCAAB"
+    source_name = "ncaab_csv"
+    SUM_COLS = ("g", "pts", "reb", "ast")
+    PASSTHROUGH_TEAMS = True          # team == the school (Duke, Kansas, ...)
+    _GROUP = {"G": "G", "PG": "G", "SG": "G", "F": "F", "SF": "F", "PF": "F", "C": "C"}
+
+    def stat_fields(self, s):
+        g = s["g"] or 1
+        # men's & women's college share the ncaab_* columns (no ncaaw_* in schema)
+        return {"ncaab_points": round(s["pts"] / g, 1), "ncaab_rebounds": round(s["reb"] / g, 1),
+                "ncaab_assists": round(s["ast"] / g, 1), "ncaab_games": int(s["g"])}
+
+    def position_group_value(self, position):
+        return self._GROUP.get(position.upper(), "")
+
+
+class NCAAWProvider(NCAABProvider):
+    sport = "NCAAW"
+    source_name = "ncaaw_csv"          # same ncaab_* stat columns, different sport
