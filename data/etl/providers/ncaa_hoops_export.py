@@ -79,53 +79,54 @@ def export(sport, out_dir, start=None, end=None, min_games=25, min_points=100):
     os.makedirs(out_dir, exist_ok=True)
     excluded = _curated_slugs(sport)
 
-    frames = []
+    # Aggregate each season as we go (200k box rows -> ~12k player-season rows)
+    # and keep only those small frames, so a 20+ season pull never holds the
+    # full ~5M-row box-score set in memory at once.
+    season_aggs, bio_frames = [], []
     for year in range(start, end + 1):
         try:
             df = pd.read_parquet(url_tmpl.format(year=year))
         except Exception as e:
             log.info(f"  {sport} {year}: no data ({type(e).__name__}) -- skipping")
             continue
-        df = df[(df["season_type"] == 2) & (df["did_not_play"] == False)].copy()  # noqa: E712
+        df = df[(df["season_type"] == 2) & (df["did_not_play"] == False)]  # noqa: E712
         if df.empty:
             continue
-        df["school"] = df["team_location"].astype(str).str.strip()
+        df = df.assign(school=df["team_location"].astype(str).str.strip())
         df = df[(df["school"] != "") & (df["school"].str.lower() != "nan")]
         for c in ("points", "rebounds", "assists"):
             df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
-        frames.append(df[["season", "athlete_id", "athlete_display_name",
-                          "athlete_position_abbreviation", "school",
-                          "points", "rebounds", "assists"]])
+        season_aggs.append(df.groupby(["athlete_id", "season", "school"], as_index=False).agg(
+            g=("points", "size"), pts=("points", "sum"),
+            reb=("rebounds", "sum"), ast=("assists", "sum")))
+        bio_frames.append(df[["athlete_id", "athlete_display_name",
+                              "athlete_position_abbreviation"]].drop_duplicates("athlete_id"))
         log.info(f"  {sport} {year}: {df['athlete_id'].nunique()} players")
 
-    if not frames:
+    if not season_aggs:
         raise RuntimeError(f"no {sport} data fetched (network/schema issue)")
 
-    box = pd.concat(frames, ignore_index=True)
-    grp = box.groupby(["athlete_id", "season", "school"], as_index=False).agg(
-        g=("points", "size"), pts=("points", "sum"),
-        reb=("rebounds", "sum"), ast=("assists", "sum"))
+    grp = pd.concat(season_aggs, ignore_index=True)
+    bios = pd.concat(bio_frames, ignore_index=True).drop_duplicates("athlete_id")  # earliest wins
 
     # career totals -> contributor filter (drop walk-ons / cup-of-coffee careers)
     career = grp.groupby("athlete_id").agg(G=("g", "sum"), P=("pts", "sum"))
     keep = set(career[(career["G"] >= min_games) & (career["P"] >= min_points)].index)
 
-    # bio: most-frequent name + position, primary school (most games)
+    # primary school = the one a player logged the most games for
+    sg = grp.groupby(["athlete_id", "school"], as_index=False)["g"].sum()
+    primary = sg.loc[sg.groupby("athlete_id")["g"].idxmax()].set_index("athlete_id")["school"].to_dict()
+
     bio_rows, kept = [], set()
-    for pid, sub in box.groupby("athlete_id"):
+    for r in bios.itertuples(index=False):
+        pid = r.athlete_id
         if pid not in keep:
             continue
-        name = sub["athlete_display_name"].mode()
-        name = name.iloc[0] if len(name) else ""
-        if _slug(name) in excluded:        # curated honors version wins
+        name = (r.athlete_display_name or "").strip()
+        if _slug(name) in excluded:        # curated honors version wins -> no duplicate
             continue
-        pos = ""
-        for cand in sub["athlete_position_abbreviation"]:
-            pos = _pos(cand)
-            if pos:
-                break
-        school = sub.groupby("school").size().idxmax()   # primary school
-        bio_rows.append([int(pid), name, pos, school, "", "", "", "USA", "", "", "", "", ""])
+        bio_rows.append([int(pid), name, _pos(r.athlete_position_abbreviation),
+                         primary.get(pid, ""), "", "", "", "USA", "", "", "", "", ""])
         kept.add(pid)
 
     seasons = [[int(r.athlete_id), int(r.season), r.school, int(r.g), int(r.pts), int(r.reb), int(r.ast)]
