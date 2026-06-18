@@ -54,6 +54,7 @@ log = logging.getLogger("sr_history")
 
 DB_PATH = os.path.join(ROOT, "data", "nfl.db")
 LETTERS = "abcdefghijklmnopqrstuvwxyz"
+CHECKPOINT = 50        # upsert+commit every N parsed players (durable progress)
 
 # Per-sport crawl config. `alpha` is the per-letter index; `cutoff` is the first
 # year the bulk source covers (we keep players whose career starts before it);
@@ -206,7 +207,19 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
     conn.commit()
     run_id = cur.lastrowid
 
-    payloads = []
+    # Persist in checkpoints so progress survives a jail / Ctrl-C / crash. Each
+    # flush commits (upsert_players commits internally) and the page cache means
+    # a re-run resumes from where the network left off, re-parsing cached pages.
+    batch, added, updated, parsed, stopped = [], 0, 0, 0, None
+
+    def flush():
+        nonlocal added, updated, batch
+        if batch:
+            a, u = upsert_players(conn, batch, "sr_history", run_id)
+            added += a
+            updated += u
+            batch = []
+
     try:
         for i, (srid, name, url) in enumerate(targets, 1):
             soup = get_page(session, url, delay)
@@ -214,22 +227,28 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
                 continue
             rec = parse_player_history(soup, cfg["team_map"])
             rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{srid}", "name": name})
-            payloads.append(rec)
-            if i % 25 == 0:
-                log.info(f"  {sport}: parsed {i}/{len(targets)}")
+            batch.append(rec)
+            if len(batch) >= CHECKPOINT:
+                flush()
+                log.info(f"  {sport}: checkpoint -- {parsed + 1} parsed, {added} saved")
+            parsed += 1
     except Jailed as e:
+        stopped = f"jailed after {parsed} ({e})"
         log.error(str(e))
+    except KeyboardInterrupt:
+        stopped = f"interrupted by user after {parsed}"
+        log.warning(f"  {sport}: interrupted -- saving what's parsed so far...")
 
-    added = updated = 0
-    if payloads:
-        added, updated = upsert_players(conn, payloads, "sr_history", run_id)
+    flush()                                   # persist the final partial batch
+    if added or updated:
         derive_fields(conn)
-        rebuild_categories(conn, sport)
-    cur.execute("UPDATE etl_runs SET players_added=?, players_updated=?, status='ok' WHERE id=?",
-                (added, updated, run_id))
+        rebuild_categories(conn, sport)       # so the partial data is usable now
+    cur.execute("UPDATE etl_runs SET players_added=?, players_updated=?, status='ok', notes=? WHERE id=?",
+                (added, updated, stopped or f"history pre-{cfg['cutoff']} ({parsed} parsed)", run_id))
     conn.commit()
     conn.close()
-    log.info(f"[{sport}] history: +{added} new, {updated} updated")
+    log.info(f"[{sport}] history: +{added} new, {updated} updated"
+             + (f" -- STOPPED: {stopped} (saved; re-run to resume from cache)" if stopped else ""))
 
 
 def main():
