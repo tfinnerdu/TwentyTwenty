@@ -111,11 +111,14 @@ def ncaaf_provider(args, tmp):
             log.warning("  NCAAF: no CFBD_API_KEY found -> curated set")
         return CuratedProvider("NCAAF")
     from data.etl.providers.cfbd_export import export as export_cfbd
-    out = os.path.join(tmp, "ncaaf")
+    cache = os.path.join(BASE_DIR, "data", "cache", "exports", "ncaaf")
+    if os.path.exists(os.path.join(cache, "ncaaf_players.csv")) and not args.refresh:
+        log.info(f"  NCAAF: reusing cached CFBD export ({cache})")
+        return NCAAFProvider(source_dir=cache)
     try:
         log.info(f"  NCAAF: exporting CollegeFootballData {args.cfbd_start}-{args.cfbd_end}...")
-        export_cfbd(args.cfbd_start, args.cfbd_end, out, key)
-        return NCAAFProvider(source_dir=out)
+        export_cfbd(args.cfbd_start, args.cfbd_end, cache, key)
+        return NCAAFProvider(source_dir=cache)
     except Exception as e:
         log.warning(f"  NCAAF: CFBD export failed ({e}) -> curated set")
         return CuratedProvider("NCAAF")
@@ -170,7 +173,17 @@ def main():
         CuratedProvider("NCAAW"),
     ]
     for p in providers:
-        run_pipeline(p, args.db)
+        try:
+            run_pipeline(p, args.db)
+        except Exception as e:
+            log.error(f"  {p.sport}: load failed ({type(e).__name__}: {e})")
+            if isinstance(p, LahmanMLBProvider):
+                try:
+                    fb = os.path.join(tmp, "mlb_fb"); write_mlb(fb)
+                    run_pipeline(LahmanMLBProvider(data_dir=fb), args.db)
+                    log.warning("  MLB: used bundled DEMO fixture after download failure")
+                except Exception as e2:
+                    log.error(f"  MLB fixture fallback failed: {e2}")
 
     conn = get_conn(args.db)
     rows = conn.execute("SELECT sport, COUNT(*) FROM players GROUP BY sport ORDER BY sport").fetchall()

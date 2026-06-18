@@ -34,7 +34,10 @@ from data.etl.providers.base import Provider
 
 log = logging.getLogger(__name__)
 
-DEFAULT_BASE_URL = "https://raw.githubusercontent.com/chadwickbureau/baseballdatabank/master"
+# NOTE: the original chadwickbureau/baseballdatabank repo was taken down (404),
+# so we use a maintained mirror with the same core/ + contrib/ CSV layout.
+# Override with base_url=... or supply the CSVs via --source-dir if it moves.
+DEFAULT_BASE_URL = "https://raw.githubusercontent.com/cbwinslow/baseballdatabank/master"
 # data/cache/lahman -- under data/cache/ which .gitignore excludes (the raw
 # CSVs are ~50MB and regenerable, so they never get committed).
 DEFAULT_CACHE = os.path.join(

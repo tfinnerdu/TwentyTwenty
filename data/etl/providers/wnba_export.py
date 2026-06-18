@@ -16,8 +16,11 @@ back to the bundled fixture if this fails.
 
 import argparse
 import csv
+import logging
 import os
 import time
+
+log = logging.getLogger("wnba_export")
 
 URL = "https://stats.wnba.com/stats/leaguedashplayerstats"
 HEADERS = {
@@ -46,23 +49,37 @@ def _params(season: int) -> dict:
     return p
 
 
-def export(out_dir: str, start: int = 1997, end: int = 2024, delay: float = 0.6):
+def export(out_dir: str, start: int = 1997, end: int = 2024, delay: float = 0.6,
+           timeout: int = 60, retries: int = 4):
     import requests
     os.makedirs(out_dir, exist_ok=True)
     seasons, pids = [], {}
 
     for year in range(start, end + 1):
-        r = requests.get(URL, headers=HEADERS, params=_params(year), timeout=30)
-        time.sleep(delay)
-        if r.status_code != 200:
+        data = None
+        for attempt in range(1, retries + 1):
+            try:
+                r = requests.get(URL, headers=HEADERS, params=_params(year), timeout=timeout)
+                if r.status_code == 200:
+                    data = r.json()
+                    break
+                log.warning(f"  WNBA {year}: HTTP {r.status_code} (attempt {attempt}/{retries})")
+            except Exception as e:
+                log.warning(f"  WNBA {year}: {type(e).__name__} (attempt {attempt}/{retries})")
+            time.sleep(3 * attempt)
+        if not data:
             continue
-        rs = r.json()["resultSets"][0]
+        rs = data["resultSets"][0]
         idx = {h: i for i, h in enumerate(rs["headers"])}
         for row in rs["rowSet"]:
             pid = row[idx["PLAYER_ID"]]
             pids[pid] = row[idx["PLAYER_NAME"]]
             seasons.append([pid, year, row[idx.get("TEAM_ABBREVIATION", -1)] if "TEAM_ABBREVIATION" in idx else "",
                             row[idx["GP"]], row[idx["PTS"]], row[idx["REB"]], row[idx["AST"]]])
+        time.sleep(delay)
+
+    if not pids:
+        raise RuntimeError("stats.wnba.com returned no data (unreachable / blocked)")
 
     players = [[pid, name, "", "", "", "", "", "USA", "", "", "", "", ""]
                for pid, name in pids.items()]
@@ -85,8 +102,11 @@ def main():
     ap.add_argument("--start", type=int, default=1997)
     ap.add_argument("--end", type=int, default=2024)
     ap.add_argument("--out", default="./wnba_csv")
+    ap.add_argument("--timeout", type=int, default=60)
+    ap.add_argument("--retries", type=int, default=4)
     args = ap.parse_args()
-    p, s = export(args.out, args.start, args.end)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+    p, s = export(args.out, args.start, args.end, timeout=args.timeout, retries=args.retries)
     print(f"Wrote {p} players, {s} player-seasons to {args.out}")
 
 
