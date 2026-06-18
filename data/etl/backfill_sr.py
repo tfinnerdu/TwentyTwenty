@@ -21,6 +21,20 @@ Usage (run from a residential IP, slowly):
     python -m data.etl.backfill_sr --sport MLB --fields college --dry-run
     python -m data.etl.backfill_sr --sport NFL --fields birth_state,draft --delay 6
 
+Cloudflare "Just a moment..." challenge (e.g. pro-football-reference):
+  A JS-less client can't pass it, so paste a clearance cookie from a browser
+  that did. In Chrome: open the site, let the challenge pass, then DevTools ->
+  Application -> Cookies -> copy the `cf_clearance` value and your exact
+  User-Agent (DevTools -> Network -> any request -> Request Headers).
+
+    pip install curl_cffi    # so the TLS fingerprint matches Chrome too
+    python -m data.etl.backfill_sr --sport NFL --fields college \
+        --cf-clearance "PASTE_VALUE" --user-agent "Mozilla/5.0 ...Chrome/137..."
+
+  The cookie is bound to that IP + User-Agent and expires when its own Expires
+  attribute says (visible right there in DevTools -- the zone sets it, commonly
+  30 min but it varies; `__cf_bm` is the ~30-min one). Re-grab it if you 403.
+
 After it runs it rebuilds that sport's categories so new colleges/birthplaces
 take effect. Treat this as backfill; we'll design a proper refresh cadence
 separately.
@@ -34,6 +48,7 @@ import random
 import re
 import sys
 import time
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup, Comment
@@ -81,6 +96,45 @@ class Jailed(Exception):
 
 
 _consecutive_403 = 0
+
+
+def _registrable_domain(url):
+    host = urlparse(url).netloc
+    return host[4:] if host.startswith("www.") else host
+
+
+def make_session(sport, cf_clearance=None, user_agent=None):
+    """Build the HTTP session.
+
+    With a browser-issued cf_clearance cookie we prefer curl_cffi (Chrome TLS
+    impersonation) -- Cloudflare also checks the TLS/JA3 fingerprint, and plain
+    requests has a Python fingerprint that strict zones (PFR) reject even when
+    the cookie + UA are correct. Falls back to requests if curl_cffi is absent.
+    """
+    sess, transport = None, "requests"
+    if cf_clearance:
+        try:
+            from curl_cffi import requests as cffi
+            sess = cffi.Session(impersonate="chrome")
+            transport = "curl_cffi (Chrome TLS impersonation)"
+        except ImportError:
+            log.warning("  curl_cffi not installed -> using plain requests; Cloudflare "
+                        "may still 403 the cookie on its TLS fingerprint alone "
+                        "(pip install curl_cffi to match Chrome)")
+    if sess is None:
+        sess = requests.Session()
+
+    sess.headers.update(HEADERS)
+    if user_agent:
+        sess.headers["User-Agent"] = user_agent
+    if cf_clearance:
+        reg = _registrable_domain(SR[sport][0])
+        sess.cookies.set("cf_clearance", cf_clearance, domain="." + reg, path="/")
+        log.info(f"  cf_clearance applied for .{reg} via {transport} "
+                 f"(IP+UA-bound; re-grab from the browser if it starts 403ing)")
+    if os.environ.get("SR_CONTACT"):
+        sess.headers["From"] = os.environ["SR_CONTACT"]
+    return sess
 
 
 def _cache_path(url):
@@ -213,7 +267,7 @@ def is_empty(val, field):
     return not val or str(val).strip() == ""
 
 
-def backfill(db, sport, fields, limit, delay, dry_run):
+def backfill(db, sport, fields, limit, delay, dry_run, cf_clearance=None, user_agent=None):
     migrate(db)
     conn = get_conn(db)
     c = conn.cursor()
@@ -228,10 +282,7 @@ def backfill(db, sport, fields, limit, delay, dry_run):
         (sport, limit)).fetchall()
     log.info(f"{len(rows)} {sport} players missing one of {fields} (limit {limit})")
 
-    session = requests.Session()
-    session.headers.update(HEADERS)
-    if os.environ.get("SR_CONTACT"):
-        session.headers["From"] = os.environ["SR_CONTACT"]
+    session = make_session(sport, cf_clearance, user_agent)
 
     rescache = {}
     filled = matched = 0
@@ -279,12 +330,22 @@ def main():
     ap.add_argument("--delay", type=float, default=5.0, help="Seconds between requests (>=4 recommended)")
     ap.add_argument("--db", default=DB_PATH)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--cf-clearance", help="cf_clearance cookie value from a browser that "
+                    "passed Cloudflare's challenge (for zones like PFR)")
+    ap.add_argument("--user-agent", help="Exact User-Agent of that browser "
+                    "(required with --cf-clearance; the cookie is bound to it)")
     args = ap.parse_args()
+
+    if args.cf_clearance and not args.user_agent:
+        ap.error("--cf-clearance requires --user-agent (the cookie is bound to the "
+                 "browser's exact User-Agent + IP; a mismatch will 403)")
 
     fields = [f.strip() for f in args.fields.split(",") if f.strip()]
     log.info(f"SR backfill: sport={args.sport} fields={fields} delay={args.delay}s "
-             f"limit={args.limit}{' DRY-RUN' if args.dry_run else ''}")
-    backfill(args.db, args.sport, fields, args.limit, args.delay, args.dry_run)
+             f"limit={args.limit}{' DRY-RUN' if args.dry_run else ''}"
+             f"{' +cf_clearance' if args.cf_clearance else ''}")
+    backfill(args.db, args.sport, fields, args.limit, args.delay, args.dry_run,
+             args.cf_clearance, args.user_agent)
 
 
 if __name__ == "__main__":
