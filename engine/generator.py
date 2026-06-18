@@ -414,6 +414,13 @@ def generate_chain(
         ph = ",".join("?" * len(requested))
         allowed_ids = {row[0] for row in
                        conn.execute(f"SELECT id FROM players WHERE sport IN ({ph})", requested)}
+        # A chain of N links needs N distinct players -- fail fast instead of
+        # letting the DFS churn through max_attempts on an impossible target.
+        if len(allowed_ids) < chain_length:
+            conn.close()
+            raise RuntimeError(
+                f"only {len(allowed_ids)} players for sport_mode={sport_mode!r}; "
+                f"need >= {chain_length} for a {chain_length}-link chain")
 
     # 2. Build intersection graph
     graph = build_intersection_map(conn, categories, min_shared=min_shared, allowed_ids=allowed_ids)

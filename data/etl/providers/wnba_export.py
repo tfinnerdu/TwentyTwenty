@@ -68,6 +68,10 @@ def export(out_dir: str, start: int = 1997, end: int = 2024, delay: float = 0.6,
                 log.warning(f"  WNBA {year}: {type(e).__name__} (attempt {attempt}/{retries})")
             time.sleep(3 * attempt)
         if not data:
+            if not pids:   # first season already unreachable -> bail instead of hours of retries
+                raise RuntimeError(
+                    f"stats.wnba.com unreachable (season {year} failed all {retries} retries -- "
+                    f"often blocked on corporate/campus networks); bailing to fixture")
             continue
         rs = data["resultSets"][0]
         idx = {h: i for i, h in enumerate(rs["headers"])}

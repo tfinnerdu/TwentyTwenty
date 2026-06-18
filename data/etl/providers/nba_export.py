@@ -60,6 +60,10 @@ def export(out_dir: str, start: int = 1996, end: int = 2024,
                             f"({type(e).__name__}); retrying...")
                 time.sleep(3 * attempt)
         if df is None:
+            if not pids:   # first season already unreachable -> host is blocked; don't burn hours
+                raise RuntimeError(
+                    f"stats.nba.com unreachable (season {ss} failed all {retries} retries -- "
+                    f"often blocked on corporate/campus networks); bailing to fixture")
             log.warning(f"  NBA {ss}: giving up after {retries} tries")
             continue
         for r in df.to_dict("records"):

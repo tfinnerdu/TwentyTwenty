@@ -124,6 +124,32 @@ def ncaaf_provider(args, tmp):
         return CuratedProvider("NCAAF")
 
 
+def generate_all_puzzles(db, length, days):
+    """Generate puzzles for every mode, sizing each sport's chain to how many
+    players it actually has (so a fixture-backed sport doesn't try -- and hang
+    on -- a 20-link chain it can't fill)."""
+    conn = get_conn(db)
+    counts = {s: n for s, n in conn.execute("SELECT sport, COUNT(*) FROM players GROUP BY sport")}
+    conn.close()
+    total = sum(counts.values())
+    log.info(f"Generating puzzles (up to length {length}, {days} day(s))...")
+    for sport in PUZZLE_SPORTS:
+        avail = total if sport == "ALL" else counts.get(sport, 0)
+        L = min(length, max(6, avail * 2 // 3))   # leave the DFS some slack
+        if avail < 8:
+            log.warning(f"  {sport}: only {avail} players -> skipping puzzles")
+            continue
+        if L < length:
+            log.info(f"  {sport}: {avail} players -> length {L}")
+        for i in range(days):
+            dt = date.today() + timedelta(days=i)
+            try:
+                generate_for_date(dt, seed=int(dt.strftime("%Y%m%d")) + len(sport), force=True,
+                                  sport_mode=sport, difficulty="any", chain_length=L)
+            except Exception as e:
+                log.warning(f"  {sport} {dt}: {e}")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Full real-data run across all sports")
     ap.add_argument("--db", default=DB_PATH)
@@ -141,9 +167,15 @@ def main():
                     help="Append to an existing DB instead of a clean rebuild")
     ap.add_argument("--refresh", action="store_true",
                     help="Force re-pull of cached exports (data/cache/exports/)")
+    ap.add_argument("--puzzles-only", action="store_true",
+                    help="Skip the data load; just (re)generate puzzles from the existing DB")
     args = ap.parse_args()
 
     load_dotenv(os.path.join(BASE_DIR, ".env"))
+    if args.puzzles_only:
+        generate_all_puzzles(args.db, args.length, args.days)
+        log.info("Done. Start the app to play.")
+        return
     if not args.keep_db:
         for f in (args.db, args.db + "-wal", args.db + "-shm"):
             if os.path.exists(f):
@@ -195,15 +227,7 @@ def main():
         log.info(f"    {s:6s} {n}")
 
     if not args.skip_puzzles:
-        log.info(f"Generating puzzles (length={args.length}, {args.days} day(s))...")
-        for sport in PUZZLE_SPORTS:
-            for i in range(args.days):
-                dt = date.today() + timedelta(days=i)
-                try:
-                    generate_for_date(dt, seed=int(dt.strftime("%Y%m%d")) + len(sport), force=True,
-                                      sport_mode=sport, difficulty="any", chain_length=args.length)
-                except Exception as e:
-                    log.warning(f"  {sport} {dt}: {e}")
+        generate_all_puzzles(args.db, args.length, args.days)
     log.info("=" * 48)
     log.info("Start the app:  FLASK_APP=api/app.py .venv/bin/flask run --host 0.0.0.0 --port 5902")
 
