@@ -120,19 +120,24 @@ def parse_player_history(soup, team_map):
 
     teams, years = [], set()
     for row in soup.select("table tbody tr"):
+        # Only count a row with a real pro team, so its season-year is one the
+        # player actually played. Otherwise a college/other table on the page
+        # leaks years (e.g. an LSU 1988 row adding a bogus 1980s decade).
+        tcell = row.select_one("[data-stat='team_id'] a, [data-stat='team_name_abbr'] a, "
+                               "[data-stat='team'] a, [data-stat='team_id'], [data-stat='team']")
+        if not tcell:
+            continue
+        abbr = tcell.get_text(strip=True).upper()
+        if not abbr or abbr in ("TOT", "2TM", "3TM", "4TM", "TM"):
+            continue
+        nick = team_map.get(abbr, abbr)            # fallback: the abbreviation
+        if nick and nick not in teams:
+            teams.append(nick)
         szn = row.select_one("[data-stat='season'], [data-stat='year_id']")
         if szn:
             m = re.search(r"(\d{4})", szn.get_text())
             if m:
                 years.add(int(m.group(1)))
-        tcell = row.select_one("[data-stat='team_id'] a, [data-stat='team_name_abbr'] a, "
-                               "[data-stat='team'] a, [data-stat='team_id'], [data-stat='team']")
-        if tcell:
-            abbr = tcell.get_text(strip=True).upper()
-            if abbr and abbr not in ("TOT", "2TM", "3TM", "4TM"):
-                nick = team_map.get(abbr, abbr)        # fallback: the abbreviation
-                if nick and nick not in teams:
-                    teams.append(nick)
     if teams:
         out["teams"] = teams
     if years:
