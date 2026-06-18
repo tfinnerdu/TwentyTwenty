@@ -27,6 +27,15 @@ import time
 log = logging.getLogger("nba_export")
 
 
+def _force_ipv4():
+    """stats.nba.com is dual-stack; on networks that advertise IPv6 but don't
+    route it, the HTTPS call hangs (while ping/DNS work fine over IPv4). Pin
+    urllib3 to IPv4 so requests don't black-hole on the AAAA record."""
+    import socket
+    import urllib3.util.connection as u3
+    u3.allowed_gai_family = lambda: socket.AF_INET
+
+
 def _season_str(y: int) -> str:
     return f"{y}-{str(y + 1)[-2:]}"
 
@@ -40,8 +49,11 @@ def _height_in(h) -> int:
 
 
 def export(out_dir: str, start: int = 1996, end: int = 2024,
-           enrich: bool = False, delay: float = 0.6, timeout: int = 90, retries: int = 4):
+           enrich: bool = False, delay: float = 0.6, timeout: int = 90,
+           retries: int = 4, force_ipv4: bool = True):
     from nba_api.stats.endpoints import leaguedashplayerstats
+    if force_ipv4:
+        _force_ipv4()
     os.makedirs(out_dir, exist_ok=True)
 
     seasons, pids = [], {}     # pid -> name
@@ -121,9 +133,11 @@ def main():
     ap.add_argument("--enrich", action="store_true", help="Add bio via CommonPlayerInfo (slow)")
     ap.add_argument("--timeout", type=int, default=90, help="Per-request timeout (stats.nba.com is slow)")
     ap.add_argument("--retries", type=int, default=4)
+    ap.add_argument("--no-ipv4", action="store_true", help="Don't force IPv4 (use if IPv6-only)")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-    p, s = export(args.out, args.start, args.end, args.enrich, timeout=args.timeout, retries=args.retries)
+    p, s = export(args.out, args.start, args.end, args.enrich, timeout=args.timeout,
+                  retries=args.retries, force_ipv4=not args.no_ipv4)
     print(f"Wrote {p} players, {s} player-seasons to {args.out}")
 
 

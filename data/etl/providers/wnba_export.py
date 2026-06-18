@@ -36,6 +36,14 @@ HEADERS = {
 }
 
 
+def _force_ipv4():
+    """Pin urllib3 to IPv4 -- stats.wnba.com is dual-stack and hangs over IPv6
+    on networks where the AAAA route is dead (ping/DNS still work)."""
+    import socket
+    import urllib3.util.connection as u3
+    u3.allowed_gai_family = lambda: socket.AF_INET
+
+
 def _params(season: int) -> dict:
     p = {k: "" for k in (
         "College", "Conference", "Country", "DateFrom", "DateTo", "Division",
@@ -50,8 +58,10 @@ def _params(season: int) -> dict:
 
 
 def export(out_dir: str, start: int = 1997, end: int = 2024, delay: float = 0.6,
-           timeout: int = 60, retries: int = 4):
+           timeout: int = 60, retries: int = 4, force_ipv4: bool = True):
     import requests
+    if force_ipv4:
+        _force_ipv4()
     os.makedirs(out_dir, exist_ok=True)
     seasons, pids = [], {}
 
@@ -108,9 +118,11 @@ def main():
     ap.add_argument("--out", default="./wnba_csv")
     ap.add_argument("--timeout", type=int, default=60)
     ap.add_argument("--retries", type=int, default=4)
+    ap.add_argument("--no-ipv4", action="store_true", help="Don't force IPv4 (use if IPv6-only)")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-    p, s = export(args.out, args.start, args.end, timeout=args.timeout, retries=args.retries)
+    p, s = export(args.out, args.start, args.end, timeout=args.timeout,
+                  retries=args.retries, force_ipv4=not args.no_ipv4)
     print(f"Wrote {p} players, {s} player-seasons to {args.out}")
 
 
