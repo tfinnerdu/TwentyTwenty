@@ -70,8 +70,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
                     datefmt="%H:%M:%S")
 log = logging.getLogger("backfill_sr")
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "nfl.db")
-CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "cache", "sr")
+DB_PATH = os.path.join(ROOT, "data", "nfl.db")
+CACHE_DIR = os.path.join(ROOT, "data", "cache", "sr")
 
 # (domain for relative links, search endpoint) per sport
 SR = {
