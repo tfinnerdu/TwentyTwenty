@@ -309,7 +309,9 @@ def parse_meta(soup):
 
     link = meta.select_one("a[href*='/colleges/'], a[href*='/friv/colleges'], a[href*='/schools/']")
     if link:
-        out["college"] = link.get_text(strip=True)
+        college = link.get_text(strip=True)
+        if college and college.lower() != "none":   # PFR renders "None" for no college
+            out["college"] = college
 
     pm = re.search(r"Position:\s*([A-Za-z]+(?:\s[A-Za-z]+)?)", full)
     if pm:
