@@ -81,6 +81,7 @@ HISTORY = {
         "domain": "https://www.pro-football-reference.com",
         "alpha":  "https://www.pro-football-reference.com/players/{letter}/",
         "cutoff": 1999, "team_map": NFLProvider.TEAM_MAP,
+        "upper_letters": True,     # PFR's index is /players/A/ ... (uppercase)
     },
 }
 
@@ -90,29 +91,38 @@ def _slug(s):
 
 
 def _sr_id_from_href(href):
-    """/players/j/jordami01.html -> jordami01"""
-    m = re.search(r"/([a-z0-9]+)\.html", href or "")
+    """/players/j/jordami01.html -> jordami01 ; /players/A/AbduKa00.html -> AbduKa00
+    (PFR player ids are mixed-case)."""
+    m = re.search(r"/([A-Za-z0-9.-]+)\.html$", href or "")
     return m.group(1) if m else ""
 
 
+PLAYER_HREF = re.compile(r"/players/[A-Za-z]/[A-Za-z0-9.'-]+\.html$")
+
+
 def parse_alpha_index(soup):
-    """Yield (name, href, year_min, year_max) for every player row on an SR
-    alphabetical index page. Defensive about the exact table id/columns."""
-    for row in soup.select("table tr"):
-        a = row.select_one("th[data-stat='player'] a, td[data-stat='player'] a, a[href*='/players/']")
-        if not a:
-            continue
-        href = a.get("href", "")
-        if "/players/" not in href or not href.endswith(".html"):
+    """Yield (name, href, year_min, year_max) for every player link on an SR
+    alphabetical index page. Finds player links anywhere on the page (some SR
+    sites don't lay the index out as one <table>), and pulls year_min/year_max
+    from the enclosing row when present."""
+    seen = set()
+    for a in soup.find_all("a", href=True):
+        href = a["href"]
+        if not PLAYER_HREF.search(href) or href in seen:
             continue
         name = a.get_text(strip=True)
-        ymin = row.select_one("[data-stat='year_min']")
-        ymax = row.select_one("[data-stat='year_max']")
-
-        def _yr(cell):
-            m = re.search(r"(\d{4})", cell.get_text() if cell else "")
-            return int(m.group(1)) if m else None
-        yield name, href, _yr(ymin), _yr(ymax)
+        if not name:
+            continue
+        seen.add(href)
+        ymin = ymax = None
+        row = a.find_parent("tr")
+        if row:
+            def _yr(sel):
+                cell = row.select_one(sel)
+                m = re.search(r"(\d{4})", cell.get_text()) if cell else None
+                return int(m.group(1)) if m else None
+            ymin, ymax = _yr("[data-stat='year_min']"), _yr("[data-stat='year_max']")
+        yield name, href, ymin, ymax
 
 
 def parse_player_history(soup, team_map):
@@ -156,7 +166,8 @@ def existing_name_slugs(conn, sport):
 def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
     """All players whose career reaches into the gap and aren't already loaded."""
     targets, seen = [], set()
-    for letter in LETTERS:
+    letters = LETTERS.upper() if cfg.get("upper_letters") else LETTERS
+    for letter in letters:
         url = cfg["alpha"].format(letter=letter)
         soup = get_page(session, url, delay)
         if soup is None:
