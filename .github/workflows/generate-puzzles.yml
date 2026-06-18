@@ -1,8 +1,10 @@
 name: Daily Puzzle Generator
 
 on:
-  schedule:
-    - cron: '0 3 * * *'   # 3am UTC daily
+  # Nightly schedule PAUSED -- this flow only generates NFL seed puzzles, which
+  # the new multi-sport pipeline supersedes. Re-enable by uncommenting below.
+  # schedule:
+  #   - cron: '0 3 * * *'   # 3am UTC daily
   workflow_dispatch:
     inputs:
       days:
