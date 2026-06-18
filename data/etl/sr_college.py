@@ -123,22 +123,36 @@ HONORS = {
         "skip": ("weekly", "monthly", "3star"),
     },
     "NFL": {
-        # pre-1999 history = award winners only (Pro Bowl / All-Pro / MVP / HOF,
-        # All-Pro back to 1922). create=True with the PRO parser (teams, .htm,
-        # mixed-case ids). Modern NFL keeps its full nflverse heft separately.
+        # pre-1999 history = award winners only. create=True with the PRO parser
+        # (teams, .htm, mixed-case ids). Modern NFL keeps its full nflverse heft.
         "hub": "https://www.pro-football-reference.com/awards/",
         "domain": "https://www.pro-football-reference.com",
-        # named awards live in /awards/; All-Pro teams (back to 1922) at
+        # named awards live in /awards/; All-Pro teams (back to 1920) at
         # /years/YYYY/allpro.htm -- match both. The hub links every leaf page, so
         # don't follow, and keep the per-year pages (they ARE the lists).
         "awards": ("/awards/", "/allpro.htm"), "players": "/players/",
         "create": True, "parser": "pro", "team_map": NFLProvider.TEAM_MAP,
         "follow": False, "skip_years": False,
-        # players/rookies of the week/month would flag thousands -- skip
-        "skip": ("of-the-week", "of-the-month"),
-        "honor_map": [("mvp", "nfl_mvps"), ("all-pro", "ap_all_pro"),
-                      ("allpro", "ap_all_pro"), ("super-bowl", "super_bowls")],
-        "default_honor": None,             # include all awards; flag specific ones
+        # weekly/monthly nods would flag thousands -- skip
+        "skip": ("of-the-week", "of-the-month", "rookies-of-the-month"),
+        # EXACT award slugs. Substring matching conflated 'super-bowl-mvp-award'
+        # with the season MVP (the 'mvp' key) and tagged it onto everyone. Season
+        # MVP / Player-of-the-Year awards -> nfl_mvps; per-year All-Pro teams ->
+        # ap_all_pro; Super Bowl MVP -> super_bowls. Every OTHER award page
+        # (OPoY/DPoY/ROY/Top-100/all-decade/Pro-Bowl/...) still creates its players,
+        # just without a marquee flag -- and NFL isn't pruned, so no keeper needed.
+        "honor_map": [],
+        "slug_honors": {
+            "ap-nfl-mvp-award": "nfl_mvps", "pfwa-nfl-mvp-award": "nfl_mvps",
+            "nfl-upi-mvp-award": "nfl_mvps", "newspaper-entertainment-mvp": "nfl_mvps",
+            "nfl-joe-f-carr-trophy": "nfl_mvps", "aafc-mvp-award": "nfl_mvps",
+            "bert-bell-award": "nfl_mvps", "sporting-news-player-of-the-year-award": "nfl_mvps",
+            "afl-ap-player-of-the-year-award": "nfl_mvps",
+            "afl-upi-player-of-the-year-award": "nfl_mvps",
+            "allpro": "ap_all_pro",
+            "super-bowl-mvp-award": "super_bowls",
+        },
+        "default_honor": None,
     },
 }
 
