@@ -24,16 +24,23 @@ Usage (run from a residential IP, slowly):
 Cloudflare "Just a moment..." challenge (e.g. pro-football-reference):
   A JS-less client can't pass it, so paste a clearance cookie from a browser
   that did. In Chrome: open the site, let the challenge pass, then DevTools ->
-  Application -> Cookies -> copy the `cf_clearance` value and your exact
-  User-Agent (DevTools -> Network -> any request -> Request Headers).
+  Application -> Cookies -> copy the `cf_clearance` value. The browser UA is
+  hardcoded (DEFAULT_BROWSER_UA, Chrome 149); set --user-agent / SR_CF_UA only
+  if yours differs -- the cookie is bound to it.
 
-    pip install curl_cffi    # so the TLS fingerprint matches Chrome too
-    python -m data.etl.backfill_sr --sport NFL --fields college \
-        --cf-clearance "PASTE_VALUE" --user-agent "Mozilla/5.0 ...Chrome/137..."
+  Keep the token in your gitignored .env (it's a secret -- never in source):
+    SR_CF_CLEARANCE=weE_qPdD...           # in .env, alongside CFBD_API_KEY
 
-  The cookie is bound to that IP + User-Agent and expires when its own Expires
-  attribute says (visible right there in DevTools -- the zone sets it, commonly
-  30 min but it varies; `__cf_bm` is the ~30-min one). Re-grab it if you 403.
+    pip install curl_cffi    # match Chrome's TLS fingerprint (recommended)
+    python -m data.etl.backfill_sr --sport NFL --fields college --limit 1 --dry-run
+    #  ^ preflight: "Matched 1" => cookie works; first-403 abort => re-grab it
+
+  The cookie is bound to that IP + User-Agent and expires per its own Expires
+  attribute (visible in DevTools; the zone sets it -- could be minutes or, as on
+  PFR, a year. `__cf_bm` is the separate ~30-min one). Two guards keep us from
+  hammering the site once the clearance dies: pass --cf-expires and the run
+  stops before that timestamp, and in cookie mode the FIRST 403 (clearance
+  revoked server-side) aborts immediately instead of firing cookie-less hits.
 
 After it runs it rebuilds that sport's categories so new colleges/birthplaces
 take effect. Treat this as backfill; we'll design a proper refresh cadence
@@ -48,12 +55,14 @@ import random
 import re
 import sys
 import time
+from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup, Comment
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, ROOT)
 from data.etl.schema import get_conn, migrate
 from data.etl.load import rebuild_categories
 
@@ -82,6 +91,13 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
+# Default UA for cf_clearance mode -- the clearance cookie is bound to the UA
+# that obtained it, so this must match the browser you grabbed it from. Hardcoded
+# for convenience (no need to pass --user-agent). If Chrome auto-updates and a
+# freshly grabbed cookie starts 403ing, bump this string (or pass --user-agent).
+DEFAULT_BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36")
+
 # text fields use '' as empty; these use 0
 NUMERIC_FIELDS = {"draft_year", "draft_round", "draft_pick", "birth_year",
                   "height_inches", "weight_lbs"}
@@ -96,6 +112,34 @@ class Jailed(Exception):
 
 
 _consecutive_403 = 0
+_max_403 = 3        # abort after this many consecutive 403s; tightened to 1 in cookie mode
+
+
+def _load_env_file(path):
+    """Minimal .env loader (same pattern as run_full) so secrets like
+    SR_CF_CLEARANCE live in the gitignored .env, never in source. Doesn't
+    override real environment variables."""
+    if not os.path.exists(path):
+        return
+    for line in open(path, encoding="utf-8"):
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+def _parse_expiry(s):
+    """Parse the cf_clearance Expires value from DevTools (ISO 8601, e.g.
+    '2027-06-18T15:49:18.188Z') into an aware datetime, or None if unparseable."""
+    if not s:
+        return None
+    try:
+        return datetime.fromisoformat(s.strip().replace("Z", "+00:00"))
+    except ValueError:
+        log.warning(f"  couldn't parse --cf-expires {s!r}; expiry auto-stop disabled "
+                    f"(the 403 tripwire still protects you)")
+        return None
 
 
 def _registrable_domain(url):
@@ -115,8 +159,17 @@ def make_session(sport, cf_clearance=None, user_agent=None):
     if cf_clearance:
         try:
             from curl_cffi import requests as cffi
-            sess = cffi.Session(impersonate="chrome")
-            transport = "curl_cffi (Chrome TLS impersonation)"
+            impersonate = "chrome"
+            try:    # pin to the newest Chrome profile available -> closest JA3 to a real browser
+                from curl_cffi.requests import BrowserType
+                chromes = sorted((t for t in dir(BrowserType) if re.fullmatch(r"chrome\d+", t)),
+                                 key=lambda s: int(s[6:]))
+                if chromes:
+                    impersonate = chromes[-1]
+            except Exception:
+                pass
+            sess = cffi.Session(impersonate=impersonate)
+            transport = f"curl_cffi ({impersonate} TLS impersonation)"
         except ImportError:
             log.warning("  curl_cffi not installed -> using plain requests; Cloudflare "
                         "may still 403 the cookie on its TLS fingerprint alone "
@@ -125,13 +178,16 @@ def make_session(sport, cf_clearance=None, user_agent=None):
         sess = requests.Session()
 
     sess.headers.update(HEADERS)
-    if user_agent:
-        sess.headers["User-Agent"] = user_agent
+    ua = user_agent or (DEFAULT_BROWSER_UA if cf_clearance else None)
+    if ua:
+        sess.headers["User-Agent"] = ua
     if cf_clearance:
         reg = _registrable_domain(SR[sport][0])
         sess.cookies.set("cf_clearance", cf_clearance, domain="." + reg, path="/")
         log.info(f"  cf_clearance applied for .{reg} via {transport} "
                  f"(IP+UA-bound; re-grab from the browser if it starts 403ing)")
+        log.info(f"  User-Agent: {ua} "
+                 f"({'from --user-agent' if user_agent else 'built-in default'})")
     if os.environ.get("SR_CONTACT"):
         sess.headers["From"] = os.environ["SR_CONTACT"]
     return sess
@@ -159,8 +215,12 @@ def fetch_raw(session, url, delay):
 
     if r.status_code == 403:
         _consecutive_403 += 1
-        log.warning(f"403 Forbidden ({_consecutive_403}/3) -- session may be jailed")
-        if _consecutive_403 >= 3:
+        log.warning(f"403 Forbidden ({_consecutive_403}/{_max_403}) -- session may be jailed")
+        if _consecutive_403 >= _max_403:
+            if _max_403 == 1:
+                raise Jailed("cf_clearance rejected (expired, IP changed, or never accepted "
+                             "by Cloudflare) -- stopping on the first 403 so we don't keep "
+                             "hitting the site cookie-less. Re-grab cf_clearance + UA.")
             raise Jailed("3 consecutive 403s -- Sports-Reference jail. Stop and retry "
                          "later (jail can last up to 24h) from a residential IP.")
         return None, r.url
@@ -267,7 +327,20 @@ def is_empty(val, field):
     return not val or str(val).strip() == ""
 
 
-def backfill(db, sport, fields, limit, delay, dry_run, cf_clearance=None, user_agent=None):
+def backfill(db, sport, fields, limit, delay, dry_run, cf_clearance=None,
+             user_agent=None, cf_expires=None):
+    global _consecutive_403, _max_403
+    _consecutive_403 = 0
+    # With a clearance cookie, a 403 means the cookie just died -- bail on the
+    # first one rather than firing off three cookie-less requests that flag us.
+    _max_403 = 1 if cf_clearance else 3
+
+    expiry = _parse_expiry(cf_expires)
+    if expiry and datetime.now(timezone.utc) >= expiry:
+        log.error(f"cf_clearance already expired (Expires {expiry.isoformat()}); "
+                  f"re-grab it from the browser before running.")
+        return
+
     migrate(db)
     conn = get_conn(db)
     c = conn.cursor()
@@ -288,6 +361,10 @@ def backfill(db, sport, fields, limit, delay, dry_run, cf_clearance=None, user_a
     filled = matched = 0
     try:
         for row in rows:
+            if expiry and datetime.now(timezone.utc) >= expiry:
+                log.warning("cf_clearance Expires reached -- stopping before any "
+                            "cookie-less request (re-grab the cookie to continue).")
+                break
             name = row["name"]
             url = resolve_url(session, sport, name, delay, rescache)
             if not url:
@@ -330,22 +407,27 @@ def main():
     ap.add_argument("--delay", type=float, default=5.0, help="Seconds between requests (>=4 recommended)")
     ap.add_argument("--db", default=DB_PATH)
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--cf-clearance", help="cf_clearance cookie value from a browser that "
-                    "passed Cloudflare's challenge (for zones like PFR)")
-    ap.add_argument("--user-agent", help="Exact User-Agent of that browser "
-                    "(required with --cf-clearance; the cookie is bound to it)")
+    ap.add_argument("--cf-clearance", help="cf_clearance cookie value (overrides "
+                    "SR_CF_CLEARANCE from .env, the recommended place to keep it)")
+    ap.add_argument("--user-agent", help="Exact UA the cookie was issued to (overrides "
+                    "SR_CF_UA / the built-in default; only needed if your Chrome differs)")
+    ap.add_argument("--cf-expires", help="cf_clearance Expires value from DevTools "
+                    "(e.g. 2027-06-18T15:49:18Z); the run won't make requests past it")
     args = ap.parse_args()
 
-    if args.cf_clearance and not args.user_agent:
-        ap.error("--cf-clearance requires --user-agent (the cookie is bound to the "
-                 "browser's exact User-Agent + IP; a mismatch will 403)")
+    # Secrets live in the gitignored .env, never in source. Flag > env > default.
+    _load_env_file(os.path.join(ROOT, ".env"))
+    cf_clearance = args.cf_clearance or os.environ.get("SR_CF_CLEARANCE")
+    user_agent = args.user_agent or os.environ.get("SR_CF_UA")
+    if not args.cf_clearance and cf_clearance:
+        log.info("  cf_clearance loaded from SR_CF_CLEARANCE (.env)")
 
     fields = [f.strip() for f in args.fields.split(",") if f.strip()]
     log.info(f"SR backfill: sport={args.sport} fields={fields} delay={args.delay}s "
              f"limit={args.limit}{' DRY-RUN' if args.dry_run else ''}"
-             f"{' +cf_clearance' if args.cf_clearance else ''}")
+             f"{' +cf_clearance' if cf_clearance else ''}")
     backfill(args.db, args.sport, fields, args.limit, args.delay, args.dry_run,
-             args.cf_clearance, args.user_agent)
+             cf_clearance, user_agent, args.cf_expires)
 
 
 if __name__ == "__main__":
