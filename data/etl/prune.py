@@ -1,8 +1,10 @@
 """
 data/etl/prune.py
 =================
-Trim the bulk pools to notable players, leaving every other source (curated,
-sr_history, sr_college) untouched.
+Trim the bulk pools to notable players, leaving the curated / sr_college / (for
+most sports) sr_history rows untouched. NHL is the exception: it also sweeps the
+retired sr_history alpha-crawl source, so any stale rows it left are held to the
+same bar instead of being stuck (sr_history players are otherwise prune-immune).
 
 Keep a bulk player if ANY of:
   - they carry an honor (college: an SR award flagged by sr_college; WNBA/NHL:
@@ -12,7 +14,7 @@ Keep a bulk player if ANY of:
 College is awards-only by design ("prune anyone not on an award list"), so RUN
 sr_college FIRST -- otherwise nothing is flagged and there'd be nothing to keep
 (guarded below). NHL keeps award-winners OR a 50-game season, so the NHL awards
-flag (sr_awards) should run first too if you want the early-era legends kept.
+flag (sr_college --sport NHL) should run first too to keep the early-era legends.
 
     python -m data.etl.prune --sport WNBA              # dry run: shows the cut
     python -m data.etl.prune --sport WNBA --apply
@@ -50,7 +52,11 @@ PRUNE = {
     "WNBA":  {"source": "wnba_csv",
               "honors": ["wnba_championships", "wnba_mvps", "wnba_finals_mvps", "wnba_all_star"],
               "min_season_games": 25},
-    "NHL":   {"source": "nhl_api",
+    # nhl_api is the modern bulk; sr_history is the retired alpha-crawl source --
+    # sweep any stale rows it left so they meet the same bar. sr_college award
+    # legends and curated rows are deliberately omitted (= protected): every
+    # sr_college NHL row is honored by construction, so it'd survive anyway.
+    "NHL":   {"source": ["nhl_api", "sr_history"],
               "honors": ["nhl_championships", "nhl_mvps", "nhl_all_star"],
               "min_season_games": 50},                        # award OR best season >= 50 G
 }
@@ -87,8 +93,10 @@ def prune(sport, db, apply, min_games=None, force=False):
                                f"{sport.lower()}_seasons.csv")
     keep |= _games_keep(conn, sport, min_games, seasons_csv)
 
+    sources = cfg["source"] if isinstance(cfg["source"], (list, tuple)) else [cfg["source"]]
+    qs = ",".join("?" for _ in sources)
     bulk = [r[0] for r in conn.execute(
-        "SELECT id FROM players WHERE sport=? AND data_source=?", (sport, cfg["source"]))]
+        f"SELECT id FROM players WHERE sport=? AND data_source IN ({qs})", (sport, *sources))]
     to_delete = [pid for pid in bulk if pid not in keep]
     kept = len(bulk) - len(to_delete)
     crit = f"  best-season>={min_games}G" if min_games else ""
