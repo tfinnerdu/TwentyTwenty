@@ -82,6 +82,7 @@ SR = {
     "WNBA": ("https://www.basketball-reference.com",  "https://www.basketball-reference.com/wnba/search/search.fcgi"),
     "NCAAF":("https://www.sports-reference.com",      "https://www.sports-reference.com/cfb/search/search.fcgi"),
     "NCAAB":("https://www.sports-reference.com",      "https://www.sports-reference.com/cbb/search/search.fcgi"),
+    "NCAAW":("https://www.sports-reference.com",      "https://www.sports-reference.com/cbb/search/search.fcgi"),
 }
 
 HEADERS = {
