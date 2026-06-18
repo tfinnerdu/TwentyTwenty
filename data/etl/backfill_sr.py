@@ -147,6 +147,23 @@ def _registrable_domain(url):
     return host[4:] if host.startswith("www.") else host
 
 
+def _client_hints(ua):
+    """Build sec-ch-ua client-hint headers consistent with the UA's Chrome major
+    version. A UA-vs-sec-ch-ua version mismatch is a classic bot tell that strict
+    Cloudflare zones (PFR) flag, so these must track the UA we actually send."""
+    m = re.search(r"Chrome/(\d+)", ua or "")
+    if not m:
+        return {}
+    v = m.group(1)
+    plat = '"Windows"' if "Windows" in (ua or "") else (
+        '"macOS"' if "Mac OS" in (ua or "") else '"Linux"')
+    return {
+        "sec-ch-ua": f'"Chromium";v="{v}", "Google Chrome";v="{v}", "Not?A_Brand";v="24"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": plat,
+    }
+
+
 def make_session(sport, cf_clearance=None, user_agent=None):
     """Build the HTTP session.
 
@@ -182,6 +199,9 @@ def make_session(sport, cf_clearance=None, user_agent=None):
     if ua:
         sess.headers["User-Agent"] = ua
     if cf_clearance:
+        # keep client hints consistent with the UA version we send (curl_cffi
+        # would otherwise advertise its own Chrome version -> a tell-tale mismatch)
+        sess.headers.update(_client_hints(ua))
         reg = _registrable_domain(SR[sport][0])
         sess.cookies.set("cf_clearance", cf_clearance, domain="." + reg, path="/")
         log.info(f"  cf_clearance applied for .{reg} via {transport} "
