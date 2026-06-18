@@ -44,7 +44,7 @@ sys.path.insert(0, ROOT)
 from data.etl.backfill_sr import (make_session, get_page, _soup, parse_meta, Jailed,
                                   _load_env_file, _cell)
 from data.etl.providers.base import upsert_players
-from data.etl.providers.csv_season import (NBAProvider, WNBAProvider, NHLProvider, NFLProvider)
+from data.etl.providers.csv_season import (NBAProvider, WNBAProvider, NHLProvider)
 from data.etl.load import derive_fields, rebuild_categories
 from data.etl.schema import get_conn, migrate
 
@@ -77,12 +77,8 @@ HISTORY = {
         # the name-dedup drop the ~4.2k already loaded. Tune with --cutoff.
         "cutoff": 2026, "team_map": NHLProvider.TEAM_MAP,
     },
-    "NFL": {
-        "domain": "https://www.pro-football-reference.com",
-        "alpha":  "https://www.pro-football-reference.com/players/{letter}/",
-        "cutoff": 1999, "team_map": NFLProvider.TEAM_MAP,
-        "upper_letters": True,     # PFR's index is /players/A/ ... (uppercase)
-    },
+    # NFL history is handled by the AWARDS crawl (sr_college --sport NFL), not the
+    # alpha index -- pulling all ~15k pre-1999 players isn't worth it. See sr_college.
 }
 
 
