@@ -73,7 +73,9 @@ HISTORY = {
     "NHL": {
         "domain": "https://www.hockey-reference.com",
         "alpha":  "https://www.hockey-reference.com/players/{letter}/",
-        "cutoff": 1918, "team_map": NHLProvider.TEAM_MAP,   # fills the deep/early gaps
+        # NHL is small (~7.5k all-time); pull everything the API missed and let
+        # the name-dedup drop the ~4.2k already loaded. Tune with --cutoff.
+        "cutoff": 2026, "team_map": NHLProvider.TEAM_MAP,
     },
     "NFL": {
         "domain": "https://www.pro-football-reference.com",
@@ -151,9 +153,8 @@ def existing_name_slugs(conn, sport):
         "SELECT name FROM players WHERE sport=?", (sport,)) if r[0]}
 
 
-def enumerate_targets(session, sport, cfg, delay, have_slugs):
+def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
     """All players whose career reaches into the gap and aren't already loaded."""
-    cutoff = cfg["cutoff"]
     targets, seen = [], set()
     for letter in LETTERS:
         url = cfg["alpha"].format(letter=letter)
@@ -179,16 +180,17 @@ def enumerate_targets(session, sport, cfg, delay, have_slugs):
     return targets
 
 
-def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
+def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=None):
     cfg = HISTORY[sport]
+    cutoff = cutoff or cfg["cutoff"]
     migrate(db)
     conn = get_conn(db)
     have = existing_name_slugs(conn, sport)
     session = make_session(sport, cf_clearance, user_agent)
 
-    log.info(f"[{sport}] enumerating SR alphabetical index (gap = pre-{cfg['cutoff']})...")
+    log.info(f"[{sport}] enumerating SR alphabetical index (gap = started before {cutoff})...")
     try:
-        targets = enumerate_targets(session, sport, cfg, delay, have)
+        targets = enumerate_targets(session, sport, cfg, delay, have, cutoff)
     except Jailed as e:
         log.error(f"[{sport}] {e}")
         log.error(f"[{sport}] can't enumerate without SR access -- set SR_CF_CLEARANCE "
@@ -249,7 +251,7 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
         derive_fields(conn)
         rebuild_categories(conn, sport)       # so the partial data is usable now
     cur.execute("UPDATE etl_runs SET players_added=?, players_updated=?, status='ok', notes=? WHERE id=?",
-                (added, updated, stopped or f"history pre-{cfg['cutoff']} ({parsed} parsed)", run_id))
+                (added, updated, stopped or f"history pre-{cutoff} ({parsed} parsed)", run_id))
     conn.commit()
     conn.close()
     log.info(f"[{sport}] history: +{added} new, {updated} updated"
@@ -265,6 +267,9 @@ def main():
     ap.add_argument("--dry-run", action="store_true", help="List who'd be pulled; fetch nothing extra")
     ap.add_argument("--cf-clearance", help="overrides SR_CF_CLEARANCE from .env")
     ap.add_argument("--user-agent")
+    ap.add_argument("--cutoff", type=int, default=None,
+                    help="Override the per-sport cutoff: pull players who started before "
+                         "this year (and aren't already loaded). Higher = more history.")
     args = ap.parse_args()
 
     _load_env_file(os.path.join(ROOT, ".env"))
@@ -276,7 +281,7 @@ def main():
         if sp not in HISTORY:
             log.error(f"Unknown/unsupported sport {sp!r}; known: {', '.join(HISTORY)} (or ALL)")
             continue
-        crawl(sp, args.db, args.limit, args.delay, args.dry_run, cf, ua)
+        crawl(sp, args.db, args.limit, args.delay, args.dry_run, cf, ua, args.cutoff)
 
 
 if __name__ == "__main__":
