@@ -61,7 +61,7 @@ HONORS = {
         "domain": "https://www.sports-reference.com",
         "awards": "/cfb/awards/", "players": "/cfb/players/", "create": True,
         "honor_map": [("heisman", "ncaaf_heisman"), ("all-america", "ncaaf_all_american")],
-        "default_honor": None,
+        "default_honor": "ncaaf_all_american",   # keep every award-list player (incl. conference)
     },
     "NCAAB": {
         "hub": "https://www.sports-reference.com/cbb/awards/",
@@ -70,7 +70,7 @@ HONORS = {
         "honor_map": [("all-america", "ncaab_all_american"),
                       ("poy", "ncaab_player_of_year"), ("naismith", "ncaab_player_of_year"),
                       ("wooden", "ncaab_player_of_year")],
-        "default_honor": None,
+        "default_honor": "ncaab_all_american",   # keep every award-list player
     },
     "NCAAW": {
         "hub": "https://www.sports-reference.com/cbb/awards/",
@@ -78,7 +78,7 @@ HONORS = {
         "awards": "/cbb/awards/women/", "players": "/cbb/players/", "create": True,
         "honor_map": [("all-america", "ncaab_all_american"),
                       ("poy", "ncaab_player_of_year"), ("mop", "ncaab_player_of_year")],
-        "default_honor": None,
+        "default_honor": "ncaab_all_american",   # keep every award-list player
     },
     "NHL": {
         "hub": "https://www.hockey-reference.com/awards/",
