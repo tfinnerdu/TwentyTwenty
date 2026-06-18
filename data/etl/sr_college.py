@@ -37,7 +37,7 @@ from urllib.parse import urljoin
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, ROOT)
 
-from data.etl.backfill_sr import make_session, get_page, parse_meta, Jailed, _load_env_file
+from data.etl.backfill_sr import make_session, get_page, parse_meta, Jailed, _load_env_file, _cell
 from data.etl.providers.base import upsert_players
 from data.etl.load import derive_fields, rebuild_categories
 from data.etl.schema import get_conn, migrate
@@ -143,23 +143,18 @@ def collect_players(session, pages, cfg, delay):
 
 def parse_college_player(soup, sport):
     """Bio + schools + active decades from an SR college player page."""
-    out = dict(parse_meta(soup))           # position / birth / draft / ht / wt (no /colleges/ link here)
+    out = dict(parse_meta(soup))           # position / birth / ht / wt (no /colleges/ link here)
     schools, years = [], set()
     for row in soup.select("table tbody tr"):
-        scell = row.select_one("[data-stat='school_name'] a, [data-stat='team_name'] a, "
-                               "[data-stat='school_name'], [data-stat='team_name']")
-        if not scell:
-            continue
-        school = scell.get_text(strip=True)
-        if not school or school.upper() in ("TOT", "OVERALL"):
+        # college player pages put the SCHOOL in team_name_abbr ("Iowa", "Florida")
+        school = _cell(row, "team_name_abbr", "school_name", "team_name")
+        if not school or school.upper() in ("TOT", "OVERALL", "CAREER"):
             continue
         if school not in schools:
             schools.append(school)
-        szn = row.select_one("[data-stat='season'], [data-stat='year_id']")
-        if szn:
-            m = re.search(r"(\d{4})", szn.get_text())
-            if m:
-                years.add(int(m.group(1)))
+        m = re.search(r"(\d{4})", _cell(row, "year_id", "season", "year"))
+        if m:
+            years.add(int(m.group(1)))
     if schools:
         out["teams"] = schools
         out["college"] = schools[0]

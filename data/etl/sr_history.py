@@ -42,7 +42,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, ROOT)
 
 from data.etl.backfill_sr import (make_session, get_page, _soup, parse_meta, Jailed,
-                                  _load_env_file)
+                                  _load_env_file, _cell)
 from data.etl.providers.base import upsert_players
 from data.etl.providers.csv_season import (NBAProvider, WNBAProvider, NHLProvider, NFLProvider)
 from data.etl.load import derive_fields, rebuild_categories
@@ -97,14 +97,15 @@ def _sr_id_from_href(href):
     return m.group(1) if m else ""
 
 
-PLAYER_HREF = re.compile(r"/players/[A-Za-z]/[A-Za-z0-9.'-]+\.html$")
+# player page: lowercase ids end .html; PFR ids are mixed-case and end .htm
+PLAYER_HREF = re.compile(r"/players/[A-Za-z]/[A-Za-z0-9.'-]+\.html?$")
 
 
 def parse_alpha_index(soup):
     """Yield (name, href, year_min, year_max) for every player link on an SR
-    alphabetical index page. Finds player links anywhere on the page (some SR
-    sites don't lay the index out as one <table>), and pulls year_min/year_max
-    from the enclosing row when present."""
+    alphabetical index page. basketball-reference lays it out as a <table> with
+    year_min/year_max cells; hockey-/wnba-/pro-football-reference use <p> tags
+    with the years as trailing text -- handle both."""
     seen = set()
     for a in soup.find_all("a", href=True):
         href = a["href"]
@@ -116,12 +117,16 @@ def parse_alpha_index(soup):
         seen.add(href)
         ymin = ymax = None
         row = a.find_parent("tr")
-        if row:
-            def _yr(sel):
-                cell = row.select_one(sel)
-                m = re.search(r"(\d{4})", cell.get_text()) if cell else None
-                return int(m.group(1)) if m else None
-            ymin, ymax = _yr("[data-stat='year_min']"), _yr("[data-stat='year_max']")
+        if row:                                  # table style (basketball-reference)
+            mn = re.search(r"(\d{4})", _cell(row, "year_min"))
+            mx = re.search(r"(\d{4})", _cell(row, "year_max"))
+            ymin = int(mn.group(1)) if mn else None
+            ymax = int(mx.group(1)) if mx else None
+        if ymin is None:                         # <p> style: years in trailing text
+            p = a.find_parent(["p", "li", "div"])
+            yrs = re.findall(r"(?:19|20)\d{2}", p.get_text()) if p else []
+            if yrs:
+                ymin, ymax = int(min(yrs)), int(max(yrs))
         yield name, href, ymin, ymax
 
 
@@ -133,23 +138,18 @@ def parse_player_history(soup, team_map):
     teams, years = [], set()
     for row in soup.select("table tbody tr"):
         # Only count a row with a real pro team, so its season-year is one the
-        # player actually played. Otherwise a college/other table on the page
-        # leaks years (e.g. an LSU 1988 row adding a bogus 1980s decade).
-        tcell = row.select_one("[data-stat='team_id'] a, [data-stat='team_name_abbr'] a, "
-                               "[data-stat='team'] a, [data-stat='team_id'], [data-stat='team']")
-        if not tcell:
-            continue
-        abbr = tcell.get_text(strip=True).upper()
+        # player actually played (a college/other table on the page would
+        # otherwise leak years -- e.g. an LSU 1988 row adding a bogus 1980s).
+        # Team data-stat varies: team_name_abbr (NHL/NFL), team (WNBA), team_id.
+        abbr = _cell(row, "team_name_abbr", "team_id", "team").upper()
         if not abbr or abbr in ("TOT", "2TM", "3TM", "4TM", "TM"):
             continue
         nick = team_map.get(abbr, abbr)            # fallback: the abbreviation
         if nick and nick not in teams:
             teams.append(nick)
-        szn = row.select_one("[data-stat='season'], [data-stat='year_id']")
-        if szn:
-            m = re.search(r"(\d{4})", szn.get_text())
-            if m:
-                years.add(int(m.group(1)))
+        m = re.search(r"(\d{4})", _cell(row, "season", "year_id", "year"))  # season varies too
+        if m:
+            years.add(int(m.group(1)))
     if teams:
         out["teams"] = teams
     if years:

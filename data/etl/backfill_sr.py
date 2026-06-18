@@ -299,6 +299,18 @@ def resolve_url(session, sport, name, delay, rescache):
     return url
 
 
+def _cell(row, *stats):
+    """First non-empty text among a row's data-stat cells (handles SR's varying
+    column names: season|year_id|year, team_name_abbr|team_id|team|school_name)."""
+    for s in stats:
+        c = row.select_one(f"[data-stat='{s}']")
+        if c:
+            t = c.get_text(strip=True)
+            if t:
+                return t
+    return ""
+
+
 def parse_meta(soup):
     """Pull bio fields from the SR meta/header block (defensive, best-effort)."""
     out = {}
