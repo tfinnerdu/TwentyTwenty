@@ -24,7 +24,7 @@ from typing import Iterable
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 from data.etl.schema import get_conn, migrate
-from data.etl.load import derive_fields, rebuild_categories, record_load_run
+from data.etl.load import derive_fields, rebuild_categories
 
 log = logging.getLogger(__name__)
 
@@ -158,7 +158,10 @@ def run_pipeline(provider: Provider, db_path: str, skip_load: bool = False,
     if not skip_load:
         derive_fields(conn)
         rebuild_categories(conn, provider.sport)
-        record_load_run(conn, provider.sport, f"provider {provider.source_name}")
+        # NB: the provider's own etl_runs row (inserted above, updated with the
+        # real added/updated counts) is the load record. Don't also call
+        # record_load_run here -- that wrote a second, zero-count 'load' row per
+        # sport that then masked the real one in the "Stats as of" footer.
 
     conn.close()
     return {"sport": provider.sport, "source": provider.source_name,

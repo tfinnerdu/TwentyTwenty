@@ -240,18 +240,26 @@ def get_data_vintage(conn, sport='ALL'):
     """
     c = conn.cursor()
     if sport == 'ALL':
+        # One row per sport: its most recent successful load that actually
+        # ingested players. Filtering out zero-count rows (legacy 'load'
+        # markers carry no counts) means MAX(run_at) lands on the real load,
+        # and dropping the old LIMIT lets every sport show in the footer.
         c.execute("""
-            SELECT sport, run_at, players_added + players_updated as total
+            SELECT sport, MAX(run_at) AS run_at,
+                   COALESCE(players_added,0) + COALESCE(players_updated,0) AS total
             FROM etl_runs
             WHERE status = 'ok'
+              AND COALESCE(players_added,0) + COALESCE(players_updated,0) > 0
+            GROUP BY sport
             ORDER BY run_at DESC
-            LIMIT 5
         """)
     else:
         c.execute("""
-            SELECT sport, run_at, players_added + players_updated as total
+            SELECT sport, run_at,
+                   COALESCE(players_added,0) + COALESCE(players_updated,0) AS total
             FROM etl_runs
             WHERE status = 'ok' AND (sport = ? OR sport = 'ALL')
+              AND COALESCE(players_added,0) + COALESCE(players_updated,0) > 0
             ORDER BY run_at DESC
             LIMIT 1
         """, (sport,))
