@@ -40,6 +40,8 @@ import os
 import re
 import sys
 
+from bs4 import BeautifulSoup, Comment
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, ROOT)
 
@@ -74,12 +76,18 @@ HISTORY = {
         # who debuted before 1999 and those who debuted after 2020 (the recent
         # rookies stats.nba.com would supply but is network-blocked).
         "cutoff": 1999, "recent_after": 2020, "team_map": NBAProvider.TEAM_MAP,
+        "stat_table": "per_game_stats",
+        "stat_cols": {"pts_per_g": "nba_points", "trb_per_g": "nba_rebounds",
+                      "ast_per_g": "nba_assists", "games": "nba_games"},
     },
     "WNBA": {
         "domain": "https://www.basketball-reference.com",
         "alpha":  "https://www.basketball-reference.com/wnba/players/{letter}/",
         "players": "/wnba/players/",
         "cutoff": 2003, "team_map": WNBAProvider.TEAM_MAP,
+        "stat_table": "per_game0",
+        "stat_cols": {"pts_per_g": "wnba_points", "trb_per_g": "wnba_rebounds",
+                      "ast_per_g": "wnba_assists", "g": "wnba_games"},
     },
     # NHL and NFL history are handled by the AWARDS crawl (sr_college), not the
     # alpha index -- an all-time crawl is thousands of non-notable names, and rows
@@ -146,9 +154,61 @@ def parse_alpha_index(soup):
         yield name, href, ymin, ymax
 
 
-def parse_player_history(soup, team_map):
+def _find_table(soup, table_id):
+    """The table with this id, looking inside HTML comments too -- SR hides most
+    secondary stat tables in <!-- --> blocks."""
+    t = soup.find("table", id=table_id)
+    if t:
+        return t
+    for c in soup.find_all(string=lambda x: isinstance(x, Comment)):
+        if f'id="{table_id}"' in c:
+            inner = BeautifulSoup(c, "html.parser").find("table", id=table_id)
+            if inner:
+                return inner
+    return None
+
+
+def _career_stats(soup, cfg):
+    """Career line(s) from the player page's stat-table footer(s), mapped to columns
+    via cfg. Single-table sports set stat_table + stat_cols (NBA per_game_stats /
+    WNBA per_game0 / NHL player_stats / cbb players_per_game); the football pass/
+    rush/rec split sets stat_tables=[(table_id, {data_stat: col}), ...]. Per-game
+    data-stats (*_per_g) stay float; every other total is an int. cfg['stat_league']
+    pins the footer row so an NHL player's WHA career line isn't picked instead."""
+    specs = cfg.get("stat_tables")
+    if not specs and cfg.get("stat_table"):
+        specs = [(cfg["stat_table"], cfg["stat_cols"])]
+    if not specs:
+        return {}
+    league = cfg.get("stat_league")
+    out = {}
+    for tid, cols in specs:
+        t = _find_table(soup, tid)
+        foot = t.find("tfoot") if t else None
+        if not foot:
+            continue
+        for tr in foot.find_all("tr"):
+            low = _cell(tr, "year_id", "year", "season").lower()
+            if "avg" in low or (league and league.lower() not in low):
+                continue                              # skip "82 Game Avg" / WHA rows
+            if "career" not in low and not re.search(r"\d+\s*yrs?\b", low):
+                continue
+            for ds, col in cols.items():
+                raw = _cell(tr, ds).replace(",", "")
+                if not raw:
+                    continue
+                try:
+                    out[col] = float(raw) if ds.endswith("_per_g") else int(float(raw))
+                except ValueError:
+                    pass
+            break
+    return out
+
+
+def parse_player_history(soup, team_map, cfg=None):
     """Bio (tested parse_meta) + teams + active decades pulled from the player's
-    season table. Returns a payload dict (sans sport/sr_id/name)."""
+    season table, plus career stat lines when cfg carries a stat_table/stat_cols.
+    Returns a payload dict (sans sport/sr_id/name)."""
     out = dict(parse_meta(soup))   # college / position / birth / draft / ht / wt
 
     teams, years = [], set()
@@ -171,6 +231,8 @@ def parse_player_history(soup, team_map):
     if years:
         out["active_decades"] = sorted({f"{(y // 10) * 10}s" for y in years})
         out["debut_year"], out["final_year"] = min(years), max(years)
+    if cfg:
+        out.update(_career_stats(soup, cfg))   # career PPG/RPG/.../goals/games
     return out
 
 
@@ -266,7 +328,7 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=Non
             soup = get_page(session, url, delay)
             if soup is None:
                 continue
-            rec = parse_player_history(soup, cfg["team_map"])
+            rec = parse_player_history(soup, cfg["team_map"], cfg)
             rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{srid}", "name": name})
             batch.append(rec)
             if len(batch) >= CHECKPOINT:

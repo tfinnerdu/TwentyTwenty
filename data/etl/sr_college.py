@@ -65,6 +65,11 @@ HONORS = {
         "hub": "https://www.sports-reference.com/cfb/awards/",
         "domain": "https://www.sports-reference.com",
         "awards": "/cfb/awards/", "players": "/cfb/players/", "create": True,
+        "stat_tables": [
+            ("passing_standard", {"pass_yds": "ncaaf_pass_yds"}),
+            ("rushing_standard", {"rush_yds": "ncaaf_rush_yds", "rec_yds": "ncaaf_rec_yds"}),
+            ("scoring_standard", {"all_td": "ncaaf_tds"}),
+        ],
         # cfb has a single consensus all-america.html (no source split, and no
         # 'all-american' conference trap -- the American Athletic uses
         # 'american-poy'). Match it + heisman by exact slug; every other award
@@ -79,6 +84,9 @@ HONORS = {
         "hub": "https://www.sports-reference.com/cbb/awards/",
         "domain": "https://www.sports-reference.com",
         "awards": "/cbb/awards/men/", "players": "/cbb/players/", "create": True,
+        "stat_table": "players_per_game",
+        "stat_cols": {"pts_per_g": "ncaab_points", "trb_per_g": "ncaab_rebounds",
+                      "ast_per_g": "ncaab_assists", "games": "ncaab_games"},
         # National All-America TEAMS + national PLAYER-OF-THE-YEAR awards are
         # matched by EXACT award slug, so conference pages (acc-poy, all-acc,
         # acc-all-frosh, ...) can't masquerade as national honors. Everyone else
@@ -103,6 +111,9 @@ HONORS = {
         "hub": "https://www.sports-reference.com/cbb/awards/",
         "domain": "https://www.sports-reference.com",
         "awards": "/cbb/awards/women/", "players": "/cbb/players/", "create": True,
+        "stat_table": "players_per_game",
+        "stat_cols": {"pts_per_g": "ncaab_points", "trb_per_g": "ncaab_rebounds",
+                      "ast_per_g": "ncaab_assists", "games": "ncaab_games"},
         "honor_map": [],
         "slug_honors": {
             "ap-all-america": "ncaab_all_american", "usbwa-all-america": "ncaab_all_american",
@@ -124,6 +135,9 @@ HONORS = {
         "domain": "https://www.hockey-reference.com",
         "awards": "/awards/", "players": "/players/", "create": True,
         "parser": "pro", "team_map": NHLProvider.TEAM_MAP,
+        "stat_table": "player_stats", "stat_league": "NHL",
+        "stat_cols": {"goals": "nhl_goals", "assists": "nhl_assists",
+                      "points": "nhl_points", "games": "nhl_games"},
         "honor_map": [("hart", "nhl_mvps"), ("stanley", "nhl_championships")],
         "default_honor": "nhl_all_star",   # Norris/Vezina/HHOF/Top-100/... -> notable
         # weekly/monthly "3 stars" nods would flag thousands as All-Stars -- skip
@@ -139,6 +153,11 @@ HONORS = {
         # don't follow, and keep the per-year pages (they ARE the lists).
         "awards": ("/awards/", "/allpro.htm"), "players": "/players/",
         "create": True, "parser": "pro", "team_map": NFLProvider.TEAM_MAP,
+        "stat_tables": [
+            ("passing", {"pass_yds": "pass_yds"}),
+            ("rushing_and_receiving", {"rush_yds": "rush_yds", "rec_yds": "rec_yds",
+                                       "rush_receive_td": "total_tds"}),
+        ],
         "follow": False, "skip_years": False,
         # weekly/monthly nods would flag thousands -- skip
         "skip": ("of-the-week", "of-the-month", "rookies-of-the-month"),
@@ -279,8 +298,9 @@ def collect_players(session, pages, cfg, delay):
     return found
 
 
-def parse_college_player(soup, sport):
-    """Bio + schools + active decades from an SR college player page."""
+def parse_college_player(soup, sport, cfg=None):
+    """Bio + schools + active decades (+ career stats when cfg carries stat tables)
+    from an SR college player page."""
     out = dict(parse_meta(soup))           # position / birth / ht / wt (no /colleges/ link here)
     schools, years = [], set()
     for row in soup.select("table tbody tr"):
@@ -299,6 +319,9 @@ def parse_college_player(soup, sport):
     if years:
         out["active_decades"] = sorted({f"{(y // 10) * 10}s" for y in years})
         out["debut_year"], out["final_year"] = min(years), max(years)
+    if cfg:
+        from data.etl.sr_history import _career_stats
+        out.update(_career_stats(soup, cfg))   # college PPG / pass-rush-rec yards
     return out
 
 
@@ -385,11 +408,11 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
             soup = get_page(session, url, delay)
             if soup is None:
                 continue
-            if cfg.get("parser") == "pro":     # NFL: teams (not schools) via the history parser
+            if cfg.get("parser") == "pro":     # NFL/NHL: teams (not schools) via the history parser
                 from data.etl.sr_history import parse_player_history
-                rec = parse_player_history(soup, cfg.get("team_map", {}))
+                rec = parse_player_history(soup, cfg.get("team_map", {}), cfg)
             else:
-                rec = parse_college_player(soup, sport)
+                rec = parse_college_player(soup, sport, cfg)
             rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{_sr_id(url)}", "name": name})
             for c in cols:
                 rec[c] = 1
