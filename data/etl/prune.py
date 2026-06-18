@@ -41,10 +41,12 @@ log = logging.getLogger("prune")
 
 PRUNE = {
     "NCAAB": {"source": "ncaab_csv",
-              "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships"],
-              "min_season_games": None},                      # awards-only
+              "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships",
+                         "ncaab_all_conference"],
+              "min_season_games": None},                      # awards-only (incl. all-conference)
     "NCAAW": {"source": "ncaaw_csv",
-              "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships"],
+              "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships",
+                         "ncaab_all_conference"],
               "min_season_games": None},
     "NCAAF": {"source": "cfbd",
               "honors": ["ncaaf_all_american", "ncaaf_heisman"],

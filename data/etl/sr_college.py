@@ -55,8 +55,11 @@ CHECKPOINT = 50
 #   flag existing rows by name.
 # parser="pro": player pages carry pro teams, not schools -- parse with
 #   sr_history.parse_player_history + a tricode->nickname team_map (NHL, NFL).
-# default_honor: column to flag when no honor_map key matches (so every award
-#   page still marks its players notable).
+# honor_map:   substring match on the award URL (loose award families).
+# slug_honors: EXACT award-slug -> column (precise -- separates national awards
+#   from same-suffixed conference ones, e.g. 'ap-poy' vs 'acc-poy').
+# default_honor: column to flag when nothing above matches (so every award page
+#   still keeps its players; college uses the all-conference keeper here).
 HONORS = {
     "NCAAF": {
         "hub": "https://www.sports-reference.com/cfb/awards/",
@@ -69,18 +72,40 @@ HONORS = {
         "hub": "https://www.sports-reference.com/cbb/awards/",
         "domain": "https://www.sports-reference.com",
         "awards": "/cbb/awards/men/", "players": "/cbb/players/", "create": True,
-        "honor_map": [("all-america", "ncaab_all_american"),
-                      ("poy", "ncaab_player_of_year"), ("naismith", "ncaab_player_of_year"),
-                      ("wooden", "ncaab_player_of_year")],
-        "default_honor": "ncaab_all_american",   # keep every award-list player
+        # National All-America TEAMS + national PLAYER-OF-THE-YEAR awards are
+        # matched by EXACT award slug, so conference pages (acc-poy, all-acc,
+        # acc-all-frosh, ...) can't masquerade as national honors. Everyone else
+        # on an award list falls to the all-conference keeper (kept, separate
+        # category). 'parade-all-america' is intentionally excluded -- it's a
+        # high-school team, not a college honor.
+        "honor_map": [],
+        "slug_honors": {
+            "consensus-all-america": "ncaab_all_american", "ap-all-america": "ncaab_all_american",
+            "usbwa-all-america": "ncaab_all_american", "nabc-all-america": "ncaab_all_american",
+            "sport-news-all-america": "ncaab_all_american", "wooden-all-america": "ncaab_all_american",
+            "chuck-all-america": "ncaab_all_american",
+            "naismith": "ncaab_player_of_year", "wooden": "ncaab_player_of_year",
+            "ap-poy": "ncaab_player_of_year", "usbwa-poy": "ncaab_player_of_year",
+            "nabc-poy": "ncaab_player_of_year", "tsn-poy": "ncaab_player_of_year",
+            "upi-poy": "ncaab_player_of_year", "helms-poy": "ncaab_player_of_year",
+            "rupp": "ncaab_player_of_year",
+        },
+        "default_honor": "ncaab_all_conference",   # keep every other award-list player
     },
     "NCAAW": {
         "hub": "https://www.sports-reference.com/cbb/awards/",
         "domain": "https://www.sports-reference.com",
         "awards": "/cbb/awards/women/", "players": "/cbb/players/", "create": True,
-        "honor_map": [("all-america", "ncaab_all_american"),
-                      ("poy", "ncaab_player_of_year"), ("mop", "ncaab_player_of_year")],
-        "default_honor": "ncaab_all_american",   # keep every award-list player
+        "honor_map": [],
+        "slug_honors": {
+            "ap-all-america": "ncaab_all_american", "usbwa-all-america": "ncaab_all_american",
+            "wbca-all-america": "ncaab_all_american", "wooden-all-america": "ncaab_all_american",
+            "naismith": "ncaab_player_of_year", "wooden": "ncaab_player_of_year",
+            "ap-poy": "ncaab_player_of_year", "usbwa-poy": "ncaab_player_of_year",
+            "wbca-poy": "ncaab_player_of_year", "wade": "ncaab_player_of_year",
+            "honda": "ncaab_player_of_year",
+        },
+        "default_honor": "ncaab_all_conference",   # keep every other award-list player
     },
     "NHL": {
         # pre-bulk history = award winners only. The nhl_api bulk crawls
@@ -139,11 +164,27 @@ def _is_year_page(url):
     return bool(re.search(r"-\d{4}\.html?$", url)) and not re.search(r"\d{4}-\d{4}", url)
 
 
-def _honor_cols(award_url, honor_map, default_honor=None):
-    low = award_url.lower()
-    cols = {col for key, col in honor_map if key in low}
-    if not cols and default_honor:
-        cols = {default_honor}      # any award page still marks its players notable
+def _award_slug(url):
+    """Award page's slug: filename minus extension and any trailing year/decade.
+    .../consensus-all-america-2020-2029.html -> consensus-all-america ;
+    .../ap-poy.html -> ap-poy ; .../naismith.html -> naismith."""
+    m = re.search(r"/([a-z0-9-]+)\.html?$", (url or "").lower())
+    slug = m.group(1) if m else ""
+    return re.sub(r"-\d{4}(?:-\d{4})?$", "", slug)
+
+
+def _honor_cols(url, cfg):
+    """Honor columns a given award page confers (unioned):
+      honor_map   -- substring match on the URL (loose award families, e.g. NHL 'hart')
+      slug_honors -- EXACT award-slug match (precise: national 'ap-poy' vs conf 'acc-poy')
+    Falls back to default_honor so every award page still keeps its players."""
+    low = (url or "").lower()
+    cols = {col for key, col in cfg.get("honor_map", []) if key in low}
+    col = (cfg.get("slug_honors") or {}).get(_award_slug(low))
+    if col:
+        cols.add(col)
+    if not cols and cfg.get("default_honor"):
+        cols = {cfg["default_honor"]}      # any award page still marks its players notable
     return cols
 
 
@@ -203,7 +244,7 @@ def collect_players(session, pages, cfg, delay):
         soup = get_page(session, url, delay)
         if soup is None:
             continue
-        cols = _honor_cols(url, cfg["honor_map"], cfg.get("default_honor"))
+        cols = _honor_cols(url, cfg)
         for table in soup.find_all("table"):
             for a in table.find_all("a", href=True):
                 full = urljoin(url, a["href"]).split("#")[0]

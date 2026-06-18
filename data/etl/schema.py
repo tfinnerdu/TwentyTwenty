@@ -162,6 +162,7 @@ def migrate(path=None):
             ncaab_championships INTEGER DEFAULT 0,
             ncaab_all_american  INTEGER DEFAULT 0,
             ncaab_player_of_year INTEGER DEFAULT 0,
+            ncaab_all_conference INTEGER DEFAULT 0,   -- all-conference / minor-award keeper (M+W)
 
             -- ETL bookkeeping
             data_source     TEXT,               -- which scraper populated this row
@@ -169,6 +170,13 @@ def migrate(path=None):
             etl_run_id      INTEGER REFERENCES etl_runs(id)
         )
     """)
+
+    # Additive migration: CREATE TABLE IF NOT EXISTS won't add columns to an
+    # already-existing players table, so ALTER in any a newer schema introduced.
+    existing = {r[1] for r in c.execute("PRAGMA table_info(players)")}
+    for col, decl in (("ncaab_all_conference", "INTEGER DEFAULT 0"),):
+        if col not in existing:
+            c.execute(f"ALTER TABLE players ADD COLUMN {col} {decl}")
 
     # ------------------------------------------------------------------
     # player_aliases: catches "LeBron" -> "LeBron James", misspellings, etc.
