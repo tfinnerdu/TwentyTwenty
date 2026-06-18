@@ -1,21 +1,22 @@
 """
 data/etl/prune.py
 =================
-Trim the bulk college / WNBA pools down to recognizable players, leaving every
-other source (curated legends, sr_history, sr_college) untouched.
+Trim the bulk pools to notable players, leaving every other source (curated,
+sr_history, sr_college) untouched.
 
 Keep a bulk player if ANY of:
-  - they carry an honor  (college: appeared in an SR award list, flagged by
-    sr_college; WNBA: a curated championship/MVP/All-Star)
-  - WNBA only: career points >= --career OR a single season >= --season
+  - they carry an honor (college: an SR award flagged by sr_college; WNBA/NHL:
+    a curated/awards honor)
+  - their best single season clears --min-games  (WNBA 25, NHL 50)
 
-Everything else loaded from the bulk CSV is deleted. College is awards-only by
-design ("prune anyone who didn't make an award list"), so RUN sr_college FIRST
--- otherwise nothing is flagged and there'd be nothing to keep (guarded below).
+College is awards-only by design ("prune anyone not on an award list"), so RUN
+sr_college FIRST -- otherwise nothing is flagged and there'd be nothing to keep
+(guarded below). NHL keeps award-winners OR a 50-game season, so the NHL awards
+flag (sr_awards) should run first too if you want the early-era legends kept.
 
-    python -m data.etl.prune --sport NCAAB              # dry run: shows the cut
-    python -m data.etl.prune --sport NCAAB --apply      # actually delete
-    python -m data.etl.prune --sport WNBA --apply --career 4000 --season 500
+    python -m data.etl.prune --sport WNBA              # dry run: shows the cut
+    python -m data.etl.prune --sport WNBA --apply
+    python -m data.etl.prune --sport NHL --apply --min-games 50
     python -m data.etl.prune --sport ALL --apply
 """
 
@@ -39,39 +40,40 @@ log = logging.getLogger("prune")
 PRUNE = {
     "NCAAB": {"source": "ncaab_csv",
               "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships"],
-              "career": None, "season": None},
+              "min_season_games": None},                      # awards-only
     "NCAAW": {"source": "ncaaw_csv",
               "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships"],
-              "career": None, "season": None},
+              "min_season_games": None},
     "WNBA":  {"source": "wnba_csv",
               "honors": ["wnba_championships", "wnba_mvps", "wnba_finals_mvps", "wnba_all_star"],
-              "career": 4000, "season": 500},
+              "min_season_games": 25},
+    "NHL":   {"source": "nhl_api",
+              "honors": ["nhl_championships", "nhl_mvps", "nhl_all_star"],
+              "min_season_games": 50},                        # award OR best season >= 50 G
 }
 
 
-def _points_keep(conn, sport, career, season, seasons_csv):
-    """DB ids of bulk players whose career or best season clears the threshold."""
-    if not (career or season) or not os.path.exists(seasons_csv):
-        if (career or season):
-            log.warning(f"  no cached seasons CSV at {seasons_csv} -- skipping points criteria")
+def _games_keep(conn, sport, min_games, seasons_csv):
+    """DB ids of bulk players whose best single season clears min_games."""
+    if not min_games:
         return set()
-    car, best = defaultdict(int), defaultdict(int)
+    if not os.path.exists(seasons_csv):
+        log.warning(f"  no cached seasons CSV at {seasons_csv} -- skipping games criteria")
+        return set()
+    best = defaultdict(int)
     with open(seasons_csv, encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            pid, pts = r["player_id"], int(float(r.get("pts") or 0))
-            car[pid] += pts
-            best[pid] = max(best[pid], pts)
-    srids = {f"{sport.lower()}_{pid}" for pid in car
-             if (career and car[pid] >= career) or (season and best[pid] >= season)}
+            pid, g = r["player_id"], int(float(r.get("g") or 0))
+            best[pid] = max(best[pid], g)
+    srids = {f"{sport.lower()}_{pid}" for pid in best if best[pid] >= min_games}
     id_by_srid = {r[1]: r[0] for r in conn.execute(
         "SELECT id, sr_id FROM players WHERE sport=?", (sport,))}
     return {id_by_srid[s] for s in srids if s in id_by_srid}
 
 
-def prune(sport, db, apply, career=None, season=None, force=False):
+def prune(sport, db, apply, min_games=None, force=False):
     cfg = PRUNE[sport]
-    career = cfg["career"] if career is None else career
-    season = cfg["season"] if season is None else season
+    min_games = cfg["min_season_games"] if min_games is None else min_games
     conn = get_conn(db)
 
     honor_clause = " OR ".join(f"COALESCE({h},0)>0" for h in cfg["honors"])
@@ -80,25 +82,23 @@ def prune(sport, db, apply, career=None, season=None, force=False):
     n_honored = len(keep)
     seasons_csv = os.path.join(ROOT, "data", "cache", "exports", sport.lower(),
                                f"{sport.lower()}_seasons.csv")
-    keep |= _points_keep(conn, sport, career, season, seasons_csv)
+    keep |= _games_keep(conn, sport, min_games, seasons_csv)
 
     bulk = [r[0] for r in conn.execute(
         "SELECT id FROM players WHERE sport=? AND data_source=?", (sport, cfg["source"]))]
     to_delete = [pid for pid in bulk if pid not in keep]
     kept = len(bulk) - len(to_delete)
-    log.info(f"[{sport}] bulk={len(bulk)}  honored={n_honored}"
-             f"{f'  +points-notable' if (career or season) else ''}"
+    crit = f"  best-season>={min_games}G" if min_games else ""
+    log.info(f"[{sport}] bulk={len(bulk)}  honored={n_honored}{crit}"
              f"  -> keep {kept}, prune {len(to_delete)}")
 
-    # Safety: awards-only sport with nothing flagged almost certainly means
-    # sr_college hasn't run -- don't nuke the whole pool by accident.
     if not apply:
         log.info("  dry run -- pass --apply to delete")
         conn.close()
         return
     if kept == 0 and not force:
         log.error(f"[{sport}] would delete the ENTIRE bulk pool (nothing kept). "
-                  f"Did you run sr_college first? Re-run with --force to override.")
+                  f"Did the awards crawl run first? Re-run with --force to override.")
         conn.close()
         return
 
@@ -112,11 +112,11 @@ def prune(sport, db, apply, career=None, season=None, force=False):
 
 def main():
     ap = argparse.ArgumentParser(description="Prune bulk pools to notable players")
-    ap.add_argument("--sport", required=True, help="NCAAB / NCAAW / WNBA / ALL")
+    ap.add_argument("--sport", required=True, help="NCAAB / NCAAW / WNBA / NHL / ALL")
     ap.add_argument("--db", default=os.path.join(ROOT, "data", "nfl.db"))
     ap.add_argument("--apply", action="store_true", help="Actually delete (default is a dry run)")
-    ap.add_argument("--career", type=int, default=None, help="Override career-points keep threshold")
-    ap.add_argument("--season", type=int, default=None, help="Override best-season-points keep threshold")
+    ap.add_argument("--min-games", type=int, default=None,
+                    help="Override the best-single-season games keep threshold")
     ap.add_argument("--force", action="store_true", help="Allow pruning even if it empties the pool")
     args = ap.parse_args()
 
@@ -125,7 +125,7 @@ def main():
         if sp not in PRUNE:
             log.error(f"Unknown sport {sp!r}; known: {', '.join(PRUNE)} (or ALL)")
             continue
-        prune(sp, args.db, args.apply, args.career, args.season, args.force)
+        prune(sp, args.db, args.apply, args.min_games, args.force)
 
 
 if __name__ == "__main__":
