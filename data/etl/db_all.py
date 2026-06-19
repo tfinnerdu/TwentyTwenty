@@ -81,11 +81,13 @@ def main():
     ap.add_argument("--delay", type=float, default=5.0)
     ap.add_argument("--dry-run", action="store_true", help="List who'd be pulled; fetch nothing extra")
     ap.add_argument("--cf-clearance", help="overrides SR_CF_CLEARANCE from .env (NFL only)")
+    ap.add_argument("--no-cookie", action="store_true",
+                    help="send NO cf_clearance (basketball/hockey-reference aren't gated)")
     ap.add_argument("--user-agent")
     args = ap.parse_args()
 
     _load_env_file(os.path.join(ROOT, ".env"))
-    cf = args.cf_clearance or os.environ.get("SR_CF_CLEARANCE")
+    cf = None if args.no_cookie else (args.cf_clearance or os.environ.get("SR_CF_CLEARANCE"))
     ua = args.user_agent or os.environ.get("SR_CF_UA")
 
     sports = ALL_SPORTS if args.sport.upper() == "ALL" else [args.sport.upper()]
