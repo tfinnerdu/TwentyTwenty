@@ -241,8 +241,10 @@ def existing_name_slugs(conn, sport):
         "SELECT name FROM players WHERE sport=?", (sport,)) if r[0]}
 
 
-def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
-    """All players whose career reaches into the gap and aren't already loaded."""
+def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff, full_mode=False):
+    """Players to pull from SR's alphabetical index. Game mode keeps only those in
+    the coverage gap (and not already loaded); full_mode keeps EVERY indexed player
+    not already loaded -- the unpruned db_all build."""
     targets, seen = [], set()
     letters = LETTERS.upper() if cfg.get("upper_letters") else LETTERS
     for letter in letters:
@@ -259,10 +261,11 @@ def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
             srid = _sr_id_from_href(href)
             if not srid or srid in seen:
                 continue
-            # in a gap = career began BEFORE the bulk's coverage (< cutoff) or, if
-            # the bulk also has a recent ceiling, AFTER it (> recent_after). When
-            # the year is unknown, keep it and let the name-dedup decide.
-            if ymin is not None:
+            # game mode: keep only the coverage gap = career began BEFORE the bulk
+            # (< cutoff) or, if the bulk has a recent ceiling, AFTER it
+            # (> recent_after). full_mode skips this and keeps everyone. Unknown
+            # year is always kept; the name-dedup below decides.
+            if not full_mode and ymin is not None:
                 in_gap = ymin < cutoff or (recent_after is not None and ymin > recent_after)
                 if not in_gap:
                     continue
@@ -272,21 +275,24 @@ def enumerate_targets(session, sport, cfg, delay, have_slugs, cutoff):
             full = href if href.startswith("http") else cfg["domain"] + href
             targets.append((srid, name, full))
             n_letter += 1
-        log.info(f"  {sport}: /{letter}/ -> {n_letter} gap players (running {len(targets)})")
+        kind = "players" if full_mode else "gap players"
+        log.info(f"  {sport}: /{letter}/ -> {n_letter} {kind} (running {len(targets)})")
     return targets
 
 
-def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=None):
-    cfg = HISTORY[sport]
-    cutoff = cutoff or cfg["cutoff"]
+def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=None,
+          full_mode=False, cfg=None):
+    cfg = cfg or HISTORY[sport]
+    cutoff = cutoff or cfg.get("cutoff", 0)
     migrate(db)
     conn = get_conn(db)
     have = existing_name_slugs(conn, sport)
     session = make_session(sport, cf_clearance, user_agent)
 
-    log.info(f"[{sport}] enumerating SR alphabetical index (gap = started before {cutoff})...")
+    scope = "every indexed player" if full_mode else f"gap = started before {cutoff}"
+    log.info(f"[{sport}] enumerating SR alphabetical index ({scope})...")
     try:
-        targets = enumerate_targets(session, sport, cfg, delay, have, cutoff)
+        targets = enumerate_targets(session, sport, cfg, delay, have, cutoff, full_mode)
     except Jailed as e:
         log.error(f"[{sport}] {e}")
         log.error(f"[{sport}] can't enumerate without SR access -- set SR_CF_CLEARANCE "
@@ -303,10 +309,11 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=Non
         conn.close()
         return
 
+    label = "full crawl" if full_mode else f"pre-{cutoff}"
     cur = conn.cursor()
     cur.execute("INSERT INTO etl_runs (sport, source, run_at, status, notes) "
                 "VALUES (?, 'sr_history', datetime('now'), 'running', ?)",
-                (sport, f"history pre-{cfg['cutoff']}"))
+                (sport, f"history {label}"))
     conn.commit()
     run_id = cur.lastrowid
 
@@ -356,7 +363,7 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=Non
             log.warning(f"  {sport}: awards overlay skipped ({e})")
         rebuild_categories(conn, sport)       # so the partial data is usable now
     cur.execute("UPDATE etl_runs SET players_added=?, players_updated=?, status='ok', notes=? WHERE id=?",
-                (added, updated, stopped or f"history pre-{cutoff} ({parsed} parsed)", run_id))
+                (added, updated, stopped or f"history {label} ({parsed} parsed)", run_id))
     conn.commit()
     conn.close()
     log.info(f"[{sport}] history: +{added} new, {updated} updated"
