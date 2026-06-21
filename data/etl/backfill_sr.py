@@ -53,6 +53,7 @@ import logging
 import os
 import random
 import re
+import unicodedata
 import sys
 import time
 from datetime import datetime, timezone
@@ -264,6 +265,12 @@ def _soup(html):
     return soup
 
 
+def _deaccent(s):
+    """Strip diacritics: '.../marta-suárez-1.html' -> '.../marta-suarez-1.html'.
+    SR player slugs are ASCII, so an accented award-page link 404s otherwise."""
+    return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
+
+
 def get_page(session, url, delay):
     """Cached page fetch -> soup (or None)."""
     cp = _cache_path(url)
@@ -272,9 +279,16 @@ def get_page(session, url, delay):
             return _soup(f.read())
     text, _ = fetch_raw(session, url, delay)
     if text is None:
-        return None
+        # SR slugs are ASCII; an accented URL (suárez, peña) 404s -- retry stripped.
+        ascii_url = _deaccent(url)
+        if ascii_url != url:
+            text, _ = fetch_raw(session, ascii_url, delay)
+            if text is not None:
+                log.info(f"  recovered {url} via de-accented slug")
+        if text is None:
+            return None
     os.makedirs(CACHE_DIR, exist_ok=True)
-    with open(cp, "w", encoding="utf-8") as f:
+    with open(cp, "w", encoding="utf-8") as f:   # cache under the original url -> re-runs hit cache
         f.write(text)
     return _soup(text)
 
