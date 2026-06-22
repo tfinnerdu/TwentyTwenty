@@ -49,6 +49,7 @@ log = logging.getLogger("sr_college")
 
 DB_PATH = os.path.join(ROOT, "data", "nfl.db")
 CHECKPOINT = 50
+LETTERS = "abcdefghijklmnopqrstuvwxyz"
 
 # create=True: award winners not already loaded are fetched + created (the
 #   college/NHL/NFL legends that pre-date each bulk pull). create=False: only
@@ -179,6 +180,34 @@ HONORS = {
             "super-bowl-mvp-award": "super_bowls",
         },
         "default_honor": None,
+    },
+}
+
+
+# Full alphabetical-index crawl configs (for db_all): EVERY indexed college
+# player, not just the award winners the HONORS crawl keeps. Reuses each sport's
+# award-crawl stat tables/cols and the same SR college player-page parser, so the
+# only new thing here is enumerating the letter indexes. cbb's letter pages are
+# shared by men and women -- women's player ids carry a '-w' suffix (see
+# scrape_ncaab) -- so NCAAB and NCAAW point at the same pages and split on it.
+INDEX = {
+    "NCAAF": {
+        "domain":  "https://www.sports-reference.com",
+        "alpha":   "https://www.sports-reference.com/cfb/players/{letter}-index.html",
+        "players": "/cfb/players/", "gender": None,
+        "stat_tables": HONORS["NCAAF"]["stat_tables"],
+    },
+    "NCAAB": {
+        "domain":  "https://www.sports-reference.com",
+        "alpha":   "https://www.sports-reference.com/cbb/players/{letter}-index.html",
+        "players": "/cbb/players/", "gender": "men",
+        "stat_table": HONORS["NCAAB"]["stat_table"], "stat_cols": HONORS["NCAAB"]["stat_cols"],
+    },
+    "NCAAW": {
+        "domain":  "https://www.sports-reference.com",
+        "alpha":   "https://www.sports-reference.com/cbb/players/{letter}-index.html",
+        "players": "/cbb/players/", "gender": "women",
+        "stat_table": HONORS["NCAAW"]["stat_table"], "stat_cols": HONORS["NCAAW"]["stat_cols"],
     },
 }
 
@@ -443,6 +472,139 @@ def _sr_id(url):
     # cbb/cfb: lowercase-slug.html ; PFR: mixed-case .htm (MahoPa00.htm)
     m = re.search(r"/([A-Za-z0-9.-]+)\.html?$", url or "")
     return m.group(1) if m else _slug(url)
+
+
+# ---------------------------------------------------------------------------
+# Full alphabetical-index crawl (db_all): every cbb/cfb player, not just honors
+# ---------------------------------------------------------------------------
+
+def _fetch_index_letter(session, alpha, letter, delay):
+    """Fetch one alphabetical letter index, tolerating SR's .html/.htm split (the
+    letter pages have been served at both; player links on them are .html). Try
+    the configured extension, then the other. Returns (soup|None, url_used)."""
+    url = alpha.format(letter=letter)
+    soup = get_page(session, url, delay)
+    if soup is None:
+        alt = url[:-5] + ".htm" if url.endswith(".html") else url[:-4] + ".html"
+        alt_soup = get_page(session, alt, delay)
+        if alt_soup is not None:
+            return alt_soup, alt
+    return soup, url
+
+
+def enumerate_index_targets(session, sport, cfg, delay, have_slugs):
+    """Every player off the cbb/cfb alphabetical letter indexes, filtered to this
+    sport's gender (cbb shares one index; women's slugs end '-w') and deduped
+    against the DB by normalized name. Full crawl -- keeps everyone not loaded."""
+    targets, seen = [], set()
+    gender = cfg.get("gender")
+    href_re = re.compile(re.escape(cfg["players"]) + r"([a-z0-9.'\-]+)\.html?$", re.I)
+    for letter in LETTERS:
+        soup, _url = _fetch_index_letter(session, cfg["alpha"], letter, delay)
+        if soup is None:
+            log.warning(f"  {sport}: index '{letter}' unavailable -- skipping")
+            continue
+        n_letter = 0
+        for a in soup.find_all("a", href=True):
+            href = a["href"].split("#")[0].split("?")[0]
+            m = href_re.search(href)
+            if not m:
+                continue
+            slug = m.group(1)
+            if "-" not in slug:                  # real players have name-based slugs (a hyphen)
+                continue
+            is_w = slug.lower().endswith("-w")
+            if (gender == "men" and is_w) or (gender == "women" and not is_w):
+                continue
+            if slug in seen:
+                continue
+            name = a.get_text(strip=True)
+            if not name:
+                continue
+            seen.add(slug)                       # collapse the index's repeat links first
+            if _slug(name) in have_slugs:        # already loaded from the bulk or awards crawl
+                continue
+            full = href if href.startswith("http") else cfg["domain"] + href
+            targets.append((slug, name, full))
+            n_letter += 1
+        log.info(f"  {sport}: '{letter}' index -> {n_letter} new players (running {len(targets)})")
+    return targets
+
+
+def crawl_index(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
+    """db_all entry point: full unpruned alphabetical-index crawl of every cbb/cfb
+    player. Mirrors sr_history.crawl's checkpointed, cache-resumable shape, but uses
+    the college player-page parser. cf_clearance is ignored -- sports-reference.com
+    (college) isn't Cloudflare-gated, and a stray cross-domain cookie only 403s it."""
+    cfg = INDEX[sport]
+    migrate(db)
+    conn = get_conn(db)
+    have = {_slug(r[0]) for r in conn.execute(
+        "SELECT name FROM players WHERE sport=?", (sport,)) if r[0]}
+    session = make_session(sport, None, user_agent)   # None -> cookie-less (non-gated host)
+
+    log.info(f"[{sport}] enumerating the cbb/cfb alphabetical index (full unpruned crawl)...")
+    try:
+        targets = enumerate_index_targets(session, sport, cfg, delay, have)
+    except Jailed as e:
+        log.error(f"[{sport}] {e}")
+        conn.close()
+        return
+    if limit:
+        targets = targets[:limit]
+    log.info(f"[{sport}] {len(targets)} players to pull" + (" (dry run)" if dry_run else ""))
+    if dry_run:
+        for slug, name, url in targets[:40]:
+            log.info(f"    would pull: {name}  ({url})")
+        conn.close()
+        return
+
+    cur = conn.cursor()
+    cur.execute("INSERT INTO etl_runs (sport, source, run_at, status, notes) "
+                "VALUES (?, 'sr_college_index', datetime('now'), 'running', 'full alpha index')",
+                (sport,))
+    conn.commit()
+    run_id = cur.lastrowid
+
+    batch, added, updated, parsed, stopped = [], 0, 0, 0, None
+
+    def flush():
+        nonlocal added, updated, batch
+        if batch:
+            a, u = upsert_players(conn, batch, "sr_college_index", run_id)
+            added += a
+            updated += u
+            batch = []
+
+    try:
+        for slug, name, url in targets:
+            soup = get_page(session, url, delay)
+            if soup is None:
+                continue
+            rec = parse_college_player(soup, sport, cfg)
+            rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{slug}", "name": name})
+            batch.append(rec)
+            parsed += 1
+            if len(batch) >= CHECKPOINT:
+                flush()
+                log.info(f"  {sport}: checkpoint -- {parsed} parsed, {added} saved")
+    except Jailed as e:
+        stopped = f"jailed after {parsed}"
+        log.error(str(e))
+    except KeyboardInterrupt:
+        stopped = f"interrupted after {parsed}"
+        log.warning(f"  {sport}: interrupted -- saving...")
+
+    flush()
+    if added or updated:
+        derive_fields(conn)
+        rebuild_categories(conn, sport)
+    cur.execute("UPDATE etl_runs SET players_added=?, players_updated=?, status='ok', notes=? WHERE id=?",
+                (added, updated, stopped or f"full index ({parsed} parsed)", run_id))
+    conn.commit()
+    conn.close()
+    log.info(f"[{sport}] full index: +{added} new, {updated} updated"
+             + (f" -- STOPPED: {stopped} (saved; re-run resumes from cache)" if stopped else ""))
 
 
 def main():

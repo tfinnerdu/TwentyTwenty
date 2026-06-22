@@ -13,14 +13,23 @@ free -- you only pay for the long tail of non-notable players the game prunes.
 
 Runbook (everything --db data/db_all.db, and NEVER prune):
 
-    python run_full.py --skip-puzzles --db data/db_all.db          # bulk: MLB + college are already complete here
+    python run_full.py --skip-puzzles --db data/db_all.db          # bulk: MLB + college bulk are loaded here
     python -m data.etl.db_all --sport ALL                          # full alpha: NBA + WNBA + NHL (no cookie)
     python -m data.etl.db_all --sport NFL                          # full PFR alpha (Cloudflare cookie, ~28k, slow)
+    python -m data.etl.db_all --sport COLLEGE                      # full cbb/cfb index: every NCAAF/NCAAB/NCAAW player (no cookie)
     python -m data.etl.sr_college --sport ALL --db data/db_all.db  # award flags + pre-bulk legends
 
 ALL = NBA + WNBA + NHL (no cookie needed). NFL is opt-in: pro-football-reference
 is Cloudflare-gated and the index is ~28k players, so run it on a fresh
 SR_CF_CLEARANCE and expect to babysit/resume. It's resumable from the page cache.
+
+COLLEGE = NCAAF + NCAAB + NCAAW, each crawled off its sports-reference.com letter
+index (/cbb|cfb/players/{letter}-index.html) -- this is the obscure pre-coverage
+long tail (pre-2003 walk-ons, never-an-award players) that the bulk and award
+crawls miss. sports-reference.com isn't Cloudflare-gated, so no cookie; cbb's
+index is shared by men and women, split on the women's '-w' slug suffix. Huge and
+slow, but resumable from the page cache. Run a flag on its own (--sport NCAAB) or
+all three with --sport COLLEGE.
 """
 
 import argparse
@@ -32,6 +41,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, ROOT)
 
 from data.etl.sr_history import HISTORY, crawl
+from data.etl.sr_college import crawl_index, INDEX
 from data.etl.providers.csv_season import NHLProvider, NFLProvider
 from data.etl.backfill_sr import _load_env_file
 
@@ -70,12 +80,17 @@ FULL = {
 
 # ALL = the no-cookie three; NFL is opt-in (Cloudflare-gated + ~28k players).
 ALL_SPORTS = ["NBA", "WNBA", "NHL"]
+# COLLEGE = the cbb/cfb full player-index crawl (its own flags). Separate from
+# ALL because it's huge and runs through the college crawler (sr_college), not the
+# pro alpha engine. sports-reference.com (college) is not Cloudflare-gated.
+COLLEGE = list(INDEX)   # ["NCAAF", "NCAAB", "NCAAW"]
 
 
 def main():
     ap = argparse.ArgumentParser(description="Build the unpruned db_all (full SR alpha crawl)")
     ap.add_argument("--sport", default="ALL",
-                    help="NBA / WNBA / NHL / NFL / ALL  (ALL = NBA+WNBA+NHL; NFL is opt-in)")
+                    help="NBA / WNBA / NHL / NFL / NCAAF / NCAAB / NCAAW / ALL / COLLEGE  "
+                         "(ALL = NBA+WNBA+NHL; COLLEGE = NCAAF+NCAAB+NCAAW; NFL is opt-in)")
     ap.add_argument("--db", default=DB_PATH)
     ap.add_argument("--limit", type=int, default=None, help="Cap players per sport (validation)")
     ap.add_argument("--delay", type=float, default=5.0)
@@ -90,14 +105,18 @@ def main():
     cf = None if args.no_cookie else (args.cf_clearance or os.environ.get("SR_CF_CLEARANCE"))
     ua = args.user_agent or os.environ.get("SR_CF_UA")
 
-    sports = ALL_SPORTS if args.sport.upper() == "ALL" else [args.sport.upper()]
+    arg = args.sport.upper()
+    sports = ALL_SPORTS if arg == "ALL" else COLLEGE if arg == "COLLEGE" else [arg]
     log.info(f"db_all -> {args.db}  (full unpruned crawl: {', '.join(sports)})")
     for sp in sports:
-        if sp not in FULL:
-            log.error(f"Unknown sport {sp!r}; known: {', '.join(FULL)} (or ALL)")
-            continue
-        crawl(sp, args.db, args.limit, args.delay, args.dry_run, cf, ua,
-              full_mode=True, cfg=FULL[sp])
+        if sp in COLLEGE:                      # cbb/cfb letter-index crawl (sr_college)
+            crawl_index(sp, args.db, args.limit, args.delay, args.dry_run, cf, ua)
+        elif sp in FULL:                       # NBA/WNBA/NHL/NFL alpha crawl (sr_history)
+            crawl(sp, args.db, args.limit, args.delay, args.dry_run, cf, ua,
+                  full_mode=True, cfg=FULL[sp])
+        else:
+            log.error(f"Unknown sport {sp!r}; known: {', '.join(list(FULL) + COLLEGE)} "
+                      f"(or ALL = {'+'.join(ALL_SPORTS)}, COLLEGE = {'+'.join(COLLEGE)})")
 
 
 if __name__ == "__main__":
