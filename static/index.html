@@ -654,6 +654,9 @@ const SPORT_DEFS = [
   { id:'NCAAW', label:'NCAAW', name:'College Hoops (W)',   needsData:true,
     coverage:'Award winners only — All-America, national POY, tournament honors.' },
 ];
+// Sports that actually have data loaded, filled from /api/vintage. Until that
+// resolves we fall back to the needsData hints above.
+let DATA_SPORTS = null;
 const ALL_COVERAGE = 'Every sport at once — chain clues cross leagues. The eligible-answer pool is each sport’s coverage combined.';
 const DIFF_DEFS = [
   { id:'easy',   label:'Easy'   },
@@ -1129,14 +1132,16 @@ function sportTilesHTML(sel){
       <div class="tile-sport-id">ALL</div>
       <div class="tile-name">Every Sport &mdash; clues cross over</div>
     </div>`;
-  const tiles = SPORT_DEFS.map(s=>`
+  const tiles = SPORT_DEFS.map(s=>{
+    const ready = DATA_SPORTS ? DATA_SPORTS.has(s.id) : !s.needsData;
+    return `
     <div class="sport-tile ${sel.includes(s.id)?'selected':''}" data-sport="${s.id}"
          onclick="toggleSport('${s.id}',this)" title="${s.coverage}">
       <span class="tile-info" onclick="event.stopPropagation()">i</span>
       <div class="tile-sport-id">${s.label}</div>
       <div class="tile-name">${s.name}</div>
-      ${s.needsData?'<span class="tile-badge">ETL required</span>':'<span class="tile-badge" style="background:rgba(0,200,83,0.1);border-color:rgba(0,200,83,0.3);color:#00C853">READY</span>'}
-    </div>`).join('');
+      ${ready?'<span class="tile-badge" style="background:rgba(0,200,83,0.1);border-color:rgba(0,200,83,0.3);color:#00C853">READY</span>':'<span class="tile-badge">ETL required</span>'}
+    </div>`;}).join('');
   return allTile + tiles;
 }
 function selectAllSports(){
@@ -1162,8 +1167,8 @@ function renderLobby(inModal) {
         <div class="diff-pills">${pills}</div>
       </div>
       <div class="lobby-note">
-        <strong>READY</strong> = works now with hand-curated data.<br>
-        <strong>ETL REQUIRED</strong> = run <code style="color:var(--gold)">python data/etl/run_all.py</code> first.
+        <strong style="color:#00C853">READY</strong> = data loaded for this sport &mdash;
+        <strong>ETL required</strong> = not yet populated.
       </div>
       <button class="start-btn" onclick="startFromLobby()">PLAY TODAY'S PUZZLE</button>
     </div>`;
@@ -1253,12 +1258,15 @@ async function loadVintage(){
     const res=await fetch(`${API}/api/vintage`);
     if(!res.ok)return;
     const data=await res.json();
+    const present=data.vintages.filter(v=>v.total>0).map(v=>v.sport);
+    DATA_SPORTS=new Set(present);
+    // now that we know what's actually loaded, refresh any open sport grid
+    document.querySelectorAll('.sport-grid').forEach(g=>{g.innerHTML=sportTilesHTML(getSelectedSports());});
     if(data.as_of){
       let el=document.getElementById('vintageFooter');
       if(!el){el=document.createElement('div');el.id='vintageFooter';el.className='vintage';
                document.querySelector('.wrap').appendChild(el);}
-      const sports=data.vintages.filter(v=>v.total>0).map(v=>v.sport).join(' / ');
-      el.textContent=`Stats as of ${data.as_of}${sports?' — '+sports:''}`;
+      el.textContent=`Stats as of ${data.as_of}${present.length?' — '+present.join(' / '):''}`;
     }
   } catch {}
 }
