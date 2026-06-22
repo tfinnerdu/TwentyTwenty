@@ -21,10 +21,6 @@ services:
         value: https://2020nfl.com
       - key: PYTHON_VERSION
         value: 3.11.9
-    disk:
-      name: puzzles
-      mountPath: /opt/render/project/src/puzzles
-      sizeGB: 1
 
   - type: cron
     name: 2020-puzzle-generator

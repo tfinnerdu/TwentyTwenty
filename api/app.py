@@ -182,6 +182,29 @@ def url_slug(date_str: str, sport_mode: str) -> str:
     return base64.urlsafe_b64encode(digest).decode().rstrip('=')
 
 
+def _resolve_slug_from_files(slug: str):
+    """Match a share-link slug to (date, sport_mode) by recomputing url_slug for
+    each puzzle file -- the slug is a one-way hash of date|sport_mode, so we match
+    rather than reverse it. Filenames are '<date>_<sport-slug>.json'; the sport
+    codes carry no '-'/'_', so the slugging is reversible (','->'-', ' '->'_')."""
+    try:
+        names = os.listdir(PUZZLE_DIR)
+    except OSError:
+        return None
+    for fn in names:
+        if not fn.endswith(".json"):
+            continue
+        stem = fn[:-5]
+        if "_" in stem:                      # dates have no '_', so split is clean
+            date_str, sslug = stem.split("_", 1)
+            sport_mode = sslug.replace("-", ",").replace("_", " ").upper()
+        else:                                # legacy un-namespaced file == default sport
+            date_str, sport_mode = stem, default_sport_mode()
+        if url_slug(date_str, sport_mode) == slug:
+            return date_str, sport_mode
+    return None
+
+
 def register_slug(d: date, sport: str):
     """Record (date, sport_mode) -> slug in puzzle_meta so /p/<slug> can resolve it."""
     try:
@@ -734,24 +757,33 @@ def puzzle_by_slug(slug):
     """
     Resolve a short slug to a puzzle.
     GET /p/u81rd6rT  ->  same response as /api/puzzle/2026-06-17?sport=NFL
-    Redirects to the standard puzzle JSON so the frontend can boot with it.
+
+    Two resolution paths: puzzle_meta (for app-registered slugs) first, then a
+    match against the puzzle files -- offline-generated puzzles never populate
+    puzzle_meta, so the file fallback is what makes their share links resolve.
     """
+    puzzle_date = sport_mode = None
+
+    # 1) app-registered slugs (puzzle_meta) -- fast path, kept for back-compat
     try:
         conn = get_conn()
         c = conn.cursor()
-        c.execute(
-            "SELECT puzzle_date, sport_mode FROM puzzle_meta WHERE url_slug = ?",
-            (slug,)
-        )
+        c.execute("SELECT puzzle_date, sport_mode FROM puzzle_meta WHERE url_slug = ?", (slug,))
         row = c.fetchone()
         conn.close()
+        if row:
+            puzzle_date, sport_mode = row["puzzle_date"], row["sport_mode"]
     except Exception as e:
-        return jsonify({"error": "Database error", "code": "DB_ERROR"}), 500
+        app.logger.warning(f"puzzle_meta slug lookup failed (falling back to files): {e}")
 
-    if not row:
+    # 2) fall back to matching the slug against the puzzle files
+    if not puzzle_date:
+        resolved = _resolve_slug_from_files(slug)
+        if resolved:
+            puzzle_date, sport_mode = resolved
+
+    if not puzzle_date:
         return jsonify({"error": "Puzzle not found", "code": "NOT_FOUND"}), 404
-
-    puzzle_date, sport_mode = row["puzzle_date"], row["sport_mode"]
 
     try:
         d = date.fromisoformat(puzzle_date)
@@ -762,8 +794,7 @@ def puzzle_by_slug(slug):
     if not chain:
         return jsonify({"error": "Puzzle file missing", "code": "NOT_FOUND"}), 404
 
-    difficulty = default_difficulty()
-    return jsonify(puzzle_response(d, chain, sport_mode, difficulty))
+    return jsonify(puzzle_response(d, chain, sport_mode, default_difficulty()))
 
 
 # Serve the frontend for any non-API route
