@@ -375,6 +375,165 @@ def validate():
     })
 
 
+def _safe_json_list(s):
+    """Parse a JSON array column (active_decades / teams) into a list, safely."""
+    try:
+        v = json.loads(s or "[]")
+        return v if isinstance(v, list) else []
+    except Exception:
+        return []
+
+
+def _player_hint_facts(row) -> list:
+    """
+    Build an ordered list of attribute 'hints' about a player, vague -> specific.
+    Each fact: {"label": ..., "text": ...}. Only facts backed by real data are
+    included. Deliberately never includes the player's name.
+    """
+    facts = []
+
+    # 1. Era -- broad. Prefer the decade span, fall back to debut year.
+    decades = _safe_json_list(row["active_decades"])
+    if decades:
+        if len(decades) == 1:
+            facts.append({"label": "Era", "text": f"Active in the {decades[0]}"})
+        else:
+            facts.append({"label": "Era", "text": f"Active from the {decades[0]} to the {decades[-1]}"})
+    elif row["debut_year"]:
+        facts.append({"label": "Era", "text": f"Debuted in {row['debut_year']}"})
+
+    # 2. Position
+    pos = row["position"] or row["position_group"]
+    if pos:
+        facts.append({"label": "Position", "text": f"Played {pos}"})
+
+    # 3. Origin -- mild. State for USA players, otherwise country.
+    bp = None
+    if row["birth_state"] and (row["birth_country"] in (None, "", "USA")):
+        bp = row["birth_state"]
+    elif row["birth_country"] and row["birth_country"] != "USA":
+        bp = row["birth_country"]
+    if bp:
+        facts.append({"label": "Origin", "text": f"Born in {bp}"})
+
+    # 4. College
+    if row["college"]:
+        facts.append({"label": "College", "text": f"Played college at {row['college']}"})
+
+    # 5. Teams
+    teams = _safe_json_list(row["teams"])
+    if teams:
+        if len(teams) == 1:
+            t = f"the {teams[0]}"
+        elif len(teams) == 2:
+            t = f"the {teams[0]} and {teams[1]}"
+        else:
+            t = f"the {teams[0]}, {teams[1]} and others"
+        facts.append({"label": "Team", "text": f"Suited up for {t}"})
+
+    # 6. Draft -- most specific / most identifying, so it comes last.
+    if row["draft_year"]:
+        bits = f"Drafted in {row['draft_year']}"
+        rp = []
+        if row["draft_round"]:
+            rp.append(f"Round {row['draft_round']}")
+        if row["draft_pick"]:
+            rp.append(f"Pick {row['draft_pick']}")
+        if rp:
+            bits += f" ({', '.join(rp)})"
+        if row["draft_team"]:
+            bits += f" by the {row['draft_team']}"
+        facts.append({"label": "Draft", "text": bits})
+
+    return facts
+
+
+@app.route("/api/hint", methods=["POST"])
+def hint():
+    """
+    Progressive 'attribute hint' help. Reveals ONE biographical attribute at a
+    time about a single valid answer for a question -- never the player's name.
+
+    Body: { "date": "2025-01-15", "question_index": 3, "sport": "NFL", "revealed": 1 }
+      revealed = how many hints the client already holds (default 0); the server
+      returns the next one (index == revealed).
+    Returns: { available, exhausted, hint:{label,text}, index, total, remaining }
+    """
+    body = request.get_json(silent=True) or {}
+    date_str = body.get("date")
+    q_index  = body.get("question_index")
+    revealed = body.get("revealed", 0)
+
+    if not date_str or q_index is None:
+        return jsonify({"error": "Missing required fields: date, question_index", "code": "BAD_REQUEST"}), 400
+    try:
+        d = date.fromisoformat(date_str)
+    except ValueError:
+        return jsonify({"error": "Invalid date", "code": "BAD_DATE"}), 400
+    if not isinstance(q_index, int) or q_index < 0 or q_index >= 20:
+        return jsonify({"error": "question_index must be 0-19", "code": "BAD_INDEX"}), 400
+    try:
+        revealed = max(0, int(revealed))
+    except (TypeError, ValueError):
+        revealed = 0
+
+    sport = body.get("sport", default_sport_mode())
+    chain = load_puzzle(d, sport)
+    if not chain:
+        return jsonify({"error": "Puzzle not found", "code": "NOT_FOUND"}), 404
+
+    node  = chain[q_index]
+    valid = node.get("valid_players", [])
+    if not valid:
+        return jsonify({"available": False, "reason": "no_answers", "question_index": q_index})
+
+    # Resolve valid answers to DB rows so we can describe their attributes.
+    # valid_players are stored as canonical DB names, so an IN-match is exact.
+    conn = get_conn()
+    placeholders = ",".join("?" * len(valid))
+    rows = conn.execute(
+        f"SELECT * FROM players WHERE name IN ({placeholders})", valid
+    ).fetchall()
+    conn.close()
+
+    # One fact-set per name; if a name maps to several rows (cross-sport), keep
+    # the richest. Drop anyone we can't say anything about.
+    best = {}
+    for r in rows:
+        f = _player_hint_facts(r)
+        if f and (r["name"] not in best or len(f) > len(best[r["name"]])):
+            best[r["name"]] = f
+    if not best:
+        return jsonify({"available": False, "reason": "no_data", "question_index": q_index})
+
+    # Pick a single representative answer, deterministically and stably so the
+    # progressive hints always describe the SAME player. Prefer the richest
+    # fact-set (most help), breaking ties with a stable hash of the question.
+    import hashlib
+    max_facts = max(len(f) for f in best.values())
+    pool = sorted(name for name, f in best.items() if len(f) == max_facts)
+    key  = f"{date_str}|{sport.lower()}|{q_index}".encode()
+    pick = int(hashlib.sha256(key).hexdigest(), 16) % len(pool)
+    facts = best[pool[pick]]
+
+    total = len(facts)
+    if revealed >= total:
+        return jsonify({
+            "available": True, "exhausted": True,
+            "question_index": q_index, "total": total,
+        })
+
+    return jsonify({
+        "available":      True,
+        "exhausted":      False,
+        "question_index": q_index,
+        "hint":           facts[revealed],
+        "index":          revealed,
+        "total":          total,
+        "remaining":      total - revealed - 1,
+    })
+
+
 @app.route("/api/validate/player", methods=["POST"])
 def validate_player_exists():
     """

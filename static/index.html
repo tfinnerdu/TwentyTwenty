@@ -308,6 +308,43 @@ input[type=text]:disabled { opacity: 0.4; }
   border: 1.5px solid var(--red); display: block;
 }
 
+/* Help / attribute hints */
+.hint-zone { margin-top: 8px; }
+.hint-btn { width: 100%; }
+.hint-btn:not(:disabled) { border-color: var(--gold-dim); color: var(--gold); }
+.hint-btn:not(:disabled):hover { background: var(--gold-dark); }
+.hint-panel {
+  display: none; margin-top: 8px;
+  border: 1px solid var(--gold-dim); border-radius: var(--r);
+  background: var(--gold-dark); padding: 8px 10px;
+}
+.hint-row {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 5px 0; border-bottom: 1px dashed rgba(154,130,0,0.3);
+  font-family: var(--font-mono); font-size: 12px;
+}
+.hint-row:last-child { border-bottom: none; }
+.hint-num {
+  flex: 0 0 auto; width: 16px; height: 16px; line-height: 16px; text-align: center;
+  background: var(--gold-dim); color: var(--bg); border-radius: 50%;
+  font-size: 9px; font-weight: 700;
+}
+.hint-label {
+  flex: 0 0 auto; min-width: 64px; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.08em; font-size: 10px;
+}
+.hint-text { flex: 1; color: var(--chalk); }
+.hint-foot {
+  margin-top: 6px; text-align: right;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--chalk-dim); letter-spacing: 0.04em;
+}
+.help-note {
+  font-family: var(--font-mono); font-size: 10px; color: var(--chalk-dim);
+  line-height: 1.6; margin-top: 8px;
+}
+.help-note b { color: var(--gold); }
+
 /* Used players */
 .used-section { margin-bottom: 1.25rem; }
 .used-label {
@@ -668,10 +705,12 @@ function loadPrefs()  { try { return JSON.parse(localStorage.getItem(PREFS_KEY)|
 function savePrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch {} }
 function getSelectedSports()     { return loadPrefs().sports || ['NFL']; }
 function getSelectedDifficulty() { return loadPrefs().difficulty || 'medium'; }
+function getHelpEnabled()        { return !!loadPrefs().help; }
 function sportMode(sports)       { return sports.length === SPORT_DEFS.length ? 'ALL' : sports.join(','); }
 function modeLabel(sports)       { return sports.length === 1 ? sports[0] : sports.length === SPORT_DEFS.length ? 'ALL' : sports.slice(0,3).join('+') + (sports.length > 3 ? '…' : ''); }
 
 let puzzle=null, currentQ=0, results=[], usedPlayers=new Set(), acTimer=null, acIndex=-1, TOTAL=20;
+let qHints=[], hintBusy=false;   // attribute-hint state for the current question
 
 function saveState() {
   if(!puzzle) return;
@@ -787,6 +826,7 @@ function setPip(i, cls, sym) {
 
 function renderQ() {
   if(currentQ>=TOTAL){renderEnd(false);return;}
+  qHints=[]; hintBusy=false;        // fresh hint state for this question
   const q=puzzle.questions[currentQ];
   const area=document.getElementById('gameArea');
   const banner=document.getElementById('restBanner');
@@ -815,6 +855,11 @@ function renderQ() {
           <button class="game-btn primary" id="subBtn">Submit</button>
         </div>
         <div class="feedback" id="fb"></div>
+        ${getHelpEnabled()?`
+        <div class="hint-zone" id="hintZone">
+          <button class="game-btn hint-btn" id="hintBtn" type="button">&#128161; Reveal a Hint</button>
+          <div class="hint-panel" id="hintPanel"></div>
+        </div>`:''}
       </div>
     </div>
     <div class="used-section">
@@ -833,6 +878,7 @@ function renderQ() {
   inp.addEventListener('keydown',e=>handleKey(e,inp,acl));
   document.getElementById('subBtn').addEventListener('click',()=>{acl.style.display='none';doSubmit(inp.value.trim());});
   document.getElementById('skipBtn').addEventListener('click',doSkip);
+  const hb=document.getElementById('hintBtn'); if(hb) hb.addEventListener('click',requestHint);
 }
 function renderChips() {
   if(!usedPlayers.size) return `<span class="chip" style="font-style:italic">none yet</span>`;
@@ -899,6 +945,47 @@ function doSkip(){
 function showFb(type,msg){
   const el=document.getElementById('fb');
   if(el){el.className=`feedback ${type}`;el.innerHTML=msg;}
+}
+
+// --- Attribute hints (Help) -------------------------------------------------
+async function requestHint(){
+  if(hintBusy) return;
+  hintBusy=true;
+  const btn=document.getElementById('hintBtn');
+  if(btn) btn.disabled=true;
+  const mode = puzzle.sport_mode || sportMode(getSelectedSports());
+  try{
+    const res=await fetch(`${API}/api/hint`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({date:puzzle.date,question_index:currentQ,sport:mode,revealed:qHints.length}),
+    });
+    const data=await res.json();
+    if(!data.available){ renderHintPanel('No hints available for this clue.',true); return; }
+    if(data.exhausted){ renderHintPanel('That’s all the hints for this one.',true); return; }
+    qHints.push(data.hint);
+    renderHintPanel(data.remaining>0
+      ? `${data.remaining} more hint${data.remaining!==1?'s':''} available.`
+      : 'That’s the last hint.', data.remaining===0);
+  } catch {
+    renderHintPanel('Hint unavailable (connection error).',false);
+  } finally {
+    hintBusy=false;
+  }
+}
+function renderHintPanel(foot, done){
+  const panel=document.getElementById('hintPanel'), btn=document.getElementById('hintBtn');
+  if(panel){
+    const rows=qHints.map((h,i)=>
+      `<div class="hint-row"><span class="hint-num">${i+1}</span>`
+      +`<span class="hint-label">${h.label}</span>`
+      +`<span class="hint-text">${h.text}</span></div>`).join('');
+    panel.innerHTML=rows+(foot?`<div class="hint-foot">${foot}</div>`:'');
+    if(qHints.length || foot) panel.style.display='block';
+  }
+  if(btn){
+    if(done){ btn.disabled=true; btn.textContent=qHints.length?'All hints revealed':'No hints available'; }
+    else    { btn.disabled=false; btn.innerHTML='&#128161; '+(qHints.length?'Reveal Another Hint':'Reveal a Hint'); }
+  }
 }
 
 
@@ -1166,6 +1253,7 @@ function renderLobby(inModal) {
         <div class="diff-label">Difficulty</div>
         <div class="diff-pills">${pills}</div>
       </div>
+      ${helpToggleHTML()}
       <div class="lobby-note">
         <strong style="color:#00C853">READY</strong> = data loaded for this sport &mdash;
         <strong>ETL required</strong> = not yet populated.
@@ -1186,9 +1274,28 @@ function coverageFor(sports){
   return sports.map(id=>{const d=SPORT_DEFS.find(x=>x.id===id);return d?d.label+': '+d.coverage:id;}).join('  •  ');
 }
 function selDiff(id,el){
-  document.querySelectorAll('.diff-pill').forEach(p=>p.classList.remove('selected'));
+  // Scope to this pill group so it doesn't clear the Help toggle's pills.
+  el.parentElement.querySelectorAll('.diff-pill').forEach(p=>p.classList.remove('selected'));
   el.classList.add('selected');
   const prefs=loadPrefs(); prefs.difficulty=id; savePrefs(prefs);
+}
+// Help (attribute hints) toggle -- reused in the lobby and the settings modal.
+function helpToggleHTML(){
+  const on=getHelpEnabled();
+  return `<div class="diff-section">
+    <div class="diff-label">Help &mdash; Attribute Hints</div>
+    <div class="diff-pills">
+      <button class="diff-pill ${!on?'selected':''}" onclick="selHelp(false,this)">Off</button>
+      <button class="diff-pill ${on?'selected':''}" onclick="selHelp(true,this)">On</button>
+    </div>
+    <div class="help-note">When on, a <b>Hint</b> button reveals one attribute at a
+      time (era, position, college, draft&hellip;) about a valid answer &mdash; never the name.</div>
+  </div>`;
+}
+function selHelp(on,el){
+  el.parentElement.querySelectorAll('.diff-pill').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  const prefs=loadPrefs(); prefs.help=on; savePrefs(prefs);
 }
 function startFromLobby(){
   const prefs=loadPrefs();
@@ -1214,6 +1321,7 @@ function openSportSelector(){
     <div style="padding:1rem 1.25rem 1.5rem">
       <div class="sport-grid" style="margin-bottom:1.25rem">${tiles}</div>
       <div class="diff-section"><div class="diff-label">Difficulty</div><div class="diff-pills">${pills}</div></div>
+      ${helpToggleHTML()}
       <button class="start-btn" style="margin-top:1rem"
               onclick="document.getElementById('selModal').remove();boot(null,true)">
         APPLY &amp; NEW PUZZLE
