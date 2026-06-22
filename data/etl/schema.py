@@ -254,13 +254,19 @@ def get_data_vintage(conn, sport='ALL'):
         # ingested players. Filtering out zero-count rows (legacy 'load'
         # markers carry no counts) means MAX(run_at) lands on the real load,
         # and dropping the old LIMIT lets every sport show in the footer.
+        # Latest player-ingesting 'ok' run per sport. A window function (not a
+        # bare-column GROUP BY) so this is valid on Postgres too -- SQLite would
+        # tolerate selecting un-grouped columns, Postgres rejects it.
         c.execute("""
-            SELECT sport, MAX(run_at) AS run_at,
-                   COALESCE(players_added,0) + COALESCE(players_updated,0) AS total
-            FROM etl_runs
-            WHERE status = 'ok'
-              AND COALESCE(players_added,0) + COALESCE(players_updated,0) > 0
-            GROUP BY sport
+            SELECT sport, run_at, total FROM (
+                SELECT sport, run_at,
+                       COALESCE(players_added,0) + COALESCE(players_updated,0) AS total,
+                       ROW_NUMBER() OVER (PARTITION BY sport ORDER BY run_at DESC) AS rn
+                FROM etl_runs
+                WHERE status = 'ok'
+                  AND COALESCE(players_added,0) + COALESCE(players_updated,0) > 0
+            ) latest
+            WHERE rn = 1
             ORDER BY run_at DESC
         """)
     else:

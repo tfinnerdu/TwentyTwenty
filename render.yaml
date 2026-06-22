@@ -3,9 +3,14 @@ services:
     name: 2020-game
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python data/etl/schema.py
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2
     envVars:
+      # The app reads from Postgres when DATABASE_URL is set. Point this at your
+      # Render Postgres (Internal Database URL). Populate it locally with
+      # `python load_to_postgres.py <EXTERNAL-url>` after building data/nfl.db.
+      - key: DATABASE_URL
+        sync: false
       - key: ADMIN_SECRET
         generateValue: true
       - key: SPORT_MODE

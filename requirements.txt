@@ -5,6 +5,9 @@ flask-cors==5.0.0
 # WSGI server (production)
 gunicorn==23.0.0
 
+# Postgres driver (production: app reads DATABASE_URL when set; SQLite locally)
+psycopg2-binary==2.9.10
+
 # ETL scrapers
 requests==2.32.3
 beautifulsoup4==4.12.3

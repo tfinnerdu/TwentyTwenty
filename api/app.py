@@ -33,6 +33,18 @@ BASE_DIR   = os.path.dirname(os.path.dirname(__file__))
 DB_PATH    = os.path.join(BASE_DIR, "data", "nfl.db")
 PUZZLE_DIR = os.path.join(BASE_DIR, "puzzles")
 
+# Database backend: Postgres when DATABASE_URL is set (production / Render), else
+# the local SQLite file (offline dev + the ETL build). The thin _PG* adapter below
+# lets the sqlite-style call sites (conn.execute / conn.cursor, '?' placeholders,
+# Row-style index+name access) run unchanged against Postgres.
+DATABASE_URL = os.environ.get("DATABASE_URL")
+try:
+    import psycopg2
+    import psycopg2.extras
+except ImportError:
+    psycopg2 = None
+USE_PG = bool(DATABASE_URL) and psycopg2 is not None
+
 START_DATE = date(2025, 1, 1)   # day 1 of the game
 
 
@@ -40,7 +52,48 @@ START_DATE = date(2025, 1, 1)   # day 1 of the game
 # Helpers
 # ---------------------------------------------------------------------------
 
+def _pg_sql(sql: str) -> str:
+    """Translate the SQLite dialect used in this file to Postgres: '?' params ->
+    '%s', and datetime('now') -> now()::text. Our queries contain no literal '%'
+    or '?', so the straight replace is safe."""
+    return sql.replace("?", "%s").replace("datetime('now')", "now()::text")
+
+
+class _PGCursor:
+    """sqlite3.Cursor-shaped wrapper: translates SQL on execute and yields
+    psycopg2 DictRows (which support both row[0] and row['col'], like sqlite3.Row)."""
+    def __init__(self, cur):
+        self._cur = cur
+
+    def execute(self, sql, params=()):
+        self._cur.execute(_pg_sql(sql), params)
+        return self
+
+    def fetchone(self):  return self._cur.fetchone()
+    def fetchall(self):  return self._cur.fetchall()
+    def __iter__(self):  return iter(self._cur)
+    def close(self):     self._cur.close()
+
+
+class _PGConn:
+    """Thin adapter so this file's sqlite-style calls (conn.execute / conn.cursor)
+    work against Postgres unchanged. Cursors use DictCursor for Row-like access."""
+    def __init__(self, raw):
+        self._raw = raw
+
+    def execute(self, sql, params=()):
+        return self.cursor().execute(sql, params)
+
+    def cursor(self):
+        return _PGCursor(self._raw.cursor(cursor_factory=psycopg2.extras.DictCursor))
+
+    def commit(self): self._raw.commit()
+    def close(self):  self._raw.close()
+
+
 def get_conn():
+    if USE_PG:
+        return _PGConn(psycopg2.connect(DATABASE_URL))
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
@@ -245,9 +298,13 @@ def data_vintage():
     if not HAS_ETL_SCHEMA:
         return jsonify({"vintages": [], "note": "ETL schema not available"})
 
-    conn = get_conn()
-    rows = _get_vintage(conn, "ALL")
-    conn.close()
+    try:
+        conn = get_conn()
+        rows = _get_vintage(conn, "ALL")
+        conn.close()
+    except Exception as e:
+        app.logger.warning(f"vintage query failed: {e}")
+        return jsonify({"vintages": [], "note": "vintage unavailable"})
 
     vintages = []
     for row in rows:
