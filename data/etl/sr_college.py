@@ -23,6 +23,13 @@ sports-reference.com isn't Cloudflare-gated (no cookie needed). Flow:
     python -m data.etl.sr_college --sport NCAAB --limit 50   # small live check
     python -m data.etl.sr_college --sport ALL
 
+There's also an --index mode: the FULL alphabetical player-index crawl (every
+cbb/cfb player, not just award winners) -- the same crawl `db_all --sport COLLEGE`
+runs, exposed here as a standalone flag. College only (NCAAF/NCAAB/NCAAW/ALL):
+
+    python -m data.etl.sr_college --sport NCAAB --index --limit 30   # shakedown
+    python -m data.etl.sr_college --sport ALL   --index --db data/db_all.db
+
 Honors come straight from which page a player appears on, so they're reliable.
 SR is blocked from CI, so dry-run + a small --limit shakedown before a full run.
 """
@@ -619,11 +626,25 @@ def main():
                     help="send NO cf_clearance -- for the non-gated SR hosts "
                          "(sports-reference / hockey-reference) when a wrong-domain cookie 403s")
     ap.add_argument("--user-agent")
+    ap.add_argument("--index", action="store_true",
+                    help="Full alphabetical player-index crawl (EVERY cbb/cfb player) "
+                         "instead of the award-page crawl. College only "
+                         "(NCAAF/NCAAB/NCAAW/ALL). The same crawl db_all --sport "
+                         "COLLEGE runs; point --db at data/db_all.db for the unpruned set.")
     args = ap.parse_args()
 
     _load_env_file(os.path.join(ROOT, ".env"))
     cf = None if args.no_cookie else (args.cf_clearance or os.environ.get("SR_CF_CLEARANCE"))
     ua = args.user_agent or os.environ.get("SR_CF_UA")
+
+    if args.index:                              # full letter-index crawl (sr_college_index)
+        sports = list(INDEX) if args.sport.upper() == "ALL" else [args.sport.upper()]
+        for sp in sports:
+            if sp not in INDEX:
+                log.error(f"--index supports {', '.join(INDEX)} (or ALL); got {sp!r}")
+                continue
+            crawl_index(sp, args.db, args.limit, args.delay, args.dry_run, cf, ua)
+        return
 
     sports = list(HONORS) if args.sport.upper() == "ALL" else [args.sport.upper()]
     for sp in sports:
