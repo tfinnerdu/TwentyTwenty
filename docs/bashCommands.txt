@@ -230,3 +230,45 @@ python generate_puzzles.py --days 7 --force
 # To override the server default, set env vars:
 #   SPORT_MODE=NFL,NBA    (comma-separated sport codes)
 #   PUZZLE_DIFFICULTY=medium
+
+--- DEMO MODE ---
+.\start-local.ps1 -Demo
+
+---Live Data Push---
+# more NBA bio (position/college/draft) — slower, per-player calls:
+.venv/bin/python -m data.etl.providers.nba_export --start 1996 --end 2024 --enrich --out ./nba_csv
+.venv/bin/python run_full.py --nba-dir ./nba_csv          # ingest the pre-export
+
+python run_full.py --ncaaf-curated          # skip CFBD, use curated NCAAF
+python run_full.py --fixtures               # real MLB+NCAA, fixtures for the 4 pro sports
+python run_full.py --cfbd-start 2000 --cfbd-end 2024     # widen NCAAF range
+python run_full.py --keep-db                # append instead of clean rebuild
+
+
+---Next Items Up---
+# After we get all data loaded or after a new data load:
+python run_full.py --puzzles-only
+
+
+---Final Steps---
+# a. bulk everything, clean rebuild, no puzzles  (wipes DB — run ONCE, first)
+python run_full.py --skip-puzzles
+
+# b. pro history: NBA + WNBA  (basketball-reference, no cookie; ~4–5 hr, resumable)
+python -m data.etl.sr_history --sport ALL
+
+# c. awards (run each to completion; college is long but resumable)
+python -m data.etl.sr_college --sport NHL      # ~50 min, hockey-ref, no cookie
+python -m data.etl.sr_college --sport NCAAF    # sports-ref, no cookie
+python -m data.etl.sr_college --sport NCAAB    # ~14 hr
+python -m data.etl.sr_college --sport NCAAW    # ~10 hr
+python -m data.etl.sr_college --sport NFL      # re-grab SR_CF_CLEARANCE right before this
+
+# d. preview the cut, then apply  (WNBA 25g · NHL award-or-50g · college awards-only)
+python -m data.etl.prune --sport ALL
+python -m data.etl.prune --sport ALL --apply
+
+# e. puzzles from the final pool
+python run_full.py --puzzles-only
+
+python -c 'from data.etl.schema import get_conn; [print(f"  {r[0]:6} {r[1]}") for r in get_conn().execute("SELECT sport, COUNT(*) FROM players GROUP BY sport ORDER BY sport")]'

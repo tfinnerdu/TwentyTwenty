@@ -19,4 +19,4 @@ data/cache/
 # DO NOT commit: data/nfl.db (binary, regenerated from seed or ETL)
 /.vs/TwentyTwenty/v18
 /.vs/TwentyTwenty/FileContentIndex
-/csv/ncaab/ncaab_players.csv
+*.csv

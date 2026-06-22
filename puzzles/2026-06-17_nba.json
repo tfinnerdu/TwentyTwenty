@@ -1,0 +1,167 @@
+[
+  {
+    "left_category": "born_80s",
+    "right_category": "nba_ring",
+    "left_label": "Born in the 1980s",
+    "right_label": "NBA Champion",
+    "valid_players": [
+      "Dwyane Wade",
+      "Kevin Durant",
+      "LeBron James",
+      "Stephen Curry"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_ring",
+    "right_category": "born_intl",
+    "left_label": "NBA Champion",
+    "right_label": "Born Outside USA",
+    "valid_players": [
+      "Dirk Nowitzki",
+      "Giannis Antetokounmpo",
+      "Hakeem Olajuwon"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "born_intl",
+    "right_category": "nba_allnba",
+    "left_label": "Born Outside USA",
+    "right_label": "All-NBA Selection",
+    "valid_players": [
+      "Dirk Nowitzki",
+      "Giannis Antetokounmpo",
+      "Hakeem Olajuwon",
+      "Patrick Ewing"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_allnba",
+    "right_category": "nba_rings2",
+    "left_label": "All-NBA Selection",
+    "right_label": "Multi NBA Champion",
+    "valid_players": [
+      "Bill Russell",
+      "David Robinson",
+      "Dwyane Wade",
+      "Hakeem Olajuwon",
+      "Kareem Abdul-Jabbar",
+      "Kevin Durant",
+      "Kobe Bryant",
+      "Larry Bird",
+      "LeBron James",
+      "Magic Johnson",
+      "Michael Jordan",
+      "Scottie Pippen",
+      "Shaquille O'Neal",
+      "Stephen Curry",
+      "Tim Duncan",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 16
+  },
+  {
+    "left_category": "nba_rings2",
+    "right_category": "nba_allnba",
+    "left_label": "Multi NBA Champion",
+    "right_label": "All-NBA Selection",
+    "valid_players": [
+      "Bill Russell",
+      "David Robinson",
+      "Dwyane Wade",
+      "Hakeem Olajuwon",
+      "Kareem Abdul-Jabbar",
+      "Kevin Durant",
+      "Kobe Bryant",
+      "Larry Bird",
+      "LeBron James",
+      "Magic Johnson",
+      "Michael Jordan",
+      "Scottie Pippen",
+      "Shaquille O'Neal",
+      "Stephen Curry",
+      "Tim Duncan",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 16
+  },
+  {
+    "left_category": "nba_allnba",
+    "right_category": "pick1",
+    "left_label": "All-NBA Selection",
+    "right_label": "#1 Overall Pick",
+    "valid_players": [
+      "Allen Iverson",
+      "David Robinson",
+      "Hakeem Olajuwon",
+      "Kareem Abdul-Jabbar",
+      "LeBron James",
+      "Magic Johnson",
+      "Patrick Ewing",
+      "Shaquille O'Neal",
+      "Tim Duncan"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "pick1",
+    "right_category": "nba_20ppg",
+    "left_label": "#1 Overall Pick",
+    "right_label": "20+ PPG Career",
+    "valid_players": [
+      "Allen Iverson",
+      "David Robinson",
+      "Hakeem Olajuwon",
+      "Kareem Abdul-Jabbar",
+      "LeBron James",
+      "Patrick Ewing",
+      "Shaquille O'Neal"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "nba_20ppg",
+    "right_category": "nba_forward",
+    "left_label": "20+ PPG Career",
+    "right_label": "NBA Forward",
+    "valid_players": [
+      "Dirk Nowitzki",
+      "Giannis Antetokounmpo",
+      "Kevin Durant",
+      "Larry Bird",
+      "LeBron James"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "nba_forward",
+    "right_category": "decade_00s",
+    "left_label": "NBA Forward",
+    "right_label": "Played in 2000s",
+    "valid_players": [
+      "Kevin Durant",
+      "Kevin Garnett",
+      "LeBron James",
+      "Tim Duncan"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "decade_00s",
+    "right_category": "nba_mvp",
+    "left_label": "Played in 2000s",
+    "right_label": "NBA MVP",
+    "valid_players": [
+      "Allen Iverson",
+      "Kevin Durant",
+      "Kevin Garnett",
+      "LeBron James",
+      "Shaquille O'Neal",
+      "Stephen Curry",
+      "Tim Duncan"
+    ],
+    "answer_count": 7
+  }
+]

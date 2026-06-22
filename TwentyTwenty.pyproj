@@ -34,6 +34,38 @@ ADMIN_SECRET=dev_secret
       <SubType>Code</SubType>
     </Compile>
     <!-- Engine -->
+    <Compile Include="build_demo_db.py" />
+    <Compile Include="check_hist.py" />
+    <Compile Include="data\etl\apply_awards.py" />
+    <Compile Include="data\etl\backfill_sr.py" />
+    <Compile Include="data\etl\db_all.py" />
+    <Compile Include="data\etl\providers\base.py" />
+    <Compile Include="data\etl\providers\cfbd_export.py" />
+    <Compile Include="data\etl\providers\csv_season.py" />
+    <Compile Include="data\etl\providers\curated.py" />
+    <Compile Include="data\etl\providers\lahman_mlb.py" />
+    <Compile Include="data\etl\providers\nba_csv.py" />
+    <Compile Include="data\etl\providers\nba_export.py" />
+    <Compile Include="data\etl\providers\nba_github_export.py" />
+    <Compile Include="data\etl\providers\ncaa_hoops_export.py" />
+    <Compile Include="data\etl\providers\nfl_export.py" />
+    <Compile Include="data\etl\providers\nhl_export.py" />
+    <Compile Include="data\etl\providers\smoke_test.py" />
+    <Compile Include="data\etl\providers\smoke_test_all.py" />
+    <Compile Include="data\etl\providers\smoke_test_csv.py" />
+    <Compile Include="data\etl\providers\smoke_test_nba.py" />
+    <Compile Include="data\etl\providers\smoke_test_ncaa.py" />
+    <Compile Include="data\etl\providers\wnba_export.py" />
+    <Compile Include="data\etl\providers\wnba_github_export.py" />
+    <Compile Include="data\etl\providers\_fixture_csv.py" />
+    <Compile Include="data\etl\providers\_fixture_mlb.py" />
+    <Compile Include="data\etl\providers\_fixture_nba.py" />
+    <Compile Include="data\etl\providers\__init__.py" />
+    <Compile Include="data\etl\prune.py" />
+    <Compile Include="data\etl\run_provider.py" />
+    <Compile Include="data\etl\sr_college.py" />
+    <Compile Include="data\etl\sr_history.py" />
+    <Compile Include="data\etl\sr_status.py" />
     <Compile Include="engine\generator.py">
       <SubType>Code</SubType>
     </Compile>
@@ -79,10 +111,69 @@ ADMIN_SECRET=dev_secret
     <Compile Include="generate_puzzles.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="reset_history.py" />
+    <Compile Include="run_full.py" />
   </ItemGroup>
   <ItemGroup>
     <!-- Frontend -->
     <Content Include=".env" />
+    <Content Include=".gitattributes" />
+    <Content Include="csv\ncaab\ncaab_players.csv" />
+    <Content Include="csv\ncaab\ncaab_seasons.csv" />
+    <Content Include="data\etl\awards\nba.json" />
+    <Content Include="data\etl\awards\ncaaf.json" />
+    <Content Include="data\etl\awards\nfl.json" />
+    <Content Include="data\etl\awards\nhl.json" />
+    <Content Include="data\etl\awards\wnba.json" />
+    <Content Include="data\etl\curated\ncaab.json" />
+    <Content Include="data\etl\curated\ncaaf.json" />
+    <Content Include="data\etl\curated\ncaaw.json" />
+    <Content Include="data\etl\providers\README.md" />
+    <Content Include="data\etl\providers\__pycache__\base.cpython-311.pyc" />
+    <Content Include="data\etl\providers\__pycache__\csv_season.cpython-311.pyc" />
+    <Content Include="data\etl\providers\__pycache__\curated.cpython-311.pyc" />
+    <Content Include="data\etl\providers\__pycache__\lahman_mlb.cpython-311.pyc" />
+    <Content Include="data\etl\providers\__pycache__\_fixture_csv.cpython-311.pyc" />
+    <Content Include="data\etl\providers\__pycache__\_fixture_mlb.cpython-311.pyc" />
+    <Content Include="data\etl\providers\__pycache__\_fixture_nba.cpython-311.pyc" />
+    <Content Include="data\etl\providers\__pycache__\__init__.cpython-311.pyc" />
+    <Content Include="data\nfl.db" />
+    <Content Include="LICENSE.txt" />
+    <Content Include="puzzles\2026-06-17.json" />
+    <Content Include="puzzles\2026-06-17_all.json" />
+    <Content Include="puzzles\2026-06-17_mlb.json" />
+    <Content Include="puzzles\2026-06-17_nba.json" />
+    <Content Include="puzzles\2026-06-17_ncaab.json" />
+    <Content Include="puzzles\2026-06-17_ncaaf.json" />
+    <Content Include="puzzles\2026-06-17_ncaaw.json" />
+    <Content Include="puzzles\2026-06-17_nfl.json" />
+    <Content Include="puzzles\2026-06-17_nhl.json" />
+    <Content Include="puzzles\2026-06-17_wnba.json" />
+    <Content Include="puzzles\2026-06-18.json" />
+    <Content Include="puzzles\2026-06-18_all.json" />
+    <Content Include="puzzles\2026-06-18_mlb.json" />
+    <Content Include="puzzles\2026-06-18_nba.json" />
+    <Content Include="puzzles\2026-06-18_ncaab.json" />
+    <Content Include="puzzles\2026-06-18_ncaaf.json" />
+    <Content Include="puzzles\2026-06-18_ncaaw.json" />
+    <Content Include="puzzles\2026-06-18_nfl.json" />
+    <Content Include="puzzles\2026-06-18_nhl.json" />
+    <Content Include="puzzles\2026-06-18_wnba.json" />
+    <Content Include="puzzles\2026-06-19.json" />
+    <Content Include="puzzles\2026-06-19_all.json" />
+    <Content Include="puzzles\2026-06-19_mlb.json" />
+    <Content Include="puzzles\2026-06-19_nba.json" />
+    <Content Include="puzzles\2026-06-19_ncaab.json" />
+    <Content Include="puzzles\2026-06-19_ncaaf.json" />
+    <Content Include="puzzles\2026-06-19_ncaaw.json" />
+    <Content Include="puzzles\2026-06-19_nfl.json" />
+    <Content Include="puzzles\2026-06-19_nhl.json" />
+    <Content Include="puzzles\2026-06-19_wnba.json" />
+    <Content Include="puzzles\2026-06-20.json" />
+    <Content Include="puzzles\2026-06-21.json" />
+    <Content Include="puzzles\2026-06-22.json" />
+    <Content Include="puzzles\2026-06-23.json" />
+    <Content Include="requirements-etl.txt" />
     <Content Include="static\index.html" />
     <!-- Config / deploy -->
     <Content Include="requirements.txt" />
@@ -100,10 +191,18 @@ ADMIN_SECRET=dev_secret
     <Folder Include=".github\" />
     <Folder Include=".github\workflows\" />
     <Folder Include="api\" />
+    <Folder Include="csv\" />
+    <Folder Include="csv\nba\" />
+    <Folder Include="csv\ncaab\" />
     <Folder Include="data\" />
     <Folder Include="data\etl\" />
+    <Folder Include="data\etl\awards\" />
+    <Folder Include="data\etl\curated\" />
+    <Folder Include="data\etl\providers\" />
+    <Folder Include="data\etl\providers\__pycache__\" />
     <Folder Include="docs\" />
     <Folder Include="engine\" />
+    <Folder Include="puzzles\" />
     <Folder Include="static\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

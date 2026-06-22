@@ -1,0 +1,407 @@
+[
+  {
+    "left_category": "team_steelers",
+    "right_category": "born_60s",
+    "left_label": "Steelers",
+    "right_label": "Born in the 1960s",
+    "valid_players": [
+      "Courtney Hawkins",
+      "Jim Sweeney",
+      "Kent Graham",
+      "Levon Kirkland",
+      "Mike Tomczak",
+      "Terance Mathis",
+      "Tom Rouen"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "born_60s",
+    "right_category": "mlb_mvp",
+    "left_label": "Born in the 1960s",
+    "right_label": "MLB MVP",
+    "valid_players": [
+      "Barry Bonds",
+      "Barry Larkin",
+      "Cal Ripken",
+      "Don Mattingly",
+      "Frank Thomas",
+      "Jeff Bagwell",
+      "Jeff Kent",
+      "Jose Canseco",
+      "Juan Gonzalez",
+      "Ken Caminiti",
+      "Ken Griffey",
+      "Kevin Mitchell",
+      "Larry Walker",
+      "Mo Vaughn",
+      "Roger Clemens",
+      "Sammy Sosa",
+      "Terry Pendleton"
+    ],
+    "answer_count": 17
+  },
+  {
+    "left_category": "mlb_mvp",
+    "right_category": "mlb_300w",
+    "left_label": "MLB MVP",
+    "right_label": "300+ Career Wins",
+    "valid_players": [
+      "Lefty Grove",
+      "Roger Clemens",
+      "Walter Johnson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "mlb_300w",
+    "right_category": "born_ny",
+    "left_label": "300+ Career Wins",
+    "right_label": "Born in New York",
+    "valid_players": [
+      "Mickey Welch",
+      "Old Hoss Radbourn",
+      "Warren Spahn"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "born_ny",
+    "right_category": "mlb_allstar5",
+    "left_label": "Born in New York",
+    "right_label": "5+ All-Star Selections",
+    "valid_players": [
+      "Alex Rodriguez",
+      "Bobby Bonilla",
+      "Buddy Rosar",
+      "Carl Yastrzemski",
+      "Craig Biggio",
+      "Edgar Martinez",
+      "Frank Malzone",
+      "Frank McCormick",
+      "Hank Greenberg",
+      "Jim Palmer",
+      "Joe Torre",
+      "Johnny Antonelli",
+      "Lou Gehrig",
+      "Lou Whitaker",
+      "Phil Rizzuto",
+      "Rocky Colavito",
+      "Sandy Koufax",
+      "Warren Spahn",
+      "Whitey Ford"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "mlb_allstar5",
+    "right_category": "born_tx",
+    "left_label": "5+ All-Star Selections",
+    "right_label": "Born in Texas",
+    "valid_players": [
+      "Cecil Cooper",
+      "Clayton Kershaw",
+      "Eddie Mathews",
+      "Ernie Banks",
+      "Ferris Fain",
+      "Frank Robinson",
+      "Greg Maddux",
+      "Jo-Jo Moore",
+      "Joe Morgan",
+      "Joe Nathan",
+      "Lance Berkman",
+      "Nolan Ryan"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "born_tx",
+    "right_category": "born_70s",
+    "left_label": "Born in Texas",
+    "right_label": "Born in the 1970s",
+    "valid_players": [
+      "Adam Dunn",
+      "Armando Almanza",
+      "Ben Broussard",
+      "Ben Grieve",
+      "Brad Hawpe",
+      "Brandon Backe",
+      "Brandon Harper",
+      "Brandon Larson",
+      "Brian Barkley",
+      "Brian Bevil",
+      "Brian Myrow",
+      "Brian Sanches",
+      "Brooks Kieschnick",
+      "Bruce Aven",
+      "Bubba Crosby",
+      "Calvin Murray",
+      "Chad Allen",
+      "Chance Sanford",
+      "Chip Ambres",
+      "Chris Clemons",
+      "Chris George",
+      "Chris Holt",
+      "Chris Sampson",
+      "Chris Seelbach",
+      "Chris Young",
+      "Clay Condrey",
+      "Clay Hensley",
+      "Cliff Bartosh",
+      "Cory Aldridge",
+      "Craig Monroe",
+      "Dan Wright",
+      "Danny Perez",
+      "Dean Crow",
+      "Delvin James",
+      "Donnie Sadler",
+      "Eric Cammack",
+      "Fred Rath",
+      "Grant Hill",
+      "J. D. Smart",
+      "J. J. Trujillo",
+      "Jaime Bubela",
+      "Jason Alfaro",
+      "Jason Jennings",
+      "Jason LaRue",
+      "Jason Tyner",
+      "Jay Canizaro",
+      "Jeff Kubenka",
+      "Jeff Sparks",
+      "Jeremy Fikac",
+      "Jeremy Hill",
+      "Jesse Garcia",
+      "Jessie Hollins",
+      "Jim Chamblee",
+      "Joe Nathan",
+      "John Lackey",
+      "John Nelson",
+      "John Patterson",
+      "Justin Thompson",
+      "Kelly Wunsch",
+      "Kerry Wood",
+      "Kevin Beirne",
+      "Kevin Hodges",
+      "Kevin Thompson",
+      "Kevin Walker",
+      "Kip Wells",
+      "Kyle Snyder",
+      "Lance Berkman",
+      "Lew Ford",
+      "Mark Brandenburg",
+      "Matt Blank",
+      "Matt Miller",
+      "Melvin Bunch",
+      "Micah Bowie",
+      "Mike Adams",
+      "Mike Bacsik",
+      "Mike Gonzalez",
+      "Mike Sirotka",
+      "Pat Mahomes",
+      "Phil Norton",
+      "Philip Barzilla",
+      "Randy Choate",
+      "Randy Keisler",
+      "Randy Williams",
+      "Ricky Pickett",
+      "Robbie Beckett",
+      "Rocky Cherry",
+      "Rocky Coppinger",
+      "Rod Myers",
+      "Rontrez Johnson",
+      "Ryan Long",
+      "Ryan Rupe",
+      "Scott Atchison",
+      "Scott Dunn",
+      "Scott Linebrink",
+      "Scott Mullen",
+      "Scott Podsednik",
+      "Scott Strickland",
+      "Sean Lowe",
+      "Shane Andrews",
+      "Shane Nance",
+      "Sheryl Swoopes",
+      "Steve Gibralter",
+      "Steve Watkins",
+      "Trey Beamon",
+      "Trey Hodges",
+      "Trey Lunsford",
+      "Trey Moore",
+      "Will Brunson"
+    ],
+    "answer_count": 108
+  },
+  {
+    "left_category": "born_70s",
+    "right_category": "ncaab_aa",
+    "left_label": "Born in the 1970s",
+    "right_label": "College All-American (M)",
+    "valid_players": [
+      "Glenn Robinson",
+      "Grant Hill",
+      "Shaquille O'Neal",
+      "Tim Duncan"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "ncaab_aa",
+    "right_category": "ncaab_kansas",
+    "left_label": "College All-American (M)",
+    "right_label": "Played at Kansas (M)",
+    "valid_players": [
+      "Danny Manning",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "ncaab_kansas",
+    "right_category": "ncaab_center",
+    "left_label": "Played at Kansas (M)",
+    "right_label": "College Center (M)",
+    "valid_players": [
+      "Cole Aldrich",
+      "Jeff Withey",
+      "Sasha Kaun",
+      "Udoka Azubuike",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "ncaab_center",
+    "right_category": "college_usc",
+    "left_label": "College Center (M)",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Omar Oraby",
+      "Onyeka Okongwu"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "rec_5k",
+    "left_label": "Went to USC",
+    "right_label": "5,000+ Receiving Yds",
+    "valid_players": [
+      "Johnnie Morton",
+      "JuJu Smith-Schuster",
+      "Robert Woods"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "rec_5k",
+    "right_category": "team_chargers",
+    "left_label": "5,000+ Receiving Yds",
+    "right_label": "Chargers",
+    "valid_players": [
+      "Antonio Gates",
+      "Jared Cook",
+      "Keenan Allen"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_chargers",
+    "right_category": "team_lions",
+    "left_label": "Chargers",
+    "right_label": "Lions",
+    "valid_players": [
+      "Andre Roberts",
+      "Chase Daniel",
+      "Justin Jackson",
+      "Tyrell Williams"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_lions",
+    "right_category": "team_bills",
+    "left_label": "Lions",
+    "right_label": "Bills",
+    "valid_players": [
+      "Andre Roberts",
+      "Dorin Dickerson",
+      "Jerome Felton",
+      "Khari Lee",
+      "Logan Thomas",
+      "Matthew Mulligan",
+      "Michael Gaines",
+      "Reggie Bush",
+      "Shawn Bryson",
+      "Ty Johnson"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "team_bills",
+    "right_category": "college_unc",
+    "left_label": "Bills",
+    "right_label": "Went to UNC",
+    "valid_players": [
+      "Antonio Williams",
+      "Brandon Tate",
+      "Johnny White",
+      "Jonathan Linton",
+      "Mitchell Trubisky",
+      "Sam Aiken"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "college_unc",
+    "right_category": "pos_nfl_def",
+    "left_label": "Went to UNC",
+    "right_label": "NFL Defensive Player",
+    "valid_players": [
+      "Bracy Walker",
+      "Dre' Bly",
+      "Julius Peppers"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "pos_nfl_def",
+    "right_category": "college_usc",
+    "left_label": "NFL Defensive Player",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Adoree' Jackson",
+      "Allen Bradford",
+      "Everson Griffen",
+      "Ifeanyi Ohalete",
+      "Junior Seau",
+      "Malcolm Smith",
+      "Mike Morgan",
+      "Taylor Mays"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "team_vikings",
+    "left_label": "Went to USC",
+    "right_label": "Vikings",
+    "valid_players": [
+      "Everson Griffen",
+      "Johnny McWilliams",
+      "Matt Cassel",
+      "Rhett Ellison"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_vikings",
+    "right_category": "college_michigan",
+    "left_label": "Vikings",
+    "right_label": "Went to Michigan",
+    "valid_players": [
+      "Derrick Alexander",
+      "Leroy Hoard"
+    ],
+    "answer_count": 2
+  }
+]

@@ -1,0 +1,355 @@
+[
+  {
+    "left_category": "born_80s",
+    "right_category": "ncaab_poy",
+    "left_label": "Born in the 1980s",
+    "right_label": "College POY (M)",
+    "valid_players": [
+      "J.J. Redick",
+      "Tyler Hansbrough"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "ncaab_poy",
+    "right_category": "decade_70s",
+    "left_label": "College POY (M)",
+    "right_label": "Played in 1970s",
+    "valid_players": [
+      "Bill Walton",
+      "Larry Bird",
+      "Pete Maravich"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "decade_70s",
+    "right_category": "ncaab_20ppg",
+    "left_label": "Played in 1970s",
+    "right_label": "20+ PPG in College (M)",
+    "valid_players": [
+      "Bill Walton",
+      "Larry Bird",
+      "Pete Maravich"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "ncaab_20ppg",
+    "right_category": "college_duke",
+    "left_label": "20+ PPG in College (M)",
+    "right_label": "Went to Duke",
+    "valid_players": [
+      "Cameron Boozer",
+      "Marvin Bagley III",
+      "RJ Barrett",
+      "Zion Williamson"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "college_duke",
+    "right_category": "ncaab_aa",
+    "left_label": "Went to Duke",
+    "right_label": "College All-American (M)",
+    "valid_players": [
+      "Christian Laettner",
+      "Grant Hill",
+      "J.J. Redick"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "ncaab_aa",
+    "right_category": "ncaab_forward",
+    "left_label": "College All-American (M)",
+    "right_label": "College Forward (M)",
+    "valid_players": [
+      "Anthony Davis",
+      "Carmelo Anthony",
+      "Christian Laettner",
+      "Danny Manning",
+      "Elgin Baylor",
+      "Glenn Robinson",
+      "Grant Hill",
+      "Larry Bird",
+      "Tyler Hansbrough"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "ncaab_forward",
+    "right_category": "ncaab_kansas",
+    "left_label": "College Forward (M)",
+    "right_label": "Played at Kansas (M)",
+    "valid_players": [
+      "Carlton Bragg Jr.",
+      "Danny Manning",
+      "Darnell Jackson",
+      "Darrell Arthur",
+      "David McCormack",
+      "Flory Bidunga",
+      "Jalen Wilson",
+      "Jamari Traylor",
+      "Julian Wright",
+      "K.J. Adams Jr.",
+      "Kevin Young",
+      "Landen Lucas",
+      "Marcus Morris Sr.",
+      "Markieff Morris",
+      "Mitch Lightfoot",
+      "Perry Ellis",
+      "Silvio De Sousa",
+      "Thomas Robinson"
+    ],
+    "answer_count": 18
+  },
+  {
+    "left_category": "ncaab_kansas",
+    "right_category": "ncaab_center",
+    "left_label": "Played at Kansas (M)",
+    "right_label": "College Center (M)",
+    "valid_players": [
+      "Cole Aldrich",
+      "Jeff Withey",
+      "Sasha Kaun",
+      "Udoka Azubuike",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "ncaab_center",
+    "right_category": "undrafted",
+    "left_label": "College Center (M)",
+    "right_label": "Undrafted",
+    "valid_players": [
+      "Bill Russell",
+      "Bill Walton",
+      "David Robinson",
+      "Hakeem Olajuwon",
+      "Lew Alcindor",
+      "Patrick Ewing",
+      "Shaquille O'Neal",
+      "Tim Duncan",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "undrafted",
+    "right_category": "ncaab_duke",
+    "left_label": "Undrafted",
+    "right_label": "Played at Duke (M)",
+    "valid_players": [
+      "Christian Laettner",
+      "Grant Hill",
+      "J.J. Redick"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "ncaab_duke",
+    "right_category": "ncaab_20ppg",
+    "left_label": "Played at Duke (M)",
+    "right_label": "20+ PPG in College (M)",
+    "valid_players": [
+      "Cameron Boozer",
+      "Marvin Bagley III",
+      "RJ Barrett",
+      "Zion Williamson"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "ncaab_20ppg",
+    "right_category": "decade_80s",
+    "left_label": "20+ PPG in College (M)",
+    "right_label": "Played in 1980s",
+    "valid_players": [
+      "Danny Manning",
+      "David Robinson"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "decade_80s",
+    "right_category": "ncaab_champ",
+    "left_label": "Played in 1980s",
+    "right_label": "NCAA Champion (M)",
+    "valid_players": [
+      "Christian Laettner",
+      "Danny Manning",
+      "Michael Jordan",
+      "Patrick Ewing"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "ncaab_champ",
+    "right_category": "ncaab_guard",
+    "left_label": "NCAA Champion (M)",
+    "right_label": "College Guard (M)",
+    "valid_players": [
+      "Kemba Walker",
+      "Michael Jordan"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "ncaab_guard",
+    "right_category": "college_unc",
+    "left_label": "College Guard (M)",
+    "right_label": "Went to UNC",
+    "valid_players": [
+      "Andrew Platek",
+      "Brandon Robinson",
+      "Caleb Love",
+      "Coby White",
+      "Danny Green",
+      "Dexter Strickland",
+      "Dontrez Styles",
+      "Elliot Cadeau",
+      "Ian Jackson",
+      "Joel Berry II",
+      "Jonathan Powell",
+      "Kendall Marshall",
+      "Kenny Williams",
+      "Larry Drew II",
+      "Leslie McDonald",
+      "Marcus Ginyard",
+      "Marcus Paige",
+      "Michael Jordan",
+      "Nate Britt",
+      "P.J. Hairston",
+      "R.J. Davis",
+      "Rashad McCants",
+      "Reggie Bullock",
+      "Seth Trimble",
+      "Ty Lawson",
+      "Wayne Ellington",
+      "Will Graves"
+    ],
+    "answer_count": 27
+  },
+  {
+    "left_category": "college_unc",
+    "right_category": "decade_20s",
+    "left_label": "Went to UNC",
+    "right_label": "Played in 2020s",
+    "valid_players": [
+      "Andrew Platek",
+      "Armando Bacot",
+      "Brandon Huffman",
+      "Brandon Robinson",
+      "Caleb Love",
+      "Dontrez Styles",
+      "Elliot Cadeau",
+      "Garrison Brooks",
+      "Ian Jackson",
+      "Jalen Washington",
+      "Jonathan Powell",
+      "Justin McKoy",
+      "Leaky Black",
+      "Puff Johnson",
+      "R.J. Davis",
+      "Seth Trimble",
+      "Ven-Allen Lubin",
+      "Walker Miller"
+    ],
+    "answer_count": 18
+  },
+  {
+    "left_category": "decade_20s",
+    "right_category": "college_ohio_st",
+    "left_label": "Played in 2020s",
+    "right_label": "Went to Ohio State",
+    "valid_players": [
+      "Andre Wesson",
+      "Brice Sensabaugh",
+      "Bruce Thornton",
+      "David Bell",
+      "Devin Royal",
+      "Duane Washington Jr.",
+      "E.J. Liddell",
+      "Eugene Brown III",
+      "Evan Mahaffey",
+      "Felix Okpara",
+      "JaQuan Lyle",
+      "John Mobley Jr.",
+      "Justice Sueing",
+      "Justin Ahrens",
+      "Kaleb Wesson",
+      "Kyle Young",
+      "Malaki Branham",
+      "Micah Potter",
+      "Roddy Gayle Jr.",
+      "Zed Key"
+    ],
+    "answer_count": 20
+  },
+  {
+    "left_category": "college_ohio_st",
+    "right_category": "decade_20s",
+    "left_label": "Went to Ohio State",
+    "right_label": "Played in 2020s",
+    "valid_players": [
+      "Andre Wesson",
+      "Brice Sensabaugh",
+      "Bruce Thornton",
+      "David Bell",
+      "Devin Royal",
+      "Duane Washington Jr.",
+      "E.J. Liddell",
+      "Eugene Brown III",
+      "Evan Mahaffey",
+      "Felix Okpara",
+      "JaQuan Lyle",
+      "John Mobley Jr.",
+      "Justice Sueing",
+      "Justin Ahrens",
+      "Kaleb Wesson",
+      "Kyle Young",
+      "Malaki Branham",
+      "Micah Potter",
+      "Roddy Gayle Jr.",
+      "Zed Key"
+    ],
+    "answer_count": 20
+  },
+  {
+    "left_category": "decade_20s",
+    "right_category": "ncaab_10rpg",
+    "left_label": "Played in 2020s",
+    "right_label": "10+ RPG in College (M)",
+    "valid_players": [
+      "Brandon Benjamin",
+      "Cameron Boozer",
+      "Charles Bassey",
+      "Clarence Daniels",
+      "Cletrell Pope",
+      "Enrique Freeman",
+      "Fardaws Aimaq",
+      "Hannes Steinbach",
+      "Lamine Diane",
+      "Norchad Omier",
+      "Oscar Tshiebwe",
+      "Precious Achiuwa",
+      "Ruot Monyyong"
+    ],
+    "answer_count": 13
+  },
+  {
+    "left_category": "ncaab_10rpg",
+    "right_category": "ncaab_kentucky",
+    "left_label": "10+ RPG in College (M)",
+    "right_label": "Played at Kentucky (M)",
+    "valid_players": [
+      "Anthony Davis",
+      "DeMarcus Cousins",
+      "Julius Randle",
+      "Oscar Tshiebwe"
+    ],
+    "answer_count": 4
+  }
+]

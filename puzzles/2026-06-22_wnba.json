@@ -1,0 +1,413 @@
+[
+  {
+    "left_category": "undrafted",
+    "right_category": "wnba_lynx",
+    "left_label": "Undrafted",
+    "right_label": "Lynx",
+    "valid_players": [
+      "Angela Aycock",
+      "Annie La Fleur",
+      "Kate Paye",
+      "Kristin Folkl"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "wnba_lynx",
+    "right_category": "born_70s",
+    "left_label": "Lynx",
+    "right_label": "Born in the 1970s",
+    "valid_players": [
+      "Adia Barnes",
+      "Angela Aycock",
+      "Angie Potthoff",
+      "Brandy Reed",
+      "Kate Paye",
+      "Keitha Dickerson",
+      "Kristin Folkl",
+      "Maylana Martin",
+      "Shanele Stires",
+      "Sonja Tate",
+      "Trisha Fallon",
+      "Val Whiting-Raymond"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "born_70s",
+    "right_category": "college_lsu",
+    "left_label": "Born in the 1970s",
+    "right_label": "Went to LSU",
+    "valid_players": [
+      "Cornelia Gayden",
+      "Katrina Hibbert",
+      "Pietra Gay"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "college_lsu",
+    "right_category": "undrafted",
+    "left_label": "Went to LSU",
+    "right_label": "Undrafted",
+    "valid_players": [
+      "Cornelia Gayden",
+      "Pietra Gay"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "undrafted",
+    "right_category": "born_60s",
+    "left_label": "Undrafted",
+    "right_label": "Born in the 1960s",
+    "valid_players": [
+      "Adrienne Shuler",
+      "Annie La Fleur",
+      "Beverly Williams",
+      "Bridgette Gordon",
+      "Cassandra Crumpton-Moorer",
+      "Cindy Brown",
+      "Cynthia Cooper",
+      "Daedra Charles",
+      "Donna Harrington",
+      "Elena Tornikidou",
+      "Eugenia Rycraw",
+      "Fran Harris",
+      "Franthea Price",
+      "Haixia Zheng",
+      "Janice Braxton",
+      "Jasmina Perazic-Gipe",
+      "Joy Holmes-Harris",
+      "Judy Mosley-McAfee",
+      "Karen Booker",
+      "Kelly Boucher",
+      "Kim Perrot",
+      "Krystyna Lara",
+      "Kym Hampton",
+      "Linda Burgess",
+      "MerleLynn Lange-Harris",
+      "Michele Timms",
+      "Michelle Edwards",
+      "Milica Vukadinovic",
+      "Pauline Jordan",
+      "Penny Moore",
+      "Penny Toler",
+      "Razija Brcaninovic",
+      "Sandra Van Embricqs",
+      "Stacey Ford",
+      "Tia Paschal",
+      "Valerie Still",
+      "Venus Lacy",
+      "Vicki Hall",
+      "Vicky Bullett",
+      "Wanda Guyton",
+      "Yvette Angel"
+    ],
+    "answer_count": 41
+  },
+  {
+    "left_category": "born_60s",
+    "right_category": "top5",
+    "left_label": "Born in the 1960s",
+    "right_label": "Top 5 Pick",
+    "valid_players": [
+      "Chantel Tremitiere",
+      "Pamela McGee",
+      "Rachael Sporn",
+      "Rehema Stephens",
+      "Sharon Manning"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "top5",
+    "right_category": "decade_90s",
+    "left_label": "Top 5 Pick",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Adia Barnes",
+      "Andrea Congreaves",
+      "Andrea Nagy",
+      "Angela Jackson",
+      "Angie Hamblin",
+      "Anita Maxwell",
+      "Chantel Tremitiere",
+      "Clarisse Machanguana",
+      "Eva Nemcova",
+      "Gergana Branzova",
+      "Jamila Wideman",
+      "Jennifer Whittle",
+      "Katrina Colleton",
+      "Kim Williams",
+      "Kisha Ford",
+      "Korie Hlede",
+      "Pamela McGee",
+      "Quacy Barnes",
+      "Rachael Sporn",
+      "Raegan Pebley",
+      "Rehema Stephens",
+      "Sharon Manning",
+      "Tammi Reiss",
+      "Tia Jackson",
+      "Tina Nicholson",
+      "Tricia Bader Binford",
+      "Val Whiting-Raymond"
+    ],
+    "answer_count": 27
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "college_alabama",
+    "left_label": "Played in 1990s",
+    "right_label": "Went to Alabama",
+    "valid_players": [
+      "Cassandra Crumpton-Moorer",
+      "Linda Burgess",
+      "Niesa Johnson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "college_alabama",
+    "right_category": "undrafted",
+    "left_label": "Went to Alabama",
+    "right_label": "Undrafted",
+    "valid_players": [
+      "Cassandra Crumpton-Moorer",
+      "Linda Burgess",
+      "Niesa Johnson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "undrafted",
+    "right_category": "decade_10s",
+    "left_label": "Undrafted",
+    "right_label": "Played in 2010s",
+    "valid_players": [
+      "DeMya Walker",
+      "Iziane Castro Marques"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "decade_10s",
+    "right_category": "wnba_5apg",
+    "left_label": "Played in 2010s",
+    "right_label": "5+ APG Career (WNBA)",
+    "valid_players": [
+      "Alyssa Thomas",
+      "Chelsea Gray",
+      "Courtney Vandersloot",
+      "Jordin Canada",
+      "Natasha Cloud",
+      "Skylar Diggins-Smith",
+      "Sue Bird"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "wnba_5apg",
+    "right_category": "wnba_mercury",
+    "left_label": "5+ APG Career (WNBA)",
+    "right_label": "Mercury",
+    "valid_players": [
+      "Alyssa Thomas",
+      "Natasha Cloud",
+      "Skylar Diggins-Smith"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "wnba_mercury",
+    "right_category": "wnba_center",
+    "left_label": "Mercury",
+    "right_label": "WNBA Center",
+    "valid_players": [
+      "Alaina Coates",
+      "Ashley Robinson",
+      "Avery Warley-Talbert",
+      "Brittney Griner",
+      "Ewelina Kobryn",
+      "Kalani Brown",
+      "Kelsey Bone",
+      "Kia Vaughn",
+      "Krystal Thomas",
+      "Marie Gulich",
+      "Megan Gustafson",
+      "Tangela  Smith",
+      "Tina Charles"
+    ],
+    "answer_count": 13
+  },
+  {
+    "left_category": "wnba_center",
+    "right_category": "wnba_lynx",
+    "left_label": "WNBA Center",
+    "right_label": "Lynx",
+    "valid_players": [
+      "Alaina Coates",
+      "Janel McCarville",
+      "Jessica  Adair",
+      "Kayla Alexander",
+      "Nikolina Milic",
+      "Quanitra Hollingsworth",
+      "Sylvia Fowles",
+      "Teaira McCowan",
+      "Temi Fagbenle"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "wnba_lynx",
+    "right_category": "born_70s",
+    "left_label": "Lynx",
+    "right_label": "Born in the 1970s",
+    "valid_players": [
+      "Adia Barnes",
+      "Angela Aycock",
+      "Angie Potthoff",
+      "Brandy Reed",
+      "Kate Paye",
+      "Keitha Dickerson",
+      "Kristin Folkl",
+      "Maylana Martin",
+      "Shanele Stires",
+      "Sonja Tate",
+      "Trisha Fallon",
+      "Val Whiting-Raymond"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "born_70s",
+    "right_category": "wnba_lynx",
+    "left_label": "Born in the 1970s",
+    "right_label": "Lynx",
+    "valid_players": [
+      "Adia Barnes",
+      "Angela Aycock",
+      "Angie Potthoff",
+      "Brandy Reed",
+      "Kate Paye",
+      "Keitha Dickerson",
+      "Kristin Folkl",
+      "Maylana Martin",
+      "Shanele Stires",
+      "Sonja Tate",
+      "Trisha Fallon",
+      "Val Whiting-Raymond"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "wnba_lynx",
+    "right_category": "decade_20s",
+    "left_label": "Lynx",
+    "right_label": "Played in 2020s",
+    "valid_players": [
+      "Aerial Powers",
+      "Alaina Coates",
+      "Alanna Smith",
+      "Alexis Jones",
+      "Angel McCoughtry",
+      "Bridget Carleton",
+      "Cecilia Zandalasini",
+      "Courtney Williams",
+      "Crystal Dangerfield",
+      "Damiris Dantas",
+      "Danielle Robinson",
+      "DiJonai Carrington",
+      "Diamond Miller",
+      "Dorka Juhasz",
+      "Emily Engstler",
+      "Erica McCall",
+      "Jessica Shepard",
+      "Karima Christmas-Kelly",
+      "Karlie Samuelson",
+      "Kayla Alexander",
+      "Kayla McBride",
+      "Layshia Clarendon",
+      "Lexie Brown",
+      "Lindsay Allen",
+      "Maria Vadeeva",
+      "Maya Caldwell",
+      "Mikiah Herbert Harrigan",
+      "Moriah Jefferson",
+      "Myisha Hines-Allen",
+      "Napheesa Collier",
+      "Natalie Achonwa",
+      "Natasha Howard",
+      "Natasha Mack",
+      "Natisha Hiedeman",
+      "Nia Coffey",
+      "Nikolina Milic",
+      "Odyssey Sims",
+      "Rachel Banham",
+      "Reshanda Gray",
+      "Seimone Augustus",
+      "Shenise Johnson",
+      "Stephanie Talbot",
+      "Sugar Rodgers",
+      "Sydney Colson",
+      "Sylvia Fowles",
+      "Teaira McCowan",
+      "Temi Fagbenle",
+      "Tiffany Mitchell",
+      "Yvonne Turner"
+    ],
+    "answer_count": 49
+  },
+  {
+    "left_category": "decade_20s",
+    "right_category": "wnba_5apg",
+    "left_label": "Played in 2020s",
+    "right_label": "5+ APG Career (WNBA)",
+    "valid_players": [
+      "Alyssa Thomas",
+      "Caitlin Clark",
+      "Chelsea Gray",
+      "Courtney Vandersloot",
+      "Jordin Canada",
+      "Natasha Cloud",
+      "Paige Bueckers",
+      "Sabrina Ionescu",
+      "Skylar Diggins-Smith",
+      "Sue Bird"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "wnba_5apg",
+    "right_category": "wnba_ring",
+    "left_label": "5+ APG Career (WNBA)",
+    "right_label": "WNBA Champion",
+    "valid_players": [
+      "Courtney Vandersloot",
+      "Sue Bird"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "wnba_ring",
+    "right_category": "wnba_mvp",
+    "left_label": "WNBA Champion",
+    "right_label": "WNBA MVP",
+    "valid_players": [
+      "A'ja Wilson",
+      "Breanna Stewart",
+      "Candace Parker",
+      "Cynthia Cooper",
+      "Diana Taurasi",
+      "Elena Delle Donne",
+      "Lauren  Jackson",
+      "Lisa Leslie",
+      "Maya Moore",
+      "Sheryl Swoopes",
+      "Sylvia Fowles",
+      "Tamika Catchings"
+    ],
+    "answer_count": 12
+  }
+]
