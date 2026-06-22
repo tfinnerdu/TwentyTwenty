@@ -134,6 +134,7 @@ body {
 .pip.correct { background: var(--green); border-color: var(--green); color: #fff; font-size: 11px; }
 .pip.wrong   { background: var(--red);   border-color: var(--red);   color: #fff; font-size: 11px; }
 .pip.skipped { background: var(--chalk-faint); border-color: var(--chalk-faint); color: var(--bg); font-size: 11px; }
+.pip.assisted { background: var(--gold); border-color: var(--gold); color: var(--bg); font-size: 11px; }
 
 /* Progress bar */
 .progress-bar { display:flex; gap:2px; margin-bottom:1.25rem; }
@@ -142,6 +143,7 @@ body {
 .seg.correct { background: var(--green); }
 .seg.wrong   { background: var(--red); }
 .seg.skipped { background: var(--chalk-faint); }
+.seg.assisted { background: var(--gold); }
 
 /* ----------------------------------------------------------------
    QUESTION CARD — trading card aesthetic
@@ -344,6 +346,12 @@ input[type=text]:disabled { opacity: 0.4; }
   line-height: 1.6; margin-top: 8px;
 }
 .help-note b { color: var(--gold); }
+.assist-tag {
+  display: inline-block; margin-left: 5px; vertical-align: middle;
+  font-family: var(--font-mono); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.08em; padding: 1px 4px; border-radius: 3px;
+  background: var(--gold-dark); color: var(--gold); border: 1px solid var(--gold-dim);
+}
 
 /* Used players */
 .used-section { margin-bottom: 1.25rem; }
@@ -641,6 +649,7 @@ input[type=text]:disabled { opacity: 0.4; }
     <div class="logo"><span>20</span><span class="logo-slash">/</span><span>20</span></div>
     <div class="header-right">
       <span class="mode-pill" id="modePill" style="display:none" onclick="openSportSelector()">NFL</span>
+      <button class="hdr-btn" id="resetBtn" style="display:none" onclick="resetPuzzle()">Reset</button>
       <button class="hdr-btn" onclick="openArchive()">Archive</button>
       <div class="puzzle-meta" id="puzzleMeta"></div>
     </div>
@@ -723,10 +732,28 @@ function loadState(date, mode) {
   catch { return null; }
 }
 function saveHistory(date, score, num, mode) {
-  try { const h=getHistory(); h[date+'_'+(mode||'NFL')]={score,puzzle_number:num,mode,completed_at:new Date().toISOString()};
+  const assisted=results.filter(r=>r.correct&&r.assisted).length;
+  try { const h=getHistory(); h[date+'_'+(mode||'NFL')]={score,assisted,puzzle_number:num,mode,completed_at:new Date().toISOString()};
     localStorage.setItem(HISTORY_KEY,JSON.stringify(h)); } catch {}
 }
 function getHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}'); } catch { return {}; } }
+
+// Show/hide the in-game header controls (Reset) depending on screen.
+function showGameHeader(show){
+  const rb=document.getElementById('resetBtn'); if(rb) rb.style.display=show?'inline-block':'none';
+}
+// Wipe saved progress for the current puzzle and replay it from question 1.
+function resetPuzzle(){
+  if(!puzzle) return;
+  const inProgress = currentQ>0 && currentQ<TOTAL;
+  if(inProgress && !confirm('Reset this puzzle? Your progress will be cleared and you’ll restart from question 1.')) return;
+  const mode = puzzle.sport_mode || sportMode(getSelectedSports());
+  try { localStorage.removeItem(STORAGE_KEY+'_'+puzzle.date+'_'+mode); } catch {}
+  try { const h=getHistory(); delete h[puzzle.date+'_'+mode]; localStorage.setItem(HISTORY_KEY,JSON.stringify(h)); } catch {}
+  currentQ=0; results=[]; usedPlayers=new Set(); qHints=[];
+  const today=new Date().toISOString().slice(0,10);
+  boot(puzzle.date===today?null:puzzle.date, true);
+}
 
 async function boot(dateStr, skipLobby) {
   const prefs = loadPrefs();
@@ -803,7 +830,7 @@ function buildProgress() {
 function rebuildPips() {
   buildPips(); buildProgress();
   results.forEach(r=>{
-    const cls=r.correct?'correct':r.skipped?'skipped':'wrong';
+    const cls=r.correct?(r.assisted?'assisted':'correct'):r.skipped?'skipped':'wrong';
     const sym=r.correct?'&#10003;':r.skipped?'&#8722;':'&#10007;';
     const p=document.getElementById(`pip-${r.q}`), s=document.getElementById(`seg-${r.q}`);
     if(p){p.className=`pip ${cls}`;p.innerHTML=sym;} if(s) s.className=`seg ${cls}`;
@@ -826,6 +853,7 @@ function setPip(i, cls, sym) {
 
 function renderQ() {
   if(currentQ>=TOTAL){renderEnd(false);return;}
+  showGameHeader(true);
   qHints=[]; hintBusy=false;        // fresh hint state for this question
   const q=puzzle.questions[currentQ];
   const area=document.getElementById('gameArea');
@@ -926,8 +954,10 @@ async function doSubmit(val) {
     const data=await res.json();
     if(data.correct){
       const name=data.canonical_name;
-      usedPlayers.add(name); results.push({q:currentQ,player:name,correct:true});
-      setPip(currentQ,'correct','&#10003;'); showFb('correct','&#9646; '+name.toUpperCase()+' &#9646;');
+      const assisted=qHints.length>0;            // did a hint help on this one?
+      usedPlayers.add(name); results.push({q:currentQ,player:name,correct:true,assisted});
+      setPip(currentQ,assisted?'assisted':'correct','&#10003;');
+      showFb('correct','&#9646; '+name.toUpperCase()+' &#9646;'+(assisted?' &#128161;':''));
       currentQ++; saveState();
       if(currentQ>=TOTAL) saveHistory(puzzle.date,results.filter(r=>r.correct).length,puzzle.puzzle_number,mode);
       setTimeout(renderQ,800);
@@ -1158,18 +1188,22 @@ function makeBowlingGraphic(score, modeDisplay, puzzleNum) {
 }
 
 function renderEnd(restored) {
+  showGameHeader(true);
   const score=results.filter(r=>r.correct).length;
+  const assisted=results.filter(r=>r.correct&&r.assisted).length;
   const mode=puzzle.sport_mode||sportMode(getSelectedSports());
   if(!restored) saveHistory(puzzle.date,score,puzzle.puzzle_number,mode);
 
   const modeDisplay=modeLabel(getSelectedSports());
-  const emojis=results.map(r=>r.correct?'\uD83D\uDFE9':r.skipped?'\u2B1C':'\uD83D\uDFE5');
+  // \uD83D\uDFE9 solved clean \u00B7 \uD83D\uDFE8 solved with a hint \u00B7 \u2B1C skipped \u00B7 \uD83D\uDFE5 missed
+  const emojis=results.map(r=>r.correct?(r.assisted?'\uD83D\uDFE8':'\uD83D\uDFE9'):r.skipped?'\u2B1C':'\uD83D\uDFE5');
   const tag=score===TOTAL?'PERFECT GAME. LEGENDARY.'
            :score>=18?'ELITE. YOU BARELY NEED HINDSIGHT.'
            :score>=15?'SOLID. MOST PEOPLE AREN\'T CLOSE.'
            :'HINDSIGHT IS 20/20 \uD83E\uDD37';
   const puzzleUrl = puzzle.slug ? `${SITE_URL}/p/${puzzle.slug}` : SITE_URL;
-  const shareText=`20/20 #${puzzle.puzzle_number} [${modeDisplay}]\n${score}/20 — ${tag.replace(/\uD83E\uDD37/,'')}\n\n${emojis.slice(0,10).join('')}\n${emojis.slice(10).join('')}\n\n${puzzleUrl}`;
+  const assistLine = assisted>0 ? `\n🟨 ${assisted} with help` : '';
+  const shareText=`20/20 #${puzzle.puzzle_number} [${modeDisplay}]\n${score}/20 — ${tag.replace(/\uD83E\uDD37/,'')}${assistLine}\n\n${emojis.slice(0,10).join('')}\n${emojis.slice(10).join('')}\n\n${puzzleUrl}`;
 
   const graphic = score===TOTAL
     ? makePerfectGraphic(score, modeDisplay, puzzle.puzzle_number)
@@ -1179,10 +1213,11 @@ function renderEnd(restored) {
     const r=results.find(x=>x.q===i);
     const c=r&&r.correct?'c':r&&r.skipped?'s':'w';
     const ans=r&&r.correct?r.player.toUpperCase():r&&r.skipped?'---':'✗';
+    const assist=r&&r.assisted?'<span class="assist-tag">HINT</span>':'';
     return `<div class="reveal-row">
       <span class="reveal-num">${i+1}</span>
       <span class="reveal-clue">${q.left_label}<br><span style="opacity:0.5">+ ${q.right_label}</span></span>
-      <span class="reveal-answer ${c}">${ans}</span>
+      <span class="reveal-answer ${c}">${ans}${assist}</span>
     </div>`;
   }).join('');
 
@@ -1199,7 +1234,7 @@ function renderEnd(restored) {
       ${rows}
       <div class="end-actions">
         <button class="game-btn" onclick="renderLobby()">Change Sports</button>
-        <button class="game-btn primary" onclick="boot(null,true)">Play Again</button>
+        <button class="game-btn primary" onclick="resetPuzzle()">Play Again</button>
       </div>
     </div>`;
 }
@@ -1237,6 +1272,7 @@ function selectAllSports(){
 }
 function renderLobby(inModal) {
   if(inModal){openSportSelector();return;}
+  showGameHeader(false);
   const sel=getSelectedSports(), diff=getSelectedDifficulty();
   const tiles=sportTilesHTML(sel);
   const pills=DIFF_DEFS.map(d=>`
