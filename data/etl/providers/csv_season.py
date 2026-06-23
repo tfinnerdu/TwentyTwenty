@@ -239,6 +239,13 @@ class NFLProvider(CsvSeasonProvider):
         "OAK": "Raiders", "LVR": "Raiders", "HOU": "Texans", "CIN": "Bengals",
         "CLE": "Browns", "NYJ": "Jets", "CAR": "Panthers", "TEN": "Titans",
         "TAM": "Buccaneers", "WAS": "Redskins", "JAX": "Jaguars",
+        # nflverse / nfl_data_py emit these standard codes (the entries above are
+        # the Pro-Football-Reference style). Without them, team-seasons silently
+        # drop and players lose teams -- e.g. NE+TB left Tom Brady with none, and
+        # LA left Jared Goff without his Rams years.
+        "NE": "Patriots", "TB": "Buccaneers", "GB": "Packers", "KC": "Chiefs",
+        "NO": "Saints", "SF": "49ers", "LA": "Rams", "SD": "Chargers",
+        "LV": "Raiders", "ARZ": "Cardinals", "JAC": "Jaguars", "WFT": "Redskins",
     }
 
     def stat_fields(self, s):
