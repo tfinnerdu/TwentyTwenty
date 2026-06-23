@@ -340,7 +340,7 @@ def parse_meta(soup):
         if college and college.lower() != "none":   # PFR renders "None" for no college
             out["college"] = college
 
-    pm = re.search(r"Position:\s*([A-Za-z]+(?:\s[A-Za-z]+)?)", full)
+    pm = re.search(r"Position\s*:\s*([A-Za-z]+(?:\s[A-Za-z]+)?)", full)
     if pm:
         raw = pm.group(1).strip()
         out["position"] = POS_FULL.get(raw.lower(), raw.split()[0])
@@ -359,11 +359,11 @@ def parse_meta(soup):
         out["height_inches"] = int(hw.group(1)) * 12 + int(hw.group(2))
         out["weight_lbs"] = int(hw.group(3))
 
-    dm = re.search(r"Draft:.*?(\d+)(?:st|nd|rd|th)\s+round.*?(\d+)(?:st|nd|rd|th)\s+(?:overall|pick)", full)
+    dm = re.search(r"Draft\s*:.*?(\d+)(?:st|nd|rd|th)\s+round.*?(\d+)(?:st|nd|rd|th)\s+(?:overall|pick)", full)
     if dm:
         out["draft_round"] = int(dm.group(1))
         out["draft_pick"] = int(dm.group(2))
-    dy = re.search(r"Draft:.*?\b((?:19|20)\d{2})\b", full)
+    dy = re.search(r"Draft\s*:.*?\b((?:19|20)\d{2})\b", full)
     if dy:
         out["draft_year"] = int(dy.group(1))
 
