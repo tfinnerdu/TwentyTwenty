@@ -25,5 +25,6 @@ if git diff --cached --quiet; then
     echo "No new puzzles to push."
 else
     git commit -m "puzzles: auto-refresh $(date +%F)"
+    git pull --no-edit        # integrate any concurrent remote push so the push fast-forwards
     git push
 fi

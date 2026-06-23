@@ -38,6 +38,7 @@ if %errorlevel%==0 (
     echo No puzzle changes to push.
 ) else (
     git commit -m "data: cache refresh + puzzle rebuild %date%"
+    git pull --no-edit
     git push
 )
 

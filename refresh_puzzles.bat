@@ -27,6 +27,7 @@ if %errorlevel%==0 (
     echo No new puzzles to push.
 ) else (
     git commit -m "puzzles: auto-refresh %date%"
+    git pull --no-edit
     git push
 )
 endlocal

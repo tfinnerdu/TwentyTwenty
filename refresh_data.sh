@@ -44,6 +44,7 @@ if git diff --cached --quiet; then
     echo "No puzzle changes to push."
 else
     git commit -m "data: cache refresh + puzzle rebuild $(date +%F)"
+    git pull --no-edit        # integrate any concurrent remote push so the push fast-forwards
     git push
 fi
 
