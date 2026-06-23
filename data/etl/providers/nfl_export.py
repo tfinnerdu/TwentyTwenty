@@ -49,6 +49,24 @@ def _current_nfl_season() -> int:
     return t.year if t.month >= 9 else t.year - 1
 
 
+def _per_year(importer, years, label):
+    """Fetch an nfl_data_py importer season-by-season, SKIPPING any year nflverse
+    hasn't published yet (its parquet 404s -- releases lag the live season). So a
+    dynamic end year can't crash the export; it just stops at the latest available."""
+    if importer is None:
+        return []
+    rows, got = [], []
+    for y in years:
+        try:
+            rows.extend(importer([y]).to_dict("records"))
+            got.append(y)
+        except Exception:
+            pass                                   # season not published yet
+    if got:
+        print(f"  nfl_export: {label} {got[0]}-{got[-1]} ({len(got)} of {len(years)} seasons)")
+    return rows
+
+
 def export(out_dir: str, start: int = 1999, end: int | None = None):
     import nfl_data_py as nfl  # noqa: imported lazily so the app needn't have it
     os.makedirs(out_dir, exist_ok=True)
@@ -56,7 +74,7 @@ def export(out_dir: str, start: int = 1999, end: int | None = None):
         end = _current_nfl_season()
     years = list(range(start, end + 1))
 
-    seasonal = nfl.import_seasonal_data(years).to_dict("records")
+    seasonal = _per_year(nfl.import_seasonal_data, years, "seasonal")
     people = nfl.import_players().to_dict("records")
 
     bio = {}
@@ -77,12 +95,11 @@ def export(out_dir: str, start: int = 1999, end: int | None = None):
             if team not in lst:
                 lst.append(team)
 
-    try:
-        for r in nfl.import_weekly_rosters(years).to_dict("records"):
-            _add(_val(r, "player_id", "gsis_id"), _int(r, "season"), _val(r, "team", "recent_team"))
-    except Exception:
-        for r in nfl.import_seasonal_rosters(years).to_dict("records"):
-            _add(_val(r, "player_id", "gsis_id"), _int(r, "season"), _val(r, "team", "recent_team"))
+    roster_rows = _per_year(getattr(nfl, "import_weekly_rosters", None), years, "weekly rosters")
+    if not roster_rows:        # endpoint missing or nothing published -> seasonal roster
+        roster_rows = _per_year(getattr(nfl, "import_seasonal_rosters", None), years, "seasonal rosters")
+    for r in roster_rows:
+        _add(_val(r, "player_id", "gsis_id"), _int(r, "season"), _val(r, "team", "recent_team"))
 
     seasons, pids = [], set()
     for s in seasonal:
