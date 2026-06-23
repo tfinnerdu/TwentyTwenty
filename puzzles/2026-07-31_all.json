@@ -1348,165 +1348,104 @@
   },
   {
     "left_category": "college_usc",
-    "right_category": "round1",
+    "right_category": "team_colts",
     "left_label": "Went to USC",
-    "right_label": "1st Round Pick",
+    "right_label": "Colts",
     "valid_players": [
-      "Adoree' Jackson",
-      "Bruce Matthews",
-      "Carson Palmer",
-      "Drake London",
-      "Johnnie Morton",
-      "Junior Seau",
-      "Mark Sanchez",
-      "Matt Leinart",
-      "Mike Williams",
+      "Michael Pittman",
+      "Stanley Havili"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_colts",
+    "right_category": "team_ravens",
+    "left_label": "Colts",
+    "right_label": "Ravens",
+    "valid_players": [
+      "Brandon Stokley",
+      "Dallas Clark",
+      "David Reed",
+      "Griff Whalen",
+      "Kamar Aiken",
+      "Qadry Ismail"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "team_ravens",
+    "right_category": "team_patriots",
+    "left_label": "Ravens",
+    "right_label": "Patriots",
+    "valid_players": [
+      "Ben Coates",
+      "Benjamin Watson",
+      "Danny Woodhead",
+      "Donte' Stallworth",
+      "Griff Whalen",
+      "Kelley Washington",
       "Nelson Agholor",
-      "R.Jay Soward",
-      "Reggie Bush",
-      "Sam Darnold"
+      "Ryan Mallett",
+      "Terry Allen",
+      "Ty Montgomery"
     ],
-    "answer_count": 13
+    "answer_count": 10
   },
   {
-    "left_category": "round1",
-    "right_category": "nhl_cup",
-    "left_label": "1st Round Pick",
-    "right_label": "Stanley Cup Champion",
+    "left_category": "team_patriots",
+    "right_category": "pick1",
+    "left_label": "Patriots",
+    "right_label": "#1 Overall Pick",
     "valid_players": [
-      "Alex Ovechkin",
-      "Jaromir Jagr",
-      "Joe Sakic",
-      "Mario Lemieux",
-      "Martin Brodeur",
-      "Paul Coffey",
-      "Ray Bourque",
-      "Sidney Crosby",
-      "Steve Yzerman"
-    ],
-    "answer_count": 9
-  },
-  {
-    "left_category": "nhl_cup",
-    "right_category": "round1",
-    "left_label": "Stanley Cup Champion",
-    "right_label": "1st Round Pick",
-    "valid_players": [
-      "Alex Ovechkin",
-      "Jaromir Jagr",
-      "Joe Sakic",
-      "Mario Lemieux",
-      "Martin Brodeur",
-      "Paul Coffey",
-      "Ray Bourque",
-      "Sidney Crosby",
-      "Steve Yzerman"
-    ],
-    "answer_count": 9
-  },
-  {
-    "left_category": "round1",
-    "right_category": "nba_knicks",
-    "left_label": "1st Round Pick",
-    "right_label": "Knicks",
-    "valid_players": [
-      "Al Harrington",
-      "Allan Houston",
-      "Amar'e Stoudemire",
-      "Arron Afflalo",
-      "Bobby Portis",
-      "Carmelo Anthony",
-      "Channing Frye",
-      "Charlie Ward",
-      "Chauncey Billups",
-      "Clarence Weatherspoon",
-      "Courtney Lee",
-      "Danilo Gallinari",
-      "David Lee",
-      "Derrick Rose",
-      "Derrick Williams",
-      "Eddy Curry",
-      "Emmanuel Mudiay",
-      "Enes Kanter",
-      "Frank Ntilikina",
-      "Fred Jones",
-      "Glen Rice",
-      "Iman Shumpert",
-      "J.R. Smith",
-      "Jalen Rose",
-      "Jamal Crawford",
-      "Jared Jeffries",
-      "Jarrett Jack",
-      "Jason Kidd",
-      "Jason Smith",
-      "Jerian Grant",
-      "Jerome Williams",
-      "Julius Randle",
-      "Kevin Knox",
-      "Kristaps Porzingis",
-      "Kurt Thomas",
-      "Larry Johnson",
-      "Latrell Sprewell",
-      "Marcus Camby",
-      "Mario Hezonja",
-      "Mark Jackson",
-      "Maurice Harkless",
-      "Michael Beasley",
-      "Michael Doleac",
-      "Mike Sweetney",
-      "Nate Robinson",
-      "Nazr Mohammed",
-      "Noah Vonleh",
-      "Patrick Ewing",
-      "Penny Hardaway",
-      "Quentin Richardson",
-      "R.J. Barrett",
-      "Raymond Felton",
-      "Robin Lopez",
-      "Shane Larkin",
-      "Stephon Marbury",
-      "Steve Francis",
-      "Taj Gibson",
-      "Tim Hardaway Jr.",
-      "Tim Thomas",
-      "Toney Douglas",
-      "Tyson Chandler",
-      "Wilson Chandler"
-    ],
-    "answer_count": 62
-  },
-  {
-    "left_category": "nba_knicks",
-    "right_category": "nba_1000g",
-    "left_label": "Knicks",
-    "right_label": "1,000+ NBA Games",
-    "valid_players": [
-      "Carmelo Anthony",
-      "Jamal Crawford"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "nba_1000g",
-    "right_category": "nba_25ppg",
-    "left_label": "1,000+ NBA Games",
-    "right_label": "25+ PPG Career",
-    "valid_players": [
-      "Kobe Bryant",
-      "LeBron James"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "nba_25ppg",
-    "right_category": "nba_ring",
-    "left_label": "25+ PPG Career",
-    "right_label": "NBA Champion",
-    "valid_players": [
-      "Kevin Durant",
-      "Kobe Bryant",
-      "LeBron James"
+      "Cam Newton",
+      "Drew Bledsoe",
+      "Vinny Testaverde"
     ],
     "answer_count": 3
+  },
+  {
+    "left_category": "pick1",
+    "right_category": "team_cowboys",
+    "left_label": "#1 Overall Pick",
+    "right_label": "Cowboys",
+    "valid_players": [
+      "Austin Carr",
+      "Drew Bledsoe",
+      "Troy Aikman",
+      "Vinny Testaverde"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_cowboys",
+    "right_category": "team_bengals",
+    "left_label": "Cowboys",
+    "right_label": "Bengals",
+    "valid_players": [
+      "Andy Dalton",
+      "Anthony Wright",
+      "Darnay Scott",
+      "Jon Kitna",
+      "Terrell Owens",
+      "Tony McGee"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "team_bengals",
+    "right_category": "team_49ers",
+    "left_label": "Bengals",
+    "right_label": "49ers",
+    "valid_players": [
+      "J.T. O'Sullivan",
+      "Jerome Simpson",
+      "Josh Johnson",
+      "Mohamed Sanu",
+      "Steve Bush",
+      "Terrell Owens",
+      "Trent Taylor",
+      "Tyler Kroft"
+    ],
+    "answer_count": 8
   }
 ]

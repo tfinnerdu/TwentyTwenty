@@ -333,160 +333,196 @@
       "Keyon Dooling",
       "Mikki Moore",
       "Nenad Krstic",
-      "Rodney Rogers"
+      "Paul Pierce",
+      "Rodney Rogers",
+      "Shane Larkin"
     ],
-    "answer_count": 6
+    "answer_count": 8
   },
   {
     "left_category": "nba_nets",
-    "right_category": "pick1",
+    "right_category": "born_90s",
     "left_label": "Nets",
-    "right_label": "#1 Overall Pick",
+    "right_label": "Born in the 1990s",
     "valid_players": [
-      "Kenyon Martin",
-      "Lucious Harris"
+      "Allen Crabbe",
+      "Caris LeVert",
+      "D'Angelo Russell",
+      "David Nwaba",
+      "Isaiah Whitehead",
+      "Jarrett Allen",
+      "Joe Harris",
+      "Justin Hamilton",
+      "Mason Plumlee",
+      "Quincy Acy",
+      "Rodions Kurucs",
+      "Rondae Hollis-Jefferson",
+      "Sean Kilpatrick",
+      "Shane Larkin",
+      "Spencer Dinwiddie",
+      "Taurean Prince",
+      "Thomas Robinson"
     ],
-    "answer_count": 2
+    "answer_count": 17
   },
   {
-    "left_category": "pick1",
-    "right_category": "nba_bulls",
-    "left_label": "#1 Overall Pick",
-    "right_label": "Bulls",
+    "left_category": "born_90s",
+    "right_category": "nba_rockets",
+    "left_label": "Born in the 1990s",
+    "right_label": "Rockets",
     "valid_players": [
-      "Derrick Rose",
-      "Elton Brand",
-      "Othella Harrington",
-      "Trenton Hassell"
+      "Austin Rivers",
+      "Ben McLemore",
+      "Clint Capela",
+      "Danuel House",
+      "Donatas Motiejunas",
+      "Greg Smith",
+      "Iman Shumpert",
+      "Montrezl Harrell",
+      "Robert Covington",
+      "Sam Dekker",
+      "Tarik Black",
+      "Terrence Jones",
+      "Thomas Robinson"
     ],
-    "answer_count": 4
+    "answer_count": 13
   },
   {
-    "left_category": "nba_bulls",
+    "left_category": "nba_rockets",
     "right_category": "born_intl",
-    "left_label": "Bulls",
+    "left_label": "Rockets",
     "right_label": "Born Outside USA",
     "valid_players": [
-      "Andres Nocioni",
-      "Ben Gordon",
-      "Carlos Boozer",
-      "Chris Anstey",
-      "Cristiano Felicio",
-      "Joakim Noah",
-      "Joffrey Lauvergne",
-      "Lauri Markkanen",
-      "Luol Deng",
-      "Marco Belinelli",
-      "Nikola Mirotic",
+      "Carlos Delfino",
+      "Clint Capela",
+      "Dikembe Mutombo",
+      "Donatas Motiejunas",
+      "Francisco Garcia",
+      "Goran Dragic",
+      "Luc Mbah a Moute",
+      "Luis Scola",
+      "Maybyner Nene",
       "Omer Asik",
-      "Pau Gasol",
-      "Thabo Sefolosha",
-      "Tomas Satoransky"
+      "Omri Casspi",
+      "Pablo Prigioni",
+      "Samuel Dalembert",
+      "Yao Ming"
     ],
-    "answer_count": 15
+    "answer_count": 14
   },
   {
     "left_category": "born_intl",
-    "right_category": "nba_lakers",
+    "right_category": "nba_10rpg",
     "left_label": "Born Outside USA",
-    "right_label": "Lakers",
+    "right_label": "10+ RPG Career",
     "valid_players": [
-      "Carlos Boozer",
-      "Pau Gasol",
-      "Rick Fox",
-      "Ronny Turiaf",
-      "Sasha Vujacic",
-      "Slava Medvedenko",
-      "Vladimir Radmanovic"
+      "Clint Capela",
+      "Deandre Ayton",
+      "Dikembe Mutombo",
+      "Joel Embiid",
+      "Karl-Anthony Towns",
+      "Nikola Vucevic",
+      "Rudy Gobert"
     ],
     "answer_count": 7
   },
   {
-    "left_category": "nba_lakers",
-    "right_category": "nba_celtics",
-    "left_label": "Lakers",
-    "right_label": "Celtics",
+    "left_category": "nba_10rpg",
+    "right_category": "nba_lakers",
+    "left_label": "10+ RPG Career",
+    "right_label": "Lakers",
     "valid_players": [
-      "Avery Bradley",
-      "Chris Mihm",
-      "Gary Payton",
-      "Rajon Rondo"
+      "Anthony Davis",
+      "Dwight Howard",
+      "Shaquille O'Neal"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "nba_lakers",
+    "right_category": "nba_nets",
+    "left_label": "Lakers",
+    "right_label": "Nets",
+    "valid_players": [
+      "Brook Lopez",
+      "D'Angelo Russell",
+      "Ed Davis",
+      "Jordan Farmar"
     ],
     "answer_count": 4
   },
   {
-    "left_category": "nba_celtics",
-    "right_category": "born_60s",
-    "left_label": "Celtics",
-    "right_label": "Born in the 1960s",
+    "left_category": "nba_nets",
+    "right_category": "nba_1000g",
+    "left_label": "Nets",
+    "right_label": "1,000+ NBA Games",
     "valid_players": [
-      "Dana Barros",
-      "Gary Payton",
-      "Sam Cassell"
+      "Joe Johnson",
+      "Paul Pierce",
+      "Richard Jefferson",
+      "Vince Carter"
     ],
-    "answer_count": 3
+    "answer_count": 4
   },
   {
-    "left_category": "born_60s",
-    "right_category": "nba_lakers",
-    "left_label": "Born in the 1960s",
-    "right_label": "Lakers",
+    "left_category": "nba_1000g",
+    "right_category": "nba_mvp",
+    "left_label": "1,000+ NBA Games",
+    "right_label": "NBA MVP",
     "valid_players": [
-      "A.C. Green",
-      "Brian Shaw",
-      "Gary Payton",
-      "Glen Rice",
-      "Horace Grant",
-      "Rick Fox",
-      "Ron Harper"
+      "Dirk Nowitzki",
+      "Kobe Bryant",
+      "LeBron James",
+      "Tim Duncan"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_mvp",
+    "right_category": "born_70s",
+    "left_label": "NBA MVP",
+    "right_label": "Born in the 1970s",
+    "valid_players": [
+      "Allen Iverson",
+      "Dirk Nowitzki",
+      "Kevin Garnett",
+      "Kobe Bryant",
+      "Shaquille O'Neal",
+      "Steve Nash",
+      "Tim Duncan"
     ],
     "answer_count": 7
   },
   {
-    "left_category": "nba_lakers",
-    "right_category": "nba_pistons",
-    "left_label": "Lakers",
-    "right_label": "Pistons",
+    "left_category": "born_70s",
+    "right_category": "nba_spurs",
+    "left_label": "Born in the 1970s",
+    "right_label": "Spurs",
     "valid_players": [
-      "Caron Butler",
-      "Chucky Atkins",
-      "Kentavious Caldwell-Pope",
-      "Lindsey Hunter",
-      "Maurice Evans",
-      "Reggie Bullock"
+      "Antonio Daniels",
+      "Antonio McDyess",
+      "Brent Barry",
+      "Bruce Bowen",
+      "Charlie Ward",
+      "Derek Anderson",
+      "Devin Brown",
+      "Fabricio Oberto",
+      "Francisco Elson",
+      "Hedo Turkoglu",
+      "Ime Udoka",
+      "Jacque Vaughn",
+      "Kurt Thomas",
+      "Malik Rose",
+      "Manu Ginobili",
+      "Michael Finley",
+      "Nazr Mohammed",
+      "Nick Van Exel",
+      "Rasho Nesterovic",
+      "Robert Horry",
+      "Samaki Walker",
+      "Stephen Jackson",
+      "Tim Duncan"
     ],
-    "answer_count": 6
-  },
-  {
-    "left_category": "nba_pistons",
-    "right_category": "nba_warriors",
-    "left_label": "Pistons",
-    "right_label": "Warriors",
-    "valid_players": [
-      "Cliff Robinson",
-      "Jonas Jerebko",
-      "Zaza Pachulia"
-    ],
-    "answer_count": 3
-  },
-  {
-    "left_category": "nba_warriors",
-    "right_category": "top5",
-    "left_label": "Warriors",
-    "right_label": "Top 5 Pick",
-    "valid_players": [
-      "Andrew Bogut",
-      "Andrew Wiggins",
-      "Antawn Jamison",
-      "Baron Davis",
-      "Carl Landry",
-      "Draymond Green",
-      "Gilbert Arenas",
-      "Jason Richardson",
-      "Kevin Durant",
-      "Mike Dunleavy",
-      "Shaun Livingston"
-    ],
-    "answer_count": 11
+    "answer_count": 23
   }
 ]
