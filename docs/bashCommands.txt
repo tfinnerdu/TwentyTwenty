@@ -1,5 +1,6 @@
 20/20 Game -- Bash / Shell Command Reference
 ============================================
+# CONTENTS:  1) Retrieve new data (network)  ·  2) Update from cache (offline)  ·  3) Puzzles  ·  4) Scheduling  ·  5) Misc/deploy/inspect      (older legacy scraper notes follow the runbook)
 
 #####################################################################
 # CURRENT RUNBOOK (canonical -- start here).  Updated 2026-06-23.
