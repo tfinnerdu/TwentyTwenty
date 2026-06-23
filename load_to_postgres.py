@@ -83,13 +83,18 @@ def copy_table(scon, pcur, table: str) -> int:
 
 def main():
     ap = argparse.ArgumentParser(description="Copy SQLite nfl.db into Postgres")
-    ap.add_argument("db_url", nargs="?", default=os.environ.get("DATABASE_URL"),
-                    help="Postgres connection string (or set DATABASE_URL)")
+    ap.add_argument("db_url", nargs="?",
+                    help="Postgres URL (else POSTGRES_DB_URL / DATABASE_URL from .env)")
     ap.add_argument("--sqlite", default=DEFAULT_SQLITE, help="source SQLite file")
     args = ap.parse_args()
 
+    # Fall back to .env so you don't have to paste the URL each run.
     if not args.db_url:
-        sys.exit("error: pass a Postgres URL (or set DATABASE_URL). "
+        from data.etl.dbconfig import load_env, postgres_url
+        load_env()
+        args.db_url = postgres_url()
+    if not args.db_url:
+        sys.exit("error: pass a Postgres URL, or set POSTGRES_DB_URL (or DATABASE_URL) in .env. "
                  "Use the Render EXTERNAL connection string with ?sslmode=require.")
     if not os.path.exists(args.sqlite):
         sys.exit(f"error: SQLite DB not found: {args.sqlite} "
