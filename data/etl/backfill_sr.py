@@ -376,8 +376,30 @@ def is_empty(val, field):
     return not val or str(val).strip() == ""
 
 
+def _cached_name_set():
+    """Normalized names of every player page already in the SR cache, so an
+    incremental crawl can SKIP them and only fetch what's missing. One light scan
+    (h1 only) -- the slow part we're avoiding is the per-player live search."""
+    import glob
+    files = glob.glob(os.path.join(CACHE_DIR, "*.html"))
+    log.info(f"indexing {len(files)} cached pages to skip already-fetched players...")
+    names = set()
+    for i, fn in enumerate(files, 1):
+        if i % 5000 == 0:
+            log.info(f"  indexed {i}/{len(files)}")
+        try:
+            soup = _soup(open(fn, encoding="utf-8", errors="ignore").read())
+        except Exception:
+            continue
+        h = soup.select_one("div#meta h1")
+        if h:
+            names.add(re.sub(r"[^a-z0-9]", "", h.get_text(strip=True).lower()))
+    log.info(f"  {len(names)} players already cached")
+    return names
+
+
 def backfill(db, sport, fields, limit, delay, dry_run, cf_clearance=None,
-             user_agent=None, cf_expires=None):
+             user_agent=None, cf_expires=None, cache_missing=False):
     global _consecutive_403, _max_403
     _consecutive_403 = 0
     # With a clearance cookie, a 403 means the cookie just died -- bail on the
@@ -394,20 +416,27 @@ def backfill(db, sport, fields, limit, delay, dry_run, cf_clearance=None,
     conn = get_conn(db)
     c = conn.cursor()
 
-    parts = []
-    for f in fields:
-        empty = "0" if f in NUMERIC_FIELDS else "''"
-        parts.append(f"({f} IS NULL OR {f}={empty})")
-    cond = " OR ".join(parts)
-    rows = c.execute(
-        f"SELECT * FROM players WHERE sport=? AND ({cond}) ORDER BY name LIMIT ?",
-        (sport, limit)).fetchall()
-    log.info(f"{len(rows)} {sport} players missing one of {fields} (limit {limit})")
+    cached = _cached_name_set() if cache_missing else set()
+    if cache_missing:
+        # incremental crawl: EVERY player (not just empty-bio), skip ones already on
+        # disk, cap FETCHES (not the selection) at --limit so it chunks and resumes.
+        rows = c.execute("SELECT * FROM players WHERE sport=? ORDER BY name", (sport,)).fetchall()
+        log.info(f"{len(rows)} {sport} players; fetching up to {limit} not yet cached")
+    else:
+        parts = []
+        for f in fields:
+            empty = "0" if f in NUMERIC_FIELDS else "''"
+            parts.append(f"({f} IS NULL OR {f}={empty})")
+        cond = " OR ".join(parts)
+        rows = c.execute(
+            f"SELECT * FROM players WHERE sport=? AND ({cond}) ORDER BY name LIMIT ?",
+            (sport, limit)).fetchall()
+        log.info(f"{len(rows)} {sport} players missing one of {fields} (limit {limit})")
 
     session = make_session(sport, cf_clearance, user_agent)
 
     rescache = {}
-    filled = matched = 0
+    filled = matched = fetched = 0
     try:
         for row in rows:
             if expiry and datetime.now(timezone.utc) >= expiry:
@@ -415,12 +444,19 @@ def backfill(db, sport, fields, limit, delay, dry_run, cf_clearance=None,
                             "cookie-less request (re-grab the cookie to continue).")
                 break
             name = row["name"]
+            if cache_missing:
+                if re.sub(r"[^a-z0-9]", "", name.lower()) in cached:
+                    continue                       # already on disk -- skip the live search
+                if fetched >= limit:
+                    log.info(f"reached fetch cap ({limit}); re-run to fetch the next batch")
+                    break
             url = resolve_url(session, sport, name, delay, rescache)
             if not url:
                 continue
             soup = get_page(session, url, delay)
             if not soup:
                 continue
+            fetched += 1
             matched += 1
             meta = parse_meta(soup)
             updates = {f: meta[f] for f in fields
@@ -453,6 +489,11 @@ def main():
     ap.add_argument("--fields", default="college,birth_state,draft_year,draft_round,draft_pick",
                     help="Comma-separated player columns to fill if empty")
     ap.add_argument("--limit", type=int, default=50)
+    ap.add_argument("--cache-missing", action="store_true",
+                    help="incremental crawl: fetch+cache the PFR page for every player of "
+                         "this sport NOT already in data/cache/sr (skips the live search for "
+                         "ones you have). --limit caps fetches per run; resumable, so chunk "
+                         "with e.g. --limit 300 and re-run, or one big --limit for all.")
     ap.add_argument("--delay", type=float, default=5.0, help="Seconds between requests (>=4 recommended)")
     ap.add_argument("--db", default=DB_PATH)
     ap.add_argument("--dry-run", action="store_true")
@@ -473,10 +514,11 @@ def main():
 
     fields = [f.strip() for f in args.fields.split(",") if f.strip()]
     log.info(f"SR backfill: sport={args.sport} fields={fields} delay={args.delay}s "
-             f"limit={args.limit}{' DRY-RUN' if args.dry_run else ''}"
+             f"limit={args.limit}{' CACHE-MISSING' if args.cache_missing else ''}"
+             f"{' DRY-RUN' if args.dry_run else ''}"
              f"{' +cf_clearance' if cf_clearance else ''}")
     backfill(args.db, args.sport, fields, args.limit, args.delay, args.dry_run,
-             cf_clearance, user_agent, args.cf_expires)
+             cf_clearance, user_agent, args.cf_expires, cache_missing=args.cache_missing)
 
 
 if __name__ == "__main__":
