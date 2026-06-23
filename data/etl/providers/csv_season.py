@@ -26,7 +26,7 @@ from typing import Iterable
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 from data.etl.providers.base import Provider
-from data.etl.teams import ABBR2NICK as NFL_ABBR2NICK
+from data.etl.teams import ABBR2NICK as NFL_ABBR2NICK, canonical_school
 
 log = logging.getLogger(__name__)
 
@@ -52,6 +52,8 @@ class CsvSeasonProvider(Provider):
     TEAM_MAP: dict = {}        # team abbrev -> franchise nickname
     PASSTHROUGH_TEAMS = False  # if True, use the raw team value when not in TEAM_MAP
                                # (college: the school IS the team, no fixed map)
+    IS_COLLEGE = False         # if True, the passthrough "team" is a school name
+                               # -> run it through the shared school canonicalizer
     SUM_COLS: tuple = ()       # season numeric columns to accumulate
     GAMES_COL: str = "g"       # which summed column is games played
 
@@ -96,6 +98,7 @@ class CsvSeasonProvider(Provider):
     # -- parse + aggregate --
     def fetch(self) -> Iterable[dict]:
         agg: dict = {}
+        dropped: dict = {}        # raw codes we couldn't map (would silently vanish)
         for r in self._rows("seasons"):
             pid = r["player_id"]
             a = agg.get(pid)
@@ -108,8 +111,18 @@ class CsvSeasonProvider(Provider):
             a["years"].add(_year(r.get("season")))
             raw_team = (r.get("team") or "").strip()
             nick = self.TEAM_MAP.get(raw_team.upper()) or (raw_team if self.PASSTHROUGH_TEAMS else None)
+            if nick and self.IS_COLLEGE:       # passthrough school -> canonical form
+                nick = canonical_school(nick)
             if nick and nick not in a["teams"]:
                 a["teams"].append(nick)
+            elif raw_team and not nick and not self.IS_COLLEGE:  # pro code that won't map
+                dropped[raw_team] = dropped.get(raw_team, 0) + 1   # -> a team is dropped
+
+        if dropped:                            # make "garbage in" loud, never silent
+            top = dict(sorted(dropped.items(), key=lambda x: -x[1])[:20])
+            log.warning("%s: %d season row(s) dropped for %d UNMAPPED team code(s) -- "
+                        "add them to %s.TEAM_MAP: %s", self.sport, sum(dropped.values()),
+                        len(dropped), type(self).__name__, top)
 
         for r in self._rows("players"):
             pid = r["player_id"]
@@ -122,7 +135,8 @@ class CsvSeasonProvider(Provider):
                 "sr_id": f"{self.sport.lower()}_{pid}",
                 "name": (r.get("name") or "").strip(),
                 "position": (r.get("position") or "").strip(),
-                "college": (r.get("college") or "").strip(),
+                # college is a school name for every sport -> canonicalize it too
+                "college": canonical_school((r.get("college") or "").strip()),
                 "birth_year": _i(r.get("birth_year")) or None,
                 "birth_city": (r.get("birth_city") or "").strip(),
                 "birth_state": (r.get("birth_state") or "").strip(),
@@ -152,16 +166,43 @@ class NBAProvider(CsvSeasonProvider):
     sport = "NBA"
     source_name = "nba_csv"
     SUM_COLS = ("g", "pts", "trb", "ast")
+    # Era-accurate franchise map (basketball-reference codes). A code resolves to
+    # the nickname the team ACTUALLY wore that season -- the same convention the
+    # data already used (SEA->SuperSonics, not Thunder). Relocations keep the old
+    # city's nickname under the old code; renamed-in-place collapses use the code.
+    # Historical city codes never collide with a current code, so the extras below
+    # only ever ADD coverage (a code the source spells differently just goes
+    # unused -- run `python -m data.etl.teams --audit` to surface any real drop).
     TEAM_MAP = {
-        "ATL": "Hawks", "BOS": "Celtics", "BKN": "Nets", "NJN": "Nets",
-        "CHA": "Hornets", "CHO": "Hornets", "CHI": "Bulls", "CLE": "Cavaliers",
-        "DAL": "Mavericks", "DEN": "Nuggets", "DET": "Pistons", "GSW": "Warriors",
-        "HOU": "Rockets", "IND": "Pacers", "LAC": "Clippers", "LAL": "Lakers",
-        "MEM": "Grizzlies", "MIA": "Heat", "MIL": "Bucks", "MIN": "Timberwolves",
-        "NOP": "Pelicans", "NYK": "Knicks", "OKC": "Thunder", "SEA": "SuperSonics",
-        "ORL": "Magic", "PHI": "76ers", "PHX": "Suns", "PHO": "Suns",
-        "POR": "Trail Blazers", "SAC": "Kings", "SAS": "Spurs", "TOR": "Raptors",
-        "UTA": "Jazz", "WAS": "Wizards",
+        # -- current 30 franchises --
+        "ATL": "Hawks", "BOS": "Celtics", "BKN": "Nets", "CHA": "Hornets",
+        "CHO": "Hornets", "CHI": "Bulls", "CLE": "Cavaliers", "DAL": "Mavericks",
+        "DEN": "Nuggets", "DET": "Pistons", "GSW": "Warriors", "HOU": "Rockets",
+        "IND": "Pacers", "LAC": "Clippers", "LAL": "Lakers", "MEM": "Grizzlies",
+        "MIA": "Heat", "MIL": "Bucks", "MIN": "Timberwolves", "NOP": "Pelicans",
+        "NYK": "Knicks", "OKC": "Thunder", "ORL": "Magic", "PHI": "76ers",
+        "PHX": "Suns", "PHO": "Suns", "POR": "Trail Blazers", "SAC": "Kings",
+        "SAS": "Spurs", "TOR": "Raptors", "UTA": "Jazz", "WAS": "Wizards",
+        # -- relocated / renamed (era-accurate by the name worn then) --
+        "SEA": "SuperSonics",                                  # -> Thunder (OKC)
+        "NJN": "Nets", "NYN": "Nets",                          # New York/New Jersey Nets
+        "CHH": "Hornets", "NOH": "Hornets", "NOK": "Hornets",  # Charlotte & New Orleans Hornets
+        "VAN": "Grizzlies",                                    # Vancouver -> Memphis
+        "SDR": "Rockets",                                      # San Diego -> Houston
+        "BUF": "Braves", "SDC": "Clippers",                   # Buffalo Braves -> SD -> LA Clippers
+        "NOJ": "Jazz",                                         # New Orleans -> Utah Jazz
+        "ROC": "Royals", "CIN": "Royals", "KCO": "Kings", "KCK": "Kings",  # Royals -> Kings (SAC)
+        "PHW": "Warriors", "SFW": "Warriors",                 # Philadelphia/SF -> Golden State
+        "SYR": "Nationals",                                    # Syracuse Nationals -> 76ers
+        "FTW": "Pistons",                                      # Fort Wayne -> Detroit
+        "MNL": "Lakers",                                       # Minneapolis -> LA Lakers
+        "TRI": "Blackhawks", "MLH": "Hawks", "STL": "Hawks",  # Tri-Cities/Milwaukee/St. Louis -> Atlanta
+        "CHP": "Packers", "CHZ": "Zephyrs", "BAL": "Bullets",  # Chicago Packers/Zephyrs -> Baltimore
+        "CAP": "Bullets", "WSB": "Bullets", "BLB": "Bullets",  # Capital/Washington Bullets -> Wizards
+        # -- defunct BAA/early-NBA clubs (no modern successor) --
+        "CHS": "Stags", "STB": "Bombers", "WSC": "Capitols",
+        "PRO": "Steamrollers", "TRH": "Huskies", "AND": "Packers",
+        "WAT": "Hawks", "DNN": "Nuggets", "INO": "Olympians",
     }
 
     def stat_fields(self, s):
@@ -204,16 +245,37 @@ class NHLProvider(CsvSeasonProvider):
     sport = "NHL"
     source_name = "nhl_api"
     SUM_COLS = ("g", "goals", "assists", "points")
+    # Era-accurate franchise map (hockey-reference codes). Same convention as NBA:
+    # a code resolves to the nickname worn that season; relocations keep the old
+    # code -> old nickname (QUE Nordiques, HFD Whalers), so they never collide with
+    # a current code. Adding a historical/alt code only ever ADDS coverage.
     TEAM_MAP = {
+        # -- current 32 franchises (+ common alt spellings) --
         "MTL": "Canadiens", "MON": "Canadiens", "TOR": "Maple Leafs", "BOS": "Bruins",
         "CHI": "Blackhawks", "NYR": "Rangers", "EDM": "Oilers", "PIT": "Penguins",
-        "DET": "Red Wings", "PHI": "Flyers", "COL": "Avalanche", "QUE": "Nordiques",
-        "NJD": "Devils", "WSH": "Capitals", "DAL": "Stars", "STL": "Blues",
-        "LAK": "Kings", "HFD": "Whalers", "BUF": "Sabres", "CGY": "Flames",
-        "VAN": "Canucks", "OTT": "Senators", "TBL": "Lightning", "FLA": "Panthers",
-        "NYI": "Islanders", "SJS": "Sharks", "ANA": "Ducks", "NSH": "Predators",
-        "CBJ": "Blue Jackets", "MIN": "Wild", "WPG": "Jets", "ARI": "Coyotes",
-        "CAR": "Hurricanes", "VGK": "Golden Knights",
+        "DET": "Red Wings", "PHI": "Flyers", "COL": "Avalanche",
+        "NJD": "Devils", "NJ": "Devils", "WSH": "Capitals", "WAS": "Capitals",
+        "DAL": "Stars", "STL": "Blues", "LAK": "Kings", "LA": "Kings",
+        "BUF": "Sabres", "CGY": "Flames", "VAN": "Canucks", "OTT": "Senators",
+        "TBL": "Lightning", "TB": "Lightning", "FLA": "Panthers",
+        "NYI": "Islanders", "SJS": "Sharks", "SJ": "Sharks", "ANA": "Ducks",
+        "NSH": "Predators", "CBJ": "Blue Jackets", "MIN": "Wild",
+        "WPG": "Jets", "CAR": "Hurricanes",
+        "VGK": "Golden Knights", "VEG": "Golden Knights",
+        "SEA": "Kraken",                                       # 2021+ (was missing)
+        "ARI": "Coyotes", "PHX": "Coyotes", "PHO": "Coyotes",  # Phoenix era was missing
+        "UTA": "Mammoth", "UHC": "Mammoth",                    # Coyotes -> Utah (2024+)
+        # -- relocated / defunct (era-accurate by the name worn then) --
+        "QUE": "Nordiques",                  # Quebec -> Colorado Avalanche
+        "HFD": "Whalers", "HAR": "Whalers",  # Hartford -> Carolina Hurricanes
+        "WIN": "Jets",                       # original Winnipeg Jets -> Phoenix
+        "MNS": "North Stars",                # Minnesota -> Dallas Stars
+        "ATL": "Thrashers", "ATF": "Thrashers",  # Atlanta Thrashers -> Winnipeg
+        "AFM": "Flames",                     # Atlanta Flames -> Calgary
+        "KCS": "Scouts",                     # Kansas City Scouts -> Colorado -> NJ
+        "CLR": "Rockies", "COR": "Rockies",  # Colorado Rockies (NHL) -> NJ Devils
+        "CGS": "Golden Seals", "OAK": "Seals", "CSE": "Seals",  # Oakland/California Seals
+        "CLE": "Barons",                     # Cleveland Barons -> merged into North Stars
     }
     _GROUP = {"C": "F", "LW": "F", "RW": "F", "W": "F", "F": "F", "D": "D", "G": "G"}
 
@@ -252,6 +314,7 @@ class NCAAFProvider(CsvSeasonProvider):
     CSVs from the CollegeFootballData API with your key."""
     sport = "NCAAF"
     source_name = "cfbd"
+    IS_COLLEGE = True                 # school-based; categories key off `college`
     SUM_COLS = ("g", "pass_yds", "rush_yds", "rec_yds", "tds", "sacks")
 
     def stat_fields(self, s):
@@ -265,6 +328,7 @@ class NCAABProvider(CsvSeasonProvider):
     source_name = "ncaab_csv"
     SUM_COLS = ("g", "pts", "reb", "ast")
     PASSTHROUGH_TEAMS = True          # team == the school (Duke, Kansas, ...)
+    IS_COLLEGE = True                 # -> canonicalize the school name
     _GROUP = {"G": "G", "PG": "G", "SG": "G", "F": "F", "SF": "F", "PF": "F", "C": "C"}
 
     def stat_fields(self, s):

@@ -27,6 +27,7 @@ from bs4 import BeautifulSoup
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from data.etl.schema import get_conn, migrate
+from data.etl.teams import canonical_school
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -53,16 +54,9 @@ HEADERS = {
 # CFB player index: /cfb/players/a-index.htm  (note: .htm not .html)
 PLAYER_INDEX_LETTERS = "abcdefghijklmnopqrstuvwxyz"
 
-# School name normalization -- CFB uses full names
-CFB_SCHOOL_MAP = {
-    "Alabama": "Alabama", "Ohio St.": "Ohio State", "USC": "USC",
-    "Michigan": "Michigan", "Notre Dame": "Notre Dame", "Oklahoma": "Oklahoma",
-    "Texas": "Texas", "LSU": "LSU", "Florida": "Florida",
-    "Penn St.": "Penn State", "Florida St.": "Florida State",
-    "Georgia": "Georgia", "Auburn": "Auburn", "Nebraska": "Nebraska",
-    "Stanford": "Stanford", "Tennessee": "Tennessee", "Clemson": "Clemson",
-    "Oregon": "Oregon", "Texas A&M": "Texas A&M", "Miami (FL)": "Miami",
-}
+# School-name normalization is shared with every other college path via
+# data.etl.teams.canonical_school ("Ohio St." -> "Ohio State", "Miami (FL)" ->
+# "Miami"), so all sources converge on one spelling per school.
 
 SESSION = requests.Session()
 SESSION.headers.update(HEADERS)
@@ -175,8 +169,7 @@ def parse_player_page(soup: BeautifulSoup, sr_id: str) -> Optional[dict]:
             if "School:" in text or "College:" in text:
                 school_link = p.select_one("a[href*='/cfb/schools/']")
                 if school_link:
-                    raw_school = school_link.get_text(strip=True)
-                    bio["college"] = CFB_SCHOOL_MAP.get(raw_school, raw_school)
+                    bio["college"] = canonical_school(school_link.get_text(strip=True))
             if "Hometown:" in text:
                 hometown = text.split("Hometown:")[-1].strip()
                 parts = hometown.split(",")

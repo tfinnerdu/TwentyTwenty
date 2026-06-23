@@ -47,6 +47,7 @@ sys.path.insert(0, ROOT)
 from data.etl.backfill_sr import make_session, get_page, parse_meta, Jailed, _load_env_file, _cell
 from data.etl.providers.base import upsert_players
 from data.etl.providers.csv_season import NFLProvider, NHLProvider
+from data.etl.teams import canonical_school
 from data.etl.load import derive_fields, rebuild_categories
 from data.etl.schema import get_conn, migrate
 
@@ -342,7 +343,7 @@ def parse_college_player(soup, sport, cfg=None):
     schools, years = [], set()
     for row in soup.select("table tbody tr"):
         # college player pages put the SCHOOL in team_name_abbr ("Iowa", "Florida")
-        school = _cell(row, "team_name_abbr", "school_name", "team_name")
+        school = canonical_school(_cell(row, "team_name_abbr", "school_name", "team_name"))
         if not school or school.upper() in ("TOT", "OVERALL", "CAREER"):
             continue
         if school not in schools:

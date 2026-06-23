@@ -80,11 +80,23 @@ def _f(s) -> float:
         return 0.0
 
 
+# Two-word nicknames where the last token alone would be wrong/ambiguous. The
+# modern three plus every multi-word club actually present in Lahman Teams.csv
+# (19th-c. / Federal League), so 'Boston Red Stockings' stays 'Red Stockings'
+# rather than collapsing to a bare 'Stockings'. Checked longest-first.
+_MULTI_NICK = (
+    "Red Sox", "White Sox", "Blue Jays",
+    "Red Stockings", "White Stockings", "Blue Stockings", "Brown Stockings",
+    "Blue Legs", "Ruby Legs", "Forest Citys", "Elm Citys", "Mountain City",
+    "Dark Blues",
+)
+
+
 def _nickname(team_name: str) -> str:
     """'Boston Red Sox' -> 'Red Sox';  'New York Yankees' -> 'Yankees'."""
     if not team_name:
         return ""
-    for multi in ("Red Sox", "White Sox", "Blue Jays"):
+    for multi in _MULTI_NICK:
         if team_name.endswith(multi):
             return multi
     return team_name.split()[-1]
