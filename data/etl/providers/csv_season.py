@@ -185,7 +185,7 @@ class NBAProvider(CsvSeasonProvider):
         "SAS": "Spurs", "TOR": "Raptors", "UTA": "Jazz", "WAS": "Wizards",
         # -- relocated / renamed (era-accurate by the name worn then) --
         "SEA": "SuperSonics",                                  # -> Thunder (OKC)
-        "NJN": "Nets", "NYN": "Nets",                          # New York/New Jersey Nets
+        "NJN": "Nets", "NYN": "Nets", "BRK": "Nets",          # NJ/NY Nets; BRK = b-ref Brooklyn
         "CHH": "Hornets", "NOH": "Hornets", "NOK": "Hornets",  # Charlotte & New Orleans Hornets
         "VAN": "Grizzlies",                                    # Vancouver -> Memphis
         "SDR": "Rockets",                                      # San Diego -> Houston
