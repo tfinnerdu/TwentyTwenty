@@ -48,12 +48,12 @@ _F = {
     "Broncos":    ("den", {"DEN"},                              {"broncos"}),
     "Lions":      ("det", {"DET"},                              {"lions"}),
     "Packers":    ("gnb", {"GB", "GNB"},                        {"packers"}),
-    "Texans":     ("htx", {"HOU", "HTX"},                       {"texans"}),
+    "Texans":     ("htx", {"HOU", "HTX", "HST"},                {"texans"}),
     "Colts":      ("clt", {"IND", "CLT", "BLT_COLTS"},          {"colts"}),
     "Jaguars":    ("jax", {"JAX", "JAC"},                       {"jaguars"}),
     "Chiefs":     ("kan", {"KC", "KAN"},                        {"chiefs"}),
     "Raiders":    ("rai", {"LV", "LVR", "OAK", "RAI"},          {"raiders"}),
-    "Rams":       ("ram", {"LA", "LAR", "STL", "RAM"},          {"rams"}),
+    "Rams":       ("ram", {"LA", "LAR", "STL", "SL", "RAM"},     {"rams"}),
     "Chargers":   ("sdg", {"LAC", "SD", "SDG"},                 {"chargers"}),
     "Dolphins":   ("mia", {"MIA"},                              {"dolphins"}),
     "Vikings":    ("min", {"MIN"},                              {"vikings"}),
@@ -118,6 +118,28 @@ def canonical_nfl_team(token: str = None, href: str = None):
         if any(f in low for f in frags):
             return nk
     return None
+
+
+def nfl_teams_from_page(soup):
+    """Ordered, de-duped canonical franchises a player suited up for, read from a
+    Pro-Football-Reference player page's season tables. Uses each team cell's
+    /teams/<code>/ href (franchise-stable) so shared-city abbrevs can't mislead --
+    this is the standardized replacement for mapping the raw text abbr."""
+    teams = []
+    for row in soup.select("table tbody tr"):
+        cell = (row.select_one("[data-stat='team_name_abbr']")
+                or row.select_one("[data-stat='team']")
+                or row.select_one("[data-stat='team_id']"))
+        if not cell:
+            continue
+        text = cell.get_text(strip=True)
+        if not text or text.upper() in ("TOT", "2TM", "3TM", "4TM", "TM", ""):
+            continue
+        link = cell.select_one("a[href]")
+        nick = canonical_nfl_team(text, href=link.get("href", "") if link else None)
+        if nick and nick not in teams:
+            teams.append(nick)
+    return teams
 
 
 def audit_tokens(tokens):

@@ -70,6 +70,7 @@ FULL = {
         "domain": "https://www.pro-football-reference.com",
         "alpha":  "https://www.pro-football-reference.com/players/{letter}/",
         "players": "/players/", "upper_letters": True, "team_map": NFLProvider.TEAM_MAP,
+        "franchise": "nfl",   # standardize teams off the /teams/<code>/ href (registry)
         "stat_tables": [
             ("passing", {"pass_yds": "pass_yds"}),
             ("rushing_and_receiving", {"rush_yds": "rush_yds", "rec_yds": "rec_yds",

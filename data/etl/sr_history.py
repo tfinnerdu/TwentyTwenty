@@ -211,6 +211,11 @@ def parse_player_history(soup, team_map, cfg=None):
     Returns a payload dict (sans sport/sr_id/name)."""
     out = dict(parse_meta(soup))   # college / position / birth / draft / ht / wt
 
+    # NFL standardizes teams off the franchise href (the registry), which is
+    # immune to the shared-city abbr trap (STL Cardinals vs STL Rams). Other
+    # sports still map the raw abbr via their team_map.
+    nfl_franchise = (cfg or {}).get("franchise") == "nfl"
+
     teams, years = [], set()
     for row in soup.select("table tbody tr"):
         # Only count a row with a real pro team, so its season-year is one the
@@ -220,12 +225,16 @@ def parse_player_history(soup, team_map, cfg=None):
         abbr = _cell(row, "team_name_abbr", "team_id", "team").upper()
         if not abbr or abbr in ("TOT", "2TM", "3TM", "4TM", "TM"):
             continue
-        nick = team_map.get(abbr, abbr)            # fallback: the abbreviation
-        if nick and nick not in teams:
-            teams.append(nick)
+        if not nfl_franchise:
+            nick = team_map.get(abbr, abbr)        # fallback: the abbreviation
+            if nick and nick not in teams:
+                teams.append(nick)
         m = re.search(r"(\d{4})", _cell(row, "season", "year_id", "year"))  # season varies too
         if m:
             years.add(int(m.group(1)))
+    if nfl_franchise:
+        from data.etl.teams import nfl_teams_from_page
+        teams = nfl_teams_from_page(soup)
     if teams:
         out["teams"] = teams
     if years:

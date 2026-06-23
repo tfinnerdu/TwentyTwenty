@@ -161,6 +161,7 @@ HONORS = {
         # don't follow, and keep the per-year pages (they ARE the lists).
         "awards": ("/awards/", "/allpro.htm"), "players": "/players/",
         "create": True, "parser": "pro", "team_map": NFLProvider.TEAM_MAP,
+        "franchise": "nfl",   # standardize teams off the /teams/<code>/ href (registry)
         "stat_tables": [
             ("passing", {"pass_yds": "pass_yds"}),
             ("rushing_and_receiving", {"rush_yds": "rush_yds", "rec_yds": "rec_yds",
