@@ -57,7 +57,9 @@ def build_cache_index(with_teams=False):
     files = glob.glob(os.path.join(CACHE_DIR, "*.html"))
     log.info(f"scanning {len(files)} cached pages in {CACHE_DIR}")
     idx, parsed = {}, 0
-    for fn in files:
+    for i, fn in enumerate(files, 1):
+        if i % 5000 == 0 or i == len(files):       # progress -- the scan is silent otherwise
+            log.info(f"  scanned {i}/{len(files)} pages ({parsed} player pages so far)")
         try:
             soup = _soup(open(fn, encoding="utf-8", errors="ignore").read())
         except Exception:
