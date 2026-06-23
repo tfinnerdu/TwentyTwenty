@@ -561,26 +561,27 @@
   },
   {
     "left_category": "nba_rockets",
-    "right_category": "nba_7apg",
+    "right_category": "pick1",
     "left_label": "Rockets",
-    "right_label": "7+ APG Career",
+    "right_label": "#1 Overall Pick",
     "valid_players": [
-      "Chris Paul",
-      "Russell Westbrook"
+      "Carl Landry",
+      "Dwight Howard",
+      "Yao Ming"
     ],
-    "answer_count": 2
+    "answer_count": 3
   },
   {
-    "left_category": "nba_7apg",
-    "right_category": "born_80s",
-    "left_label": "7+ APG Career",
-    "right_label": "Born in the 1980s",
+    "left_category": "pick1",
+    "right_category": "nba_ring",
+    "left_label": "#1 Overall Pick",
+    "right_label": "NBA Champion",
     "valid_players": [
-      "Chris Paul",
-      "Deron Williams",
+      "David Robinson",
+      "Dwight Howard",
       "LeBron James",
-      "Rajon Rondo",
-      "Russell Westbrook"
+      "Shaquille O'Neal",
+      "Tim Duncan"
     ],
     "answer_count": 5
   }

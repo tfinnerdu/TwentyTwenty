@@ -82,9 +82,200 @@
   },
   {
     "left_category": "team_cowboys",
-    "right_category": "team_dolphins",
+    "right_category": "rush_5k",
     "left_label": "Cowboys",
+    "right_label": "5,000+ Rushing Yds",
+    "valid_players": [
+      "Alfred Morris",
+      "Darren McFadden",
+      "DeMarco Murray",
+      "Eddie George",
+      "Emmitt Smith",
+      "Ezekiel Elliott",
+      "Julius Jones"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "rush_5k",
+    "right_category": "td_150",
+    "left_label": "5,000+ Rushing Yds",
+    "right_label": "150+ Career TDs",
+    "valid_players": [
+      "Cam Newton",
+      "LaDainian Tomlinson",
+      "Lamar Jackson",
+      "Mike Vick",
+      "Russell Wilson"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "td_150",
+    "right_category": "team_colts",
+    "left_label": "150+ Career TDs",
+    "right_label": "Colts",
+    "valid_players": [
+      "Andrew Luck",
+      "Carson Wentz",
+      "Kerry Collins",
+      "Matt Hasselbeck",
+      "Matt Ryan",
+      "Peyton Manning",
+      "Philip Rivers"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_colts",
+    "right_category": "td_50",
+    "left_label": "Colts",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Andre Johnson",
+      "Andrew Luck",
+      "Brian Hoyer",
+      "Carson Wentz",
+      "Dallas Clark",
+      "Edgerrin James",
+      "Frank Gore",
+      "Gardner Minshew",
+      "Jacoby Brissett",
+      "Josh Freeman",
+      "Kerry Collins",
+      "Marvin Harrison",
+      "Matt Hasselbeck",
+      "Matt Ryan",
+      "Nick Foles",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Reggie Wayne",
+      "T.Y. Hilton"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "college_oklahoma",
+    "left_label": "50+ Career TDs",
+    "right_label": "Went to Oklahoma",
+    "valid_players": [
+      "Adrian Peterson",
+      "DeMarco Murray",
+      "Joe Mixon",
+      "Sam Bradford"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "college_oklahoma",
+    "right_category": "team_cardinals",
+    "left_label": "Went to Oklahoma",
+    "right_label": "Cardinals",
+    "valid_players": [
+      "Adrian Peterson",
+      "Jermaine Gresham",
+      "Sam Bradford"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_cardinals",
+    "right_category": "rush_5k",
+    "left_label": "Cardinals",
+    "right_label": "5,000+ Rushing Yds",
+    "valid_players": [
+      "Adrian Peterson",
+      "Alfred Morris",
+      "Chris Johnson",
+      "Edgerrin James",
+      "Emmitt Smith",
+      "Fred Taylor",
+      "Michael Pittman",
+      "Thomas Jones"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "rush_5k",
+    "right_category": "college_ohio_st",
+    "left_label": "5,000+ Rushing Yds",
+    "right_label": "Went to Ohio State",
+    "valid_players": [
+      "Eddie George",
+      "Ezekiel Elliott"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_ohio_st",
+    "right_category": "team_titans",
+    "left_label": "Went to Ohio State",
+    "right_label": "Titans",
+    "valid_players": [
+      "Ben Hartsock",
+      "Chris Sanders",
+      "Donnie Nickey",
+      "Eddie George"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_titans",
+    "right_category": "college_texas",
+    "left_label": "Titans",
+    "right_label": "Went to Texas",
+    "valid_players": [
+      "Ahmard Hall",
+      "Bo Scaife",
+      "Chris Simms",
+      "D'Onta Foreman",
+      "Marcus Johnson",
+      "Vince Young"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "college_texas",
+    "right_category": "rush_5k",
+    "left_label": "Went to Texas",
+    "right_label": "5,000+ Rushing Yds",
+    "valid_players": [
+      "Cedric Benson",
+      "Jamaal Charles",
+      "Priest Holmes",
+      "Ricky Williams"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "rush_5k",
+    "right_category": "td_200",
+    "left_label": "5,000+ Rushing Yds",
+    "right_label": "200+ Career TDs",
+    "valid_players": [
+      "Cam Newton",
+      "Russell Wilson"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "td_200",
+    "right_category": "team_dolphins",
+    "left_label": "200+ Career TDs",
     "right_label": "Dolphins",
+    "valid_players": [
+      "Jay Cutler",
+      "Ryan Fitzpatrick",
+      "Ryan Tannehill"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_dolphins",
+    "right_category": "team_cowboys",
+    "left_label": "Dolphins",
+    "right_label": "Cowboys",
     "valid_players": [
       "Allen Hurns",
       "Anthony Fasano",
@@ -102,22 +293,29 @@
     "answer_count": 12
   },
   {
-    "left_category": "team_dolphins",
-    "right_category": "pass_30k",
-    "left_label": "Dolphins",
-    "right_label": "30,000+ Passing Yds",
+    "left_category": "team_cowboys",
+    "right_category": "pass_10k",
+    "left_label": "Cowboys",
+    "right_label": "10,000+ Passing Yds",
     "valid_players": [
-      "Jay Cutler",
-      "Ryan Fitzpatrick",
-      "Ryan Tannehill"
+      "Andy Dalton",
+      "Brad Johnson",
+      "Dak Prescott",
+      "Drew Bledsoe",
+      "Jon Kitna",
+      "Kyle Orton",
+      "Mark Sanchez",
+      "Matt Cassel",
+      "Tony Romo",
+      "Vinny Testaverde"
     ],
-    "answer_count": 3
+    "answer_count": 10
   },
   {
-    "left_category": "pass_30k",
-    "right_category": "sb_1",
-    "left_label": "30,000+ Passing Yds",
-    "right_label": "Super Bowl Champion",
+    "left_category": "pass_10k",
+    "right_category": "pb_5",
+    "left_label": "10,000+ Passing Yds",
+    "right_label": "5+ Pro Bowls",
     "valid_players": [
       "Aaron Rodgers",
       "Brett Favre",
@@ -128,234 +326,27 @@
     "answer_count": 5
   },
   {
-    "left_category": "sb_1",
-    "right_category": "sb_2",
-    "left_label": "Super Bowl Champion",
-    "right_label": "Multi SB Champion",
+    "left_category": "pb_5",
+    "right_category": "rec_10k",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "10,000+ Receiving Yds",
     "valid_players": [
-      "Emmitt Smith",
-      "Jerry Rice",
-      "Peyton Manning",
-      "Rob Gronkowski",
-      "Tom Brady"
-    ],
-    "answer_count": 5
-  },
-  {
-    "left_category": "sb_2",
-    "right_category": "pb_3",
-    "left_label": "Multi SB Champion",
-    "right_label": "3+ Pro Bowls",
-    "valid_players": [
-      "Emmitt Smith",
-      "Jerry Rice",
-      "Peyton Manning",
-      "Rob Gronkowski",
-      "Tom Brady"
-    ],
-    "answer_count": 5
-  },
-  {
-    "left_category": "pb_3",
-    "right_category": "td_400",
-    "left_label": "3+ Pro Bowls",
-    "right_label": "400+ Career TDs",
-    "valid_players": [
-      "Aaron Rodgers",
-      "Drew Brees",
-      "Peyton Manning",
-      "Tom Brady"
+      "Larry Fitzgerald",
+      "Randy Moss",
+      "Terrell Owens",
+      "Tony Gonzalez"
     ],
     "answer_count": 4
   },
   {
-    "left_category": "td_400",
-    "right_category": "pass_10k",
-    "left_label": "400+ Career TDs",
-    "right_label": "10,000+ Passing Yds",
+    "left_category": "rec_10k",
+    "right_category": "team_lions",
+    "left_label": "10,000+ Receiving Yds",
+    "right_label": "Lions",
     "valid_players": [
-      "Aaron Rodgers",
-      "Ben Roethlisberger",
-      "Drew Brees",
-      "Peyton Manning",
-      "Philip Rivers",
-      "Tom Brady"
-    ],
-    "answer_count": 6
-  },
-  {
-    "left_category": "pass_10k",
-    "right_category": "pick1",
-    "left_label": "10,000+ Passing Yds",
-    "right_label": "#1 Overall Pick",
-    "valid_players": [
-      "Cam Newton",
-      "Carson Palmer",
-      "David Carr",
-      "Drew Bledsoe",
-      "Eli Manning",
-      "Peyton Manning",
-      "Tim Couch",
-      "Vinny Testaverde"
-    ],
-    "answer_count": 8
-  },
-  {
-    "left_category": "pick1",
-    "right_category": "nba_nets",
-    "left_label": "#1 Overall Pick",
-    "right_label": "Nets",
-    "valid_players": [
-      "Kenyon Martin",
-      "Lucious Harris"
+      "Anquan Boldin",
+      "Calvin Johnson"
     ],
     "answer_count": 2
-  },
-  {
-    "left_category": "nba_nets",
-    "right_category": "nba_celtics",
-    "left_label": "Nets",
-    "right_label": "Celtics",
-    "valid_players": [
-      "Brian Scalabrine",
-      "Courtney Lee",
-      "Keyon Dooling",
-      "Mikki Moore",
-      "Nenad Krstic",
-      "Rodney Rogers"
-    ],
-    "answer_count": 6
-  },
-  {
-    "left_category": "nba_celtics",
-    "right_category": "nba_warriors",
-    "left_label": "Celtics",
-    "right_label": "Warriors",
-    "valid_players": [
-      "Jonas Jerebko",
-      "Jordan Crawford",
-      "Mickael Pietrus"
-    ],
-    "answer_count": 3
-  },
-  {
-    "left_category": "nba_warriors",
-    "right_category": "nba_allnba",
-    "left_label": "Warriors",
-    "right_label": "All-NBA Selection",
-    "valid_players": [
-      "Kevin Durant",
-      "Stephen Curry"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "nba_allnba",
-    "right_category": "nba_lakers",
-    "left_label": "All-NBA Selection",
-    "right_label": "Lakers",
-    "valid_players": [
-      "Dwight Howard",
-      "Kobe Bryant",
-      "LeBron James",
-      "Shaquille O'Neal"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "nba_lakers",
-    "right_category": "nba_allnba",
-    "left_label": "Lakers",
-    "right_label": "All-NBA Selection",
-    "valid_players": [
-      "Dwight Howard",
-      "Kobe Bryant",
-      "LeBron James",
-      "Shaquille O'Neal"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "nba_allnba",
-    "right_category": "nba_ring",
-    "left_label": "All-NBA Selection",
-    "right_label": "NBA Champion",
-    "valid_players": [
-      "David Robinson",
-      "Dirk Nowitzki",
-      "Dwight Howard",
-      "Dwyane Wade",
-      "Giannis Antetokounmpo",
-      "Jason Kidd",
-      "Kawhi Leonard",
-      "Kevin Durant",
-      "Kevin Garnett",
-      "Kobe Bryant",
-      "LeBron James",
-      "Michael Jordan",
-      "Nikola Jokic",
-      "Scottie Pippen",
-      "Shaquille O'Neal",
-      "Stephen Curry",
-      "Tim Duncan"
-    ],
-    "answer_count": 17
-  },
-  {
-    "left_category": "nba_ring",
-    "right_category": "decade_90s",
-    "left_label": "NBA Champion",
-    "right_label": "Played in 1990s",
-    "valid_players": [
-      "David Robinson",
-      "Dirk Nowitzki",
-      "Jason Kidd",
-      "Kevin Garnett",
-      "Kobe Bryant",
-      "Michael Jordan",
-      "Scottie Pippen",
-      "Shaquille O'Neal",
-      "Tim Duncan"
-    ],
-    "answer_count": 9
-  },
-  {
-    "left_category": "decade_90s",
-    "right_category": "nba_warriors",
-    "left_label": "Played in 1990s",
-    "right_label": "Warriors",
-    "valid_players": [
-      "Adonal Foyle",
-      "Al Harrington",
-      "Antawn Jamison",
-      "Baron Davis",
-      "Bob Sura",
-      "Calbert Cheaney",
-      "Cliff Robinson",
-      "Corey Maggette",
-      "Danny Fortson",
-      "Derek Fisher",
-      "Erick Dampier",
-      "Jason Caffey",
-      "Larry Hughes",
-      "Mike Dunleavy",
-      "Mookie Blaylock",
-      "Reggie Williams",
-      "Tony Farmer",
-      "Vonteego Cummings"
-    ],
-    "answer_count": 18
-  },
-  {
-    "left_category": "nba_warriors",
-    "right_category": "nba_1000g",
-    "left_label": "Warriors",
-    "right_label": "1,000+ NBA Games",
-    "valid_players": [
-      "Andre Iguodala",
-      "Derek Fisher",
-      "Richard Jefferson"
-    ],
-    "answer_count": 3
   }
 ]
