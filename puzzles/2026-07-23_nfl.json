@@ -1,0 +1,403 @@
+[
+  {
+    "left_category": "pb_3",
+    "right_category": "sb_2",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "Multi SB Champion",
+    "valid_players": [
+      "Emmitt Smith",
+      "Jerry Rice",
+      "Peyton Manning",
+      "Rob Gronkowski",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "sb_2",
+    "right_category": "sb_1",
+    "left_label": "Multi SB Champion",
+    "right_label": "Super Bowl Champion",
+    "valid_players": [
+      "Emmitt Smith",
+      "Jerry Rice",
+      "Peyton Manning",
+      "Rob Gronkowski",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "sb_1",
+    "right_category": "td_150",
+    "left_label": "Super Bowl Champion",
+    "right_label": "150+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "td_150",
+    "right_category": "td_50",
+    "left_label": "150+ Career TDs",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Alex Smith",
+      "Andrew Luck",
+      "Andy Dalton",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Cam Newton",
+      "Carson Palmer",
+      "Carson Wentz",
+      "Dak Prescott",
+      "Daunte Culpepper",
+      "Derek Carr",
+      "Donovan McNabb",
+      "Drew Brees",
+      "Eli Manning",
+      "Jameis Winston",
+      "Jared Goff",
+      "Jay Cutler",
+      "Jeff Garcia",
+      "Joe Flacco",
+      "Jon Kitna",
+      "Josh Allen",
+      "Kerry Collins",
+      "Kirk Cousins",
+      "Kurt Warner",
+      "LaDainian Tomlinson",
+      "Lamar Jackson",
+      "Matt Hasselbeck",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Mike Vick",
+      "Patrick Mahomes",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Russell Wilson",
+      "Ryan Fitzpatrick",
+      "Ryan Tannehill",
+      "Steve McNair",
+      "Tom Brady",
+      "Tony Romo"
+    ],
+    "answer_count": 40
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "pb_10",
+    "left_label": "50+ Career TDs",
+    "right_label": "10+ Pro Bowls",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Larry Fitzgerald",
+      "Peyton Manning",
+      "Tom Brady",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "pb_10",
+    "right_category": "pass_10k",
+    "left_label": "10+ Pro Bowls",
+    "right_label": "10,000+ Passing Yds",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "pass_10k",
+    "right_category": "sb_1",
+    "left_label": "10,000+ Passing Yds",
+    "right_label": "Super Bowl Champion",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "sb_1",
+    "right_category": "pb_5",
+    "left_label": "Super Bowl Champion",
+    "right_label": "5+ Pro Bowls",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Ed Reed",
+      "Emmitt Smith",
+      "Jerry Rice",
+      "Peyton Manning",
+      "Rob Gronkowski",
+      "Tom Brady"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "pb_5",
+    "right_category": "decade_10s",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "Played in 2010s",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Adrian Peterson",
+      "Brett Favre",
+      "Drew Brees",
+      "LaDainian Tomlinson",
+      "Larry Fitzgerald",
+      "Peyton Manning",
+      "Randy Moss",
+      "Rob Gronkowski",
+      "Terrell Owens",
+      "Tom Brady",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "decade_10s",
+    "right_category": "decade_90s",
+    "left_label": "Played in 2010s",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Brandon Stokley",
+      "Brett Favre",
+      "Brian Finneran",
+      "Charles Woodson",
+      "Charlie Batch",
+      "Derrick Mason",
+      "Desmond Clark",
+      "Donald Driver",
+      "Donovan McNabb",
+      "Fred Taylor",
+      "Hines Ward",
+      "Jake Delhomme",
+      "Jimmy Kleinsasser",
+      "Joey Galloway",
+      "Jon Kitna",
+      "Kerry Collins",
+      "Kevin Faulk",
+      "Mark Brunell",
+      "Matt Hasselbeck",
+      "Mike Sellers",
+      "Peyton Manning",
+      "Randy Moss",
+      "Reggie Kelly",
+      "Ricky Williams",
+      "Terrell Owens",
+      "Tony Gonzalez",
+      "Tony Richardson"
+    ],
+    "answer_count": 27
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "top5",
+    "left_label": "Played in 1990s",
+    "right_label": "Top 5 Pick",
+    "valid_players": [
+      "Akili Smith",
+      "Charles Woodson",
+      "Cris Carter",
+      "Curtis Enis",
+      "Desmond Howard",
+      "Donovan McNabb",
+      "Drew Bledsoe",
+      "Irving Fryar",
+      "Junior Seau",
+      "Kerry Collins",
+      "Ki-Jana Carter",
+      "Marshall Faulk",
+      "Michael Westbrook",
+      "Peyton Manning",
+      "Ricky Williams",
+      "Steve Walsh",
+      "Steve Young",
+      "Tim Couch",
+      "Troy Aikman",
+      "Vinny Testaverde"
+    ],
+    "answer_count": 20
+  },
+  {
+    "left_category": "top5",
+    "right_category": "decade_90s",
+    "left_label": "Top 5 Pick",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Akili Smith",
+      "Charles Woodson",
+      "Cris Carter",
+      "Curtis Enis",
+      "Desmond Howard",
+      "Donovan McNabb",
+      "Drew Bledsoe",
+      "Irving Fryar",
+      "Junior Seau",
+      "Kerry Collins",
+      "Ki-Jana Carter",
+      "Marshall Faulk",
+      "Michael Westbrook",
+      "Peyton Manning",
+      "Ricky Williams",
+      "Steve Walsh",
+      "Steve Young",
+      "Tim Couch",
+      "Troy Aikman",
+      "Vinny Testaverde"
+    ],
+    "answer_count": 20
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "team_jets",
+    "left_label": "Played in 1990s",
+    "right_label": "Jets",
+    "valid_players": [
+      "Bernie Parmalee",
+      "Blake Spence",
+      "Brett Favre",
+      "Curtis Conway",
+      "Curtis Martin",
+      "Dedric Ward",
+      "Dwight Stone",
+      "Eric Green",
+      "Fred Baxter",
+      "James Hodgins",
+      "Jay Fiedler",
+      "Jerald Sowell",
+      "Kevin Lockett",
+      "Keyshawn Johnson",
+      "Leon Johnson",
+      "Malcolm Johnson",
+      "Mark Brunell",
+      "Matt Hatchette",
+      "Quinn Early",
+      "Ray Lucas",
+      "Richie Anderson",
+      "Rick Mirer",
+      "Tim Dwight",
+      "Tom Tupa",
+      "Tony Richardson",
+      "Vincent Brisby",
+      "Vinny Testaverde",
+      "Wayne Chrebet"
+    ],
+    "answer_count": 28
+  },
+  {
+    "left_category": "team_jets",
+    "right_category": "team_broncos",
+    "left_label": "Jets",
+    "right_label": "Broncos",
+    "valid_players": [
+      "Brandon Marshall",
+      "Brett Rypien",
+      "De'Angelo Henderson Sr.",
+      "Demaryius Thomas",
+      "Eric Decker",
+      "Eric Tomlinson",
+      "Joe Flacco",
+      "Joel Dreessen",
+      "LaMont Jordan",
+      "Patrick Ramsey",
+      "Tim Tebow",
+      "Trevor Siemian"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "team_broncos",
+    "right_category": "college_texas",
+    "left_label": "Broncos",
+    "right_label": "Went to Texas",
+    "valid_players": [
+      "Andrew Beck",
+      "Chris Simms",
+      "Jamaal Charles",
+      "Lil'Jordan Humphrey",
+      "Selvin Young"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "college_texas",
+    "right_category": "team_packers",
+    "left_label": "Went to Texas",
+    "right_label": "Packers",
+    "valid_players": [
+      "Cedric Benson",
+      "Eric Metcalf",
+      "Jermichael Finley",
+      "Marcus Wilkins"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_packers",
+    "right_category": "college_michigan",
+    "left_label": "Packers",
+    "right_label": "Went to Michigan",
+    "valid_players": [
+      "Desmond Howard",
+      "Joe Kerridge"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_michigan",
+    "right_category": "team_bills",
+    "left_label": "Went to Michigan",
+    "right_label": "Bills",
+    "valid_players": [
+      "Anthony Thomas",
+      "Jay Riemersma",
+      "Mark Campbell"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_bills",
+    "right_category": "pos_nfl_ol",
+    "left_label": "Bills",
+    "right_label": "NFL Offensive Lineman",
+    "valid_players": [
+      "Dion Dawkins",
+      "Jason Peters",
+      "Robert Hicks",
+      "Ross Tucker",
+      "Ruben Brown"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "pos_nfl_ol",
+    "right_category": "top5",
+    "left_label": "NFL Offensive Lineman",
+    "right_label": "Top 5 Pick",
+    "valid_players": [
+      "Andrew Thomas",
+      "Jonathan Ogden"
+    ],
+    "answer_count": 2
+  }
+]

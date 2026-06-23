@@ -1,0 +1,408 @@
+[
+  {
+    "left_category": "born_90s",
+    "right_category": "nba_warriors",
+    "left_label": "Born in the 1990s",
+    "right_label": "Warriors",
+    "valid_players": [
+      "Alfonzo McKinnie",
+      "Andrew Wiggins",
+      "Damian Jones",
+      "Damion Lee",
+      "Draymond Green",
+      "Eric Paschall",
+      "Harrison Barnes",
+      "Ian Clark",
+      "James McAdoo",
+      "Jordan Bell",
+      "Jordan Poole",
+      "Kevon Looney",
+      "Klay Thompson",
+      "Marquese Chriss",
+      "Omari Spellman",
+      "Patrick McCaw",
+      "Quinn Cook"
+    ],
+    "answer_count": 17
+  },
+  {
+    "left_category": "nba_warriors",
+    "right_category": "nba_bulls",
+    "left_label": "Warriors",
+    "right_label": "Bulls",
+    "valid_players": [
+      "C.J. Watson",
+      "Mike Dunleavy"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nba_bulls",
+    "right_category": "born_80s",
+    "left_label": "Bulls",
+    "right_label": "Born in the 1980s",
+    "valid_players": [
+      "Aaron Brooks",
+      "Ben Gordon",
+      "C.J. Watson",
+      "Carlos Boozer",
+      "Chris Duhon",
+      "D.J. Augustin",
+      "Derrick Rose",
+      "Dwyane Wade",
+      "Eddy Curry",
+      "Hakim Warrick",
+      "Jamal Crawford",
+      "Jay Williams",
+      "Jimmy Butler",
+      "Joakim Noah",
+      "Justin Holiday",
+      "Keith Bogans",
+      "Kirk Hinrich",
+      "Kyle Korver",
+      "Luol Deng",
+      "Marco Belinelli",
+      "Mike Dunleavy",
+      "Mike Sweetney",
+      "Nate Robinson",
+      "Omer Asik",
+      "Pau Gasol",
+      "Rajon Rondo",
+      "Robin Lopez",
+      "Ronnie Brewer",
+      "Taj Gibson",
+      "Thabo Sefolosha",
+      "Thaddeus Young",
+      "Tyrus Thomas",
+      "Tyson Chandler"
+    ],
+    "answer_count": 33
+  },
+  {
+    "left_category": "born_80s",
+    "right_category": "nba_fmvp",
+    "left_label": "Born in the 1980s",
+    "right_label": "NBA Finals MVP",
+    "valid_players": [
+      "Dwyane Wade",
+      "Kevin Durant",
+      "LeBron James",
+      "Stephen Curry"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_fmvp",
+    "right_category": "nba_25ppg",
+    "left_label": "NBA Finals MVP",
+    "right_label": "25+ PPG Career",
+    "valid_players": [
+      "Kevin Durant",
+      "Kobe Bryant",
+      "LeBron James"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "nba_25ppg",
+    "right_category": "nba_5star",
+    "left_label": "25+ PPG Career",
+    "right_label": "5+ All-Star Selections",
+    "valid_players": [
+      "Allen Iverson",
+      "Kevin Durant",
+      "Kobe Bryant",
+      "LeBron James"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_5star",
+    "right_category": "nba_20ppg",
+    "left_label": "5+ All-Star Selections",
+    "right_label": "20+ PPG Career",
+    "valid_players": [
+      "Allen Iverson",
+      "Dirk Nowitzki",
+      "Dwyane Wade",
+      "Giannis Antetokounmpo",
+      "Karl Malone",
+      "Kevin Durant",
+      "Kevin Garnett",
+      "Kobe Bryant",
+      "LeBron James",
+      "Michael Jordan",
+      "Russell Westbrook",
+      "Shaquille O'Neal",
+      "Stephen Curry"
+    ],
+    "answer_count": 13
+  },
+  {
+    "left_category": "nba_20ppg",
+    "right_category": "decade_00s",
+    "left_label": "20+ PPG Career",
+    "right_label": "Played in 2000s",
+    "valid_players": [
+      "Allan Houston",
+      "Allen Iverson",
+      "Amar'e Stoudemire",
+      "Brandon Roy",
+      "Carmelo Anthony",
+      "Chris Webber",
+      "DeMar DeRozan",
+      "Dirk Nowitzki",
+      "Dwyane Wade",
+      "Gilbert Arenas",
+      "James Harden",
+      "Jerry Stackhouse",
+      "Karl Malone",
+      "Kevin Durant",
+      "Kevin Garnett",
+      "Kobe Bryant",
+      "LaMarcus Aldridge",
+      "LeBron James",
+      "Michael Jordan",
+      "Michael Redd",
+      "Paul Pierce",
+      "Russell Westbrook",
+      "Shaquille O'Neal",
+      "Stephen Curry",
+      "Stephon Marbury",
+      "Tracy McGrady"
+    ],
+    "answer_count": 26
+  },
+  {
+    "left_category": "decade_00s",
+    "right_category": "nba_warriors",
+    "left_label": "Played in 2000s",
+    "right_label": "Warriors",
+    "valid_players": [
+      "Adonal Foyle",
+      "Al Harrington",
+      "Al Thornton",
+      "Andre Iguodala",
+      "Andrew Bogut",
+      "Andris Biedrins",
+      "Antawn Jamison",
+      "Baron Davis",
+      "Bob Sura",
+      "Brandon Rush",
+      "Brian Cardinal",
+      "C.J. Watson",
+      "Calbert Cheaney",
+      "Carl Landry",
+      "Cliff Robinson",
+      "Corey Maggette",
+      "Danny Fortson",
+      "David Lee",
+      "David West",
+      "Derek Fisher",
+      "Dominic McGuire",
+      "Dorell Wright",
+      "Erick Dampier",
+      "Gilbert Arenas",
+      "JaVale McGee",
+      "Jarrett Jack",
+      "Jason Caffey",
+      "Jason Richardson",
+      "Jonas Jerebko",
+      "Kelenna Azubuike",
+      "Kevin Durant",
+      "Larry Hughes",
+      "Leandro Barbosa",
+      "Marreese Speights",
+      "Matt Barnes",
+      "Mickael Pietrus",
+      "Mike Dunleavy",
+      "Monta Ellis",
+      "Mookie Blaylock",
+      "Nick Young",
+      "Reggie Williams",
+      "Richard Jefferson",
+      "Ronny Turiaf",
+      "Shaun Livingston",
+      "Stephen Curry",
+      "Stephen Jackson",
+      "Tony Farmer",
+      "Troy Murphy",
+      "Vladimir Radmanovic",
+      "Vonteego Cummings",
+      "Zaza Pachulia"
+    ],
+    "answer_count": 51
+  },
+  {
+    "left_category": "nba_warriors",
+    "right_category": "nba_pistons",
+    "left_label": "Warriors",
+    "right_label": "Pistons",
+    "valid_players": [
+      "Cliff Robinson",
+      "Jonas Jerebko",
+      "Zaza Pachulia"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "nba_pistons",
+    "right_category": "top5",
+    "left_label": "Pistons",
+    "right_label": "Top 5 Pick",
+    "valid_players": [
+      "Antonio McDyess",
+      "Ben Gordon",
+      "Blake Griffin",
+      "Chauncey Billups",
+      "Chris Webber",
+      "Christian Laettner",
+      "Derrick Rose",
+      "Grant Hill",
+      "Jerry Stackhouse",
+      "Kyle Singler",
+      "Rasheed Wallace"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "top5",
+    "right_category": "nba_7apg",
+    "left_label": "Top 5 Pick",
+    "right_label": "7+ APG Career",
+    "valid_players": [
+      "Baron Davis",
+      "Ben Simmons",
+      "Chris Paul",
+      "Deron Williams",
+      "Devonte' Graham",
+      "Ja Morant",
+      "Jason Kidd",
+      "John Wall",
+      "LeBron James",
+      "Luka Doncic",
+      "Ricky Rubio",
+      "Russell Westbrook",
+      "Stephon Marbury",
+      "Trae Young"
+    ],
+    "answer_count": 14
+  },
+  {
+    "left_category": "nba_7apg",
+    "right_category": "nba_20ppg",
+    "left_label": "7+ APG Career",
+    "right_label": "20+ PPG Career",
+    "valid_players": [
+      "LeBron James",
+      "Luka Doncic",
+      "Russell Westbrook",
+      "Stephon Marbury",
+      "Trae Young"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "nba_20ppg",
+    "right_category": "nba_5star",
+    "left_label": "20+ PPG Career",
+    "right_label": "5+ All-Star Selections",
+    "valid_players": [
+      "Allen Iverson",
+      "Dirk Nowitzki",
+      "Dwyane Wade",
+      "Giannis Antetokounmpo",
+      "Karl Malone",
+      "Kevin Durant",
+      "Kevin Garnett",
+      "Kobe Bryant",
+      "LeBron James",
+      "Michael Jordan",
+      "Russell Westbrook",
+      "Shaquille O'Neal",
+      "Stephen Curry"
+    ],
+    "answer_count": 13
+  },
+  {
+    "left_category": "nba_5star",
+    "right_category": "decade_80s",
+    "left_label": "5+ All-Star Selections",
+    "right_label": "Played in 1980s",
+    "valid_players": [
+      "John Stockton",
+      "Karl Malone",
+      "Michael Jordan",
+      "Patrick Ewing",
+      "Scottie Pippen"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "decade_80s",
+    "right_category": "nba_20ppg",
+    "left_label": "Played in 1980s",
+    "right_label": "20+ PPG Career",
+    "valid_players": [
+      "Karl Malone",
+      "Michael Jordan"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nba_20ppg",
+    "right_category": "nba_rockets",
+    "left_label": "20+ PPG Career",
+    "right_label": "Rockets",
+    "valid_players": [
+      "Carmelo Anthony",
+      "James Harden",
+      "Russell Westbrook",
+      "Tracy McGrady"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_rockets",
+    "right_category": "nba_knicks",
+    "left_label": "Rockets",
+    "right_label": "Knicks",
+    "valid_players": [
+      "Carmelo Anthony",
+      "Courtney Lee",
+      "Iman Shumpert",
+      "Jared Jeffries",
+      "Marcus Camby",
+      "Pablo Prigioni",
+      "Shandon Anderson",
+      "Steve Francis",
+      "Trevor Ariza"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "nba_knicks",
+    "right_category": "nba_lakers",
+    "left_label": "Knicks",
+    "right_label": "Lakers",
+    "valid_players": [
+      "Glen Rice",
+      "Julius Randle",
+      "Trevor Ariza",
+      "Tyson Chandler"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_lakers",
+    "right_category": "nba_10star",
+    "left_label": "Lakers",
+    "right_label": "10+ All-Star Selections",
+    "valid_players": [
+      "Kobe Bryant",
+      "LeBron James",
+      "Shaquille O'Neal"
+    ],
+    "answer_count": 3
+  }
+]

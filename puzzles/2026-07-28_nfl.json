@@ -1,0 +1,307 @@
+[
+  {
+    "left_category": "rush_5k",
+    "right_category": "team_49ers",
+    "left_label": "5,000+ Rushing Yds",
+    "right_label": "49ers",
+    "valid_players": [
+      "Alfred Morris",
+      "Brandon Jacobs",
+      "Brian Westbrook",
+      "Christian McCaffrey",
+      "Frank Gore",
+      "Reggie Bush"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "team_49ers",
+    "right_category": "team_bengals",
+    "left_label": "49ers",
+    "right_label": "Bengals",
+    "valid_players": [
+      "J.T. O'Sullivan",
+      "Jerome Simpson",
+      "Josh Johnson",
+      "Mohamed Sanu",
+      "Steve Bush",
+      "Terrell Owens",
+      "Trent Taylor",
+      "Tyler Kroft"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_bengals",
+    "right_category": "pick1",
+    "left_label": "Bengals",
+    "right_label": "#1 Overall Pick",
+    "valid_players": [
+      "Carson Palmer",
+      "Ki-Jana Carter"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "pick1",
+    "right_category": "team_falcons",
+    "left_label": "#1 Overall Pick",
+    "right_label": "Falcons",
+    "valid_players": [
+      "Derrick Coleman",
+      "Michael Wilson"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_falcons",
+    "right_category": "team_dolphins",
+    "left_label": "Falcons",
+    "right_label": "Dolphins",
+    "valid_players": [
+      "Damien Williams",
+      "Joey Harrington",
+      "Josh Rosen",
+      "Justin Peelle",
+      "Lousaka Polite",
+      "Mack Hollins",
+      "Marty Booker",
+      "Stanley Pritchett",
+      "Tony Martin"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_dolphins",
+    "right_category": "college_oklahoma",
+    "left_label": "Dolphins",
+    "right_label": "Went to Oklahoma",
+    "valid_players": [
+      "Kenny Stills",
+      "Samaje Perine"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_oklahoma",
+    "right_category": "pos_rb",
+    "left_label": "Went to Oklahoma",
+    "right_label": "Running Back",
+    "valid_players": [
+      "Aaron Ripkowski",
+      "Adrian Peterson",
+      "De'Mond Parker",
+      "DeMarco Murray",
+      "James Allen",
+      "Jerald Moore",
+      "Jermaine Fazande",
+      "Joe Mixon",
+      "Mossis Madu",
+      "Quentin Griffin",
+      "Samaje Perine"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "pos_rb",
+    "right_category": "college_lsu",
+    "left_label": "Running Back",
+    "right_label": "Went to LSU",
+    "valid_players": [
+      "Alfred Blue",
+      "Clyde Edwards-Helaire",
+      "Darrel Williams",
+      "Derrius Guice",
+      "Domanick Williams",
+      "Jacob Hester",
+      "Jeremy Hill",
+      "Joseph Addai",
+      "Keiland Williams",
+      "Kevin Faulk",
+      "LaBrandon Toefield",
+      "Leonard Fournette",
+      "Quinn Johnson",
+      "Richard Murphy",
+      "Rondell Mealey",
+      "Spencer Ware",
+      "Stevan Ridley",
+      "Terrence Magee",
+      "Tyrion Davis-Price"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "college_lsu",
+    "right_category": "pos_nfl_ol",
+    "left_label": "Went to LSU",
+    "right_label": "NFL Offensive Lineman",
+    "valid_players": [
+      "Andrew Whitworth",
+      "Jerald Hawkins"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "pos_nfl_ol",
+    "right_category": "born_60s",
+    "left_label": "NFL Offensive Lineman",
+    "right_label": "Born in the 1960s",
+    "valid_players": [
+      "Bruce Matthews",
+      "Jim Sweeney",
+      "Jumbo Elliott",
+      "Randall McDaniel"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "born_60s",
+    "right_category": "pb_8",
+    "left_label": "Born in the 1960s",
+    "right_label": "8+ Pro Bowls",
+    "valid_players": [
+      "Brett Favre",
+      "Dan Marino",
+      "Emmitt Smith",
+      "Jerry Rice"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pb_8",
+    "right_category": "sb_2",
+    "left_label": "8+ Pro Bowls",
+    "right_label": "Multi SB Champion",
+    "valid_players": [
+      "Emmitt Smith",
+      "Jerry Rice",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "sb_2",
+    "right_category": "pb_3",
+    "left_label": "Multi SB Champion",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Emmitt Smith",
+      "Jerry Rice",
+      "Peyton Manning",
+      "Rob Gronkowski",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "td_100",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "100+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Adrian Peterson",
+      "Brett Favre",
+      "Drew Brees",
+      "LaDainian Tomlinson",
+      "Larry Fitzgerald",
+      "Peyton Manning",
+      "Randy Moss",
+      "Terrell Owens",
+      "Tom Brady",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "td_100",
+    "right_category": "team_49ers",
+    "left_label": "100+ Career TDs",
+    "right_label": "49ers",
+    "valid_players": [
+      "Jeff Garcia",
+      "Jimmy Garoppolo",
+      "Randy Moss",
+      "Terrell Owens"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_49ers",
+    "right_category": "born_60s",
+    "left_label": "49ers",
+    "right_label": "Born in the 1960s",
+    "valid_players": [
+      "Jerry Rice",
+      "Steve Young",
+      "Tommy Vardell"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "born_60s",
+    "right_category": "team_jets",
+    "left_label": "Born in the 1960s",
+    "right_label": "Jets",
+    "valid_players": [
+      "Bernie Parmalee",
+      "Brett Favre",
+      "Dan Stryzinski",
+      "Dwight Stone",
+      "Eric Green",
+      "Jumbo Elliott",
+      "Matt Turk",
+      "Mo Lewis",
+      "Quinn Early",
+      "Tom Tupa",
+      "Vinny Testaverde"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "team_jets",
+    "right_category": "college_penn_st",
+    "left_label": "Jets",
+    "right_label": "Went to Penn State",
+    "valid_players": [
+      "Richie Anderson",
+      "Ross Travis"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_penn_st",
+    "right_category": "team_patriots",
+    "left_label": "Went to Penn State",
+    "right_label": "Patriots",
+    "valid_players": [
+      "Kyle Brady",
+      "Mike Gesicki"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_patriots",
+    "right_category": "team_browns",
+    "left_label": "Patriots",
+    "right_label": "Browns",
+    "valid_players": [
+      "Andre Davis",
+      "Benjamin Watson",
+      "Brian Hoyer",
+      "Brian Tyms",
+      "David Patten",
+      "Donte' Stallworth",
+      "Jacoby Brissett",
+      "Josh Gordon",
+      "Kellen Winslow",
+      "Marc Edwards",
+      "Pharaoh Brown",
+      "Pierre Strong",
+      "Sam Aiken",
+      "Tony Simmons"
+    ],
+    "answer_count": 14
+  }
+]

@@ -1,0 +1,423 @@
+[
+  {
+    "left_category": "pick1",
+    "right_category": "team_panthers",
+    "left_label": "#1 Overall Pick",
+    "right_label": "Panthers",
+    "valid_players": [
+      "Cam Newton",
+      "David Carr",
+      "Vinny Testaverde"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_panthers",
+    "right_category": "team_packers",
+    "left_label": "Panthers",
+    "right_label": "Packers",
+    "valid_players": [
+      "Eric Metcalf",
+      "Wesley Walls"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_packers",
+    "right_category": "team_ravens",
+    "left_label": "Packers",
+    "right_label": "Ravens",
+    "valid_players": [
+      "Kenyan Drake",
+      "Seth Roberts",
+      "Ty Montgomery",
+      "Tyler Ervin",
+      "Vonta Leach"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_ravens",
+    "right_category": "decade_90s",
+    "left_label": "Ravens",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "A.J. Ofodile",
+      "Aaron Pierce",
+      "Ben Coates",
+      "Billy Davis",
+      "Brandon Stokley",
+      "Chuck Evans",
+      "Dedric Ward",
+      "Deion Sanders",
+      "Derrick Mason",
+      "Elvis Grbac",
+      "Errict Rhett",
+      "Frank Sanders",
+      "Greg DeLong",
+      "Jeff Blake",
+      "Jermaine Lewis",
+      "Justin Armour",
+      "Kordell Stewart",
+      "Lorenzo Neal",
+      "Lovett Purnell",
+      "Marcus Nash",
+      "Marcus Robinson",
+      "Moe Williams",
+      "Obafemi Ayanbadejo",
+      "Pat Johnson",
+      "Priest Holmes",
+      "Qadry Ismail",
+      "Randall Cunningham",
+      "Ricky Williams",
+      "Sam Gash",
+      "Scott Mitchell",
+      "Shannon Sharpe",
+      "Steve McNair",
+      "Stoney Case",
+      "Terry Allen",
+      "Tony Banks",
+      "Trent Dilfer"
+    ],
+    "answer_count": 36
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "team_lions",
+    "left_label": "Played in 1990s",
+    "right_label": "Lions",
+    "valid_players": [
+      "Alfred Pupunu",
+      "Autry Denson",
+      "Az-Zahir Hakim",
+      "Bert Emanuel",
+      "Bill Schroeder",
+      "Brian Stablein",
+      "Brock Olivo",
+      "Charlie Batch",
+      "Corey Bradford",
+      "Cory Schlesinger",
+      "Dan Campbell",
+      "Daunte Culpepper",
+      "David Sloan",
+      "Desmond Howard",
+      "Ed Smith",
+      "Germane Crowell",
+      "Greg Hill",
+      "Gus Frerotte",
+      "Herman Moore",
+      "Iheanyi Uwaezuoke",
+      "Isaac Jones",
+      "Jacquez Green",
+      "James Stewart",
+      "Jeff Garcia",
+      "John Jett",
+      "Johnnie Morton",
+      "Jon Kitna",
+      "Lamont Warren",
+      "Lee Johnson",
+      "Marcus Pollard",
+      "Mario Bates",
+      "Mikhael Ricks",
+      "Olandis Gary",
+      "Pete Chryplewicz",
+      "Pete Mitchell",
+      "Richard Huntley",
+      "Ron Rivers",
+      "Sedrick Irvin",
+      "Shawn Jefferson",
+      "Stephen Alexander",
+      "Stoney Case",
+      "Tai Streets",
+      "Troy Edwards",
+      "Ty Detmer",
+      "Walter Rasby"
+    ],
+    "answer_count": 45
+  },
+  {
+    "left_category": "team_lions",
+    "right_category": "team_jets",
+    "left_label": "Lions",
+    "right_label": "Jets",
+    "valid_players": [
+      "Andre Roberts",
+      "Bam Knight",
+      "Josh McCown",
+      "Kellen Davis",
+      "Matthew Mulligan",
+      "Nick Bawden",
+      "Nick Bellore",
+      "Ty Johnson"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_jets",
+    "right_category": "td_200",
+    "left_label": "Jets",
+    "right_label": "200+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Joe Flacco",
+      "Ryan Fitzpatrick"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "td_200",
+    "right_category": "team_saints",
+    "left_label": "200+ Career TDs",
+    "right_label": "Saints",
+    "valid_players": [
+      "Andy Dalton",
+      "Derek Carr",
+      "Drew Brees"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_saints",
+    "right_category": "college_oklahoma",
+    "left_label": "Saints",
+    "right_label": "Went to Oklahoma",
+    "valid_players": [
+      "Jerald Moore",
+      "Kenny Stills"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_oklahoma",
+    "right_category": "team_broncos",
+    "left_label": "Went to Oklahoma",
+    "right_label": "Broncos",
+    "valid_players": [
+      "Marvin Mims Jr.",
+      "Quentin Griffin",
+      "Samaje Perine",
+      "Stephen Alexander"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_broncos",
+    "right_category": "team_49ers",
+    "left_label": "Broncos",
+    "right_label": "49ers",
+    "valid_players": [
+      "Ashley Lelie",
+      "Brandon Lloyd",
+      "Darrell Jackson",
+      "Emmanuel Sanders",
+      "Garrison Hearst",
+      "River Cracraft",
+      "Vernon Davis"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_49ers",
+    "right_category": "pos_te",
+    "left_label": "49ers",
+    "right_label": "Tight End",
+    "valid_players": [
+      "Aaron Walker",
+      "Asante Cleveland",
+      "Billy Bajema",
+      "Blake Bell",
+      "Brian Leonhardt",
+      "Chad Fann",
+      "Charlie Woerner",
+      "Cole Hikutini",
+      "Delanie Walker",
+      "Derek Carrier",
+      "Eric Johnson",
+      "Garrett Celek",
+      "George Kittle",
+      "Greg Clark",
+      "Je'Ron Hamm",
+      "Jed Weaver",
+      "Jordan Matthews",
+      "Jordan Reed",
+      "Justin Peelle",
+      "Kevin Ware",
+      "Levine Toilolo",
+      "Logan Paulsen",
+      "Nate Byham",
+      "Ross Dwelley",
+      "Trent Smith",
+      "Tyler Kroft",
+      "Vance McDonald",
+      "Vernon Davis"
+    ],
+    "answer_count": 28
+  },
+  {
+    "left_category": "pos_te",
+    "right_category": "team_eagles",
+    "left_label": "Tight End",
+    "right_label": "Eagles",
+    "valid_players": [
+      "Albert Okwuegbunam",
+      "Alex Smith",
+      "Brent Celek",
+      "Chad Lewis",
+      "Charles Jones",
+      "Clay Harbor",
+      "Dallas Goedert",
+      "Evan Moore",
+      "Grant Calcaterra",
+      "Hakeem Butler",
+      "Jack Stoll",
+      "James Casey",
+      "Jason Croom",
+      "Jed Weaver",
+      "Jeff Thomason",
+      "Jordan Matthews",
+      "Josh Perkins",
+      "L.J. Smith",
+      "Luther Broughton",
+      "Matt Schobel",
+      "Mike Bartrum",
+      "Noah Togiai",
+      "Richard Rodgers",
+      "Stephen Spach",
+      "Tony Stewart",
+      "Trey Burton",
+      "Tyree Jackson",
+      "Zach Ertz"
+    ],
+    "answer_count": 28
+  },
+  {
+    "left_category": "team_eagles",
+    "right_category": "td_50",
+    "left_label": "Eagles",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Alex Smith",
+      "Brian Westbrook",
+      "Carson Wentz",
+      "Darren Sproles",
+      "DeMarco Murray",
+      "DeSean Jackson",
+      "Donovan McNabb",
+      "Gardner Minshew",
+      "Jalen Hurts",
+      "Jeff Blake",
+      "Jeff Garcia",
+      "Josh McCown",
+      "Julio Jones",
+      "LeGarrette Blount",
+      "LeSean McCoy",
+      "Marcus Mariota",
+      "Mark Sanchez",
+      "Mike Vick",
+      "Mike Wallace",
+      "Nick Foles",
+      "Sam Bradford",
+      "Terrell Owens",
+      "Vince Young"
+    ],
+    "answer_count": 23
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "college_penn_st",
+    "left_label": "50+ Career TDs",
+    "right_label": "Went to Penn State",
+    "valid_players": [
+      "Kerry Collins",
+      "Larry Johnson"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_penn_st",
+    "right_category": "team_bears",
+    "left_label": "Went to Penn State",
+    "right_label": "Bears",
+    "valid_players": [
+      "Allen Robinson",
+      "Bobby Engram",
+      "Curtis Enis",
+      "Jesse James",
+      "John Gilmore",
+      "Robbie Gould"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "team_bears",
+    "right_category": "td_50",
+    "left_label": "Bears",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Andy Dalton",
+      "Brandon Marshall",
+      "Brian Griese",
+      "Brian Hoyer",
+      "Chris Chandler",
+      "Greg Olsen",
+      "Jason Campbell",
+      "Jay Cutler",
+      "Jeff Blake",
+      "Jimmy Graham",
+      "Josh McCown",
+      "Justin Fields",
+      "Kordell Stewart",
+      "Kyle Orton",
+      "Marion Barber",
+      "Matt Forte",
+      "Mitchell Trubisky",
+      "Muhsin Muhammad",
+      "Nick Foles",
+      "Rex Grossman",
+      "Thomas Jones"
+    ],
+    "answer_count": 21
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "sb_3",
+    "left_label": "50+ Career TDs",
+    "right_label": "3+ Super Bowl Rings",
+    "valid_players": [
+      "Rob Gronkowski",
+      "Tom Brady"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "sb_3",
+    "right_category": "decade_90s",
+    "left_label": "3+ Super Bowl Rings",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Emmitt Smith",
+      "Jerry Rice"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "td_150",
+    "left_label": "Played in 1990s",
+    "right_label": "150+ Career TDs",
+    "valid_players": [
+      "Brett Favre",
+      "Daunte Culpepper",
+      "Donovan McNabb",
+      "Jeff Garcia",
+      "Jon Kitna",
+      "Kerry Collins",
+      "Kurt Warner",
+      "Matt Hasselbeck",
+      "Peyton Manning",
+      "Steve McNair"
+    ],
+    "answer_count": 10
+  }
+]

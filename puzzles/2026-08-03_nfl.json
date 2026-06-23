@@ -1,0 +1,268 @@
+[
+  {
+    "left_category": "team_saints",
+    "right_category": "team_broncos",
+    "left_label": "Saints",
+    "right_label": "Broncos",
+    "valid_players": [
+      "Aaron Craver",
+      "Adam Trautman",
+      "Bennie Fowler",
+      "Billy Miller",
+      "Brandon Marshall",
+      "Emmanuel Sanders",
+      "Keith Poole",
+      "Latavius Murray",
+      "Lil'Jordan Humphrey",
+      "Michael Burton",
+      "Mike Bell",
+      "Nick Vannett",
+      "Teddy Bridgewater",
+      "Trevor Siemian"
+    ],
+    "answer_count": 14
+  },
+  {
+    "left_category": "team_broncos",
+    "right_category": "pass_30k",
+    "left_label": "Broncos",
+    "right_label": "30,000+ Passing Yds",
+    "valid_players": [
+      "Jay Cutler",
+      "Joe Flacco",
+      "Peyton Manning",
+      "Russell Wilson"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pass_30k",
+    "right_category": "pb_3",
+    "left_label": "30,000+ Passing Yds",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "team_49ers",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "49ers",
+    "valid_players": [
+      "Jerry Rice",
+      "Randy Moss",
+      "Terrell Owens"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_49ers",
+    "right_category": "pick1",
+    "left_label": "49ers",
+    "right_label": "#1 Overall Pick",
+    "valid_players": [
+      "David Carr",
+      "Steve Young"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "pick1",
+    "right_category": "pass_30k",
+    "left_label": "#1 Overall Pick",
+    "right_label": "30,000+ Passing Yds",
+    "valid_players": [
+      "Cam Newton",
+      "Carson Palmer",
+      "Eli Manning",
+      "Peyton Manning"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pass_30k",
+    "right_category": "team_patriots",
+    "left_label": "30,000+ Passing Yds",
+    "right_label": "Patriots",
+    "valid_players": [
+      "Cam Newton",
+      "Tom Brady"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_patriots",
+    "right_category": "team_rams",
+    "left_label": "Patriots",
+    "right_label": "Rams",
+    "valid_players": [
+      "Brandin Cooks",
+      "Brandon Lloyd",
+      "Cameron Cleeland",
+      "Cody Davis",
+      "Daniel Fells",
+      "Danny Amendola",
+      "Kenny Britt",
+      "Matthew Mulligan",
+      "Michael Hoomanawanui",
+      "Sony Michel",
+      "Steven Jackson",
+      "Wes Welker"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "team_rams",
+    "right_category": "college_penn_st",
+    "left_label": "Rams",
+    "right_label": "Went to Penn State",
+    "valid_players": [
+      "Allen Robinson",
+      "Nick Scott"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_penn_st",
+    "right_category": "team_browns",
+    "left_label": "Went to Penn State",
+    "right_label": "Browns",
+    "valid_players": [
+      "Joe Jurevicius",
+      "Jordan Norwood",
+      "Kevin Thompson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_browns",
+    "right_category": "college_usc",
+    "left_label": "Browns",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Cody Kessler",
+      "Randall Telfer"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "team_saints",
+    "left_label": "Went to USC",
+    "right_label": "Saints",
+    "valid_players": [
+      "Billy Miller",
+      "Chad Morton",
+      "Marvin Powell",
+      "Reggie Bush"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_saints",
+    "right_category": "college_oklahoma",
+    "left_label": "Saints",
+    "right_label": "Went to Oklahoma",
+    "valid_players": [
+      "Jerald Moore",
+      "Kenny Stills"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_oklahoma",
+    "right_category": "team_broncos",
+    "left_label": "Went to Oklahoma",
+    "right_label": "Broncos",
+    "valid_players": [
+      "Marvin Mims Jr.",
+      "Quentin Griffin",
+      "Samaje Perine",
+      "Stephen Alexander"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_broncos",
+    "right_category": "college_texas",
+    "left_label": "Broncos",
+    "right_label": "Went to Texas",
+    "valid_players": [
+      "Andrew Beck",
+      "Chris Simms",
+      "Jamaal Charles",
+      "Lil'Jordan Humphrey",
+      "Selvin Young"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "college_texas",
+    "right_category": "team_chiefs",
+    "left_label": "Went to Texas",
+    "right_label": "Chiefs",
+    "valid_players": [
+      "Jamaal Charles",
+      "Priest Holmes"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_chiefs",
+    "right_category": "college_alabama",
+    "left_label": "Chiefs",
+    "right_label": "Went to Alabama",
+    "valid_players": [
+      "Brodie Croyle",
+      "Daniel Pope",
+      "Javier Arenas",
+      "Le'Ron McClain",
+      "Tim Castille"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "college_alabama",
+    "right_category": "team_packers",
+    "left_label": "Went to Alabama",
+    "right_label": "Packers",
+    "valid_players": [
+      "Eddie Lacy",
+      "J.K. Scott",
+      "Kenyan Drake"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_packers",
+    "right_category": "nfl_mvp",
+    "left_label": "Packers",
+    "right_label": "NFL MVP",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nfl_mvp",
+    "right_category": "decade_10s",
+    "left_label": "NFL MVP",
+    "right_label": "Played in 2010s",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Adrian Peterson",
+      "Brett Favre",
+      "LaDainian Tomlinson",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 6
+  }
+]

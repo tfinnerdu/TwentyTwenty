@@ -1,0 +1,377 @@
+[
+  {
+    "left_category": "td_100",
+    "right_category": "decade_90s",
+    "left_label": "100+ Career TDs",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Brad Johnson",
+      "Brett Favre",
+      "Brian Griese",
+      "Daunte Culpepper",
+      "Donovan McNabb",
+      "Drew Bledsoe",
+      "Jake Delhomme",
+      "Jake Plummer",
+      "Jeff Garcia",
+      "Jon Kitna",
+      "Kerry Collins",
+      "Kurt Warner",
+      "Mark Brunell",
+      "Marvin Harrison",
+      "Matt Hasselbeck",
+      "Peyton Manning",
+      "Randy Moss",
+      "Rich Gannon",
+      "Steve McNair",
+      "Terrell Owens",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 21
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "college_alabama",
+    "left_label": "Played in 1990s",
+    "right_label": "Went to Alabama",
+    "valid_players": [
+      "Chris Mohr",
+      "Daniel Pope",
+      "David Palmer",
+      "Howard Cross",
+      "Kevin Turner",
+      "Patrick Hape",
+      "Rod Rutledge"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "college_alabama",
+    "right_category": "pos_rb",
+    "left_label": "Went to Alabama",
+    "right_label": "Running Back",
+    "valid_players": [
+      "Bo Scarbrough",
+      "Brian Robinson",
+      "Damien Harris",
+      "David Palmer",
+      "Derrick Henry",
+      "Eddie Lacy",
+      "Glen Coffee",
+      "Jalston Fowler",
+      "Josh Jacobs",
+      "Kenneth Darby",
+      "Kenyan Drake",
+      "Kevin Turner",
+      "Le'Ron McClain",
+      "Mark Ingram",
+      "Najee Harris",
+      "Shaun Alexander",
+      "T.J. Yeldon",
+      "Tim Castille",
+      "Trent Richardson"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "pos_rb",
+    "right_category": "college_usc",
+    "left_label": "Running Back",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Chad Morton",
+      "Chauncey Washington",
+      "George Farmer",
+      "Javorius Allen",
+      "Joe McKnight",
+      "Justin Davis",
+      "Keaontay Ingram",
+      "LenDale White",
+      "Marvin Powell",
+      "Reggie Bush",
+      "Ronald Jones",
+      "Stanley Havili",
+      "Sultan McCullough",
+      "Tre Madden"
+    ],
+    "answer_count": 14
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "team_cardinals",
+    "left_label": "Went to USC",
+    "right_label": "Cardinals",
+    "valid_players": [
+      "Carson Palmer",
+      "Johnny McWilliams",
+      "Keaontay Ingram",
+      "Matt Leinart"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_cardinals",
+    "right_category": "team_panthers",
+    "left_label": "Cardinals",
+    "right_label": "Panthers",
+    "valid_players": [
+      "Brian St. Pierre",
+      "Damiere Byrd",
+      "Derek Anderson",
+      "Jeff King",
+      "Josh McCown",
+      "Pharoh Cooper",
+      "Robbie Chosen",
+      "Ted Ginn"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_panthers",
+    "right_category": "college_ohio_st",
+    "left_label": "Panthers",
+    "right_label": "Went to Ohio State",
+    "valid_players": [
+      "Ben Hartsock",
+      "C.J. Saunders",
+      "Corey Brown",
+      "Curtis Samuel",
+      "Devin Smith",
+      "Drew Carter",
+      "Joe Montgomery",
+      "Ted Ginn"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "college_ohio_st",
+    "right_category": "rec_5k",
+    "left_label": "Went to Ohio State",
+    "right_label": "5,000+ Receiving Yds",
+    "valid_players": [
+      "Joey Galloway",
+      "Michael Thomas",
+      "Santonio Holmes",
+      "Ted Ginn",
+      "Terry Glenn",
+      "Terry McLaurin"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "rec_5k",
+    "right_category": "pb_3",
+    "left_label": "5,000+ Receiving Yds",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Jerry Rice",
+      "Larry Fitzgerald",
+      "Randy Moss",
+      "Rob Gronkowski",
+      "Terrell Owens",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "born_60s",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "Born in the 1960s",
+    "valid_players": [
+      "Brett Favre",
+      "Dan Marino",
+      "Emmitt Smith",
+      "Jerry Rice"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "born_60s",
+    "right_category": "team_falcons",
+    "left_label": "Born in the 1960s",
+    "right_label": "Falcons",
+    "valid_players": [
+      "Bob Christian",
+      "Chris Calloway",
+      "Chris Chandler",
+      "Chris Mohr",
+      "Shawn Jefferson",
+      "Terance Mathis",
+      "Tony Martin"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_falcons",
+    "right_category": "team_chargers",
+    "left_label": "Falcons",
+    "right_label": "Chargers",
+    "valid_players": [
+      "Andre Roberts",
+      "Fred McCrary",
+      "George Layne",
+      "Justin Peelle",
+      "Michael Turner",
+      "Tim Dwight",
+      "Trevor Gaylor"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_chargers",
+    "right_category": "td_100",
+    "left_label": "Chargers",
+    "right_label": "100+ Career TDs",
+    "valid_players": [
+      "Antonio Gates",
+      "Drew Brees",
+      "Justin Herbert",
+      "LaDainian Tomlinson",
+      "Philip Rivers"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "td_100",
+    "right_category": "team_lions",
+    "left_label": "100+ Career TDs",
+    "right_label": "Lions",
+    "valid_players": [
+      "Adrian Peterson",
+      "Daunte Culpepper",
+      "Jared Goff",
+      "Jeff Garcia",
+      "Jon Kitna",
+      "Josh McCown",
+      "Matt Cassel",
+      "Matthew Stafford"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_lions",
+    "right_category": "td_50",
+    "left_label": "Lions",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Adrian Peterson",
+      "Anquan Boldin",
+      "Calvin Johnson",
+      "Charlie Batch",
+      "Daunte Culpepper",
+      "Gus Frerotte",
+      "Jared Goff",
+      "Jeff Garcia",
+      "Joey Harrington",
+      "Jon Kitna",
+      "Josh McCown",
+      "LeGarrette Blount",
+      "Marvin Jones",
+      "Matt Cassel",
+      "Matthew Stafford",
+      "Reggie Bush",
+      "Rudi Johnson",
+      "Shaun Hill",
+      "Teddy Bridgewater"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "pass_30k",
+    "left_label": "50+ Career TDs",
+    "right_label": "30,000+ Passing Yds",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Alex Smith",
+      "Andy Dalton",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Cam Newton",
+      "Carson Palmer",
+      "Derek Carr",
+      "Donovan McNabb",
+      "Drew Brees",
+      "Eli Manning",
+      "Jared Goff",
+      "Jay Cutler",
+      "Joe Flacco",
+      "Kerry Collins",
+      "Kirk Cousins",
+      "Kurt Warner",
+      "Matt Hasselbeck",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Russell Wilson",
+      "Ryan Fitzpatrick",
+      "Ryan Tannehill",
+      "Tom Brady",
+      "Tony Romo"
+    ],
+    "answer_count": 27
+  },
+  {
+    "left_category": "pass_30k",
+    "right_category": "team_cardinals",
+    "left_label": "30,000+ Passing Yds",
+    "right_label": "Cardinals",
+    "valid_players": [
+      "Carson Palmer",
+      "Kurt Warner"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_cardinals",
+    "right_category": "team_chargers",
+    "left_label": "Cardinals",
+    "right_label": "Chargers",
+    "valid_players": [
+      "Andre Roberts",
+      "David Boston",
+      "Freddie Jones",
+      "John Phillips",
+      "Kory Sperry",
+      "Stephen Anderson"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "team_chargers",
+    "right_category": "team_cowboys",
+    "left_label": "Chargers",
+    "right_label": "Cowboys",
+    "valid_players": [
+      "John Phillips",
+      "Patrick Crayton",
+      "Robert Chancey",
+      "Ryan Leaf",
+      "Simi Fehoko"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_cowboys",
+    "right_category": "team_dolphins",
+    "left_label": "Cowboys",
+    "right_label": "Dolphins",
+    "valid_players": [
+      "Allen Hurns",
+      "Anthony Fasano",
+      "Brice Butler",
+      "Cedrick Wilson Jr.",
+      "Darian Barnes",
+      "Dedric Ward",
+      "Jamar Martin",
+      "James McKnight",
+      "Jeff Ogden",
+      "Lousaka Polite",
+      "Sammy Morris",
+      "Tyler Clutts"
+    ],
+    "answer_count": 12
+  }
+]

@@ -1,0 +1,376 @@
+[
+  {
+    "left_category": "team_colts",
+    "right_category": "td_50",
+    "left_label": "Colts",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Andre Johnson",
+      "Andrew Luck",
+      "Brian Hoyer",
+      "Carson Wentz",
+      "Dallas Clark",
+      "Edgerrin James",
+      "Frank Gore",
+      "Gardner Minshew",
+      "Jacoby Brissett",
+      "Josh Freeman",
+      "Kerry Collins",
+      "Marvin Harrison",
+      "Matt Hasselbeck",
+      "Matt Ryan",
+      "Nick Foles",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Reggie Wayne",
+      "T.Y. Hilton"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "pass_50k",
+    "left_label": "50+ Career TDs",
+    "right_label": "50,000+ Passing Yds",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Drew Brees",
+      "Eli Manning",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Tom Brady"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "pass_50k",
+    "right_category": "pb_3",
+    "left_label": "50,000+ Passing Yds",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "rush_5k",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "5,000+ Rushing Yds",
+    "valid_players": [
+      "Adrian Peterson",
+      "Emmitt Smith",
+      "LaDainian Tomlinson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "rush_5k",
+    "right_category": "college_miami",
+    "left_label": "5,000+ Rushing Yds",
+    "right_label": "Went to Miami",
+    "valid_players": [
+      "Clinton Portis",
+      "Edgerrin James",
+      "Frank Gore",
+      "Lamar Miller",
+      "Willis McGahee"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "college_miami",
+    "right_category": "rush_5k",
+    "left_label": "Went to Miami",
+    "right_label": "5,000+ Rushing Yds",
+    "valid_players": [
+      "Clinton Portis",
+      "Edgerrin James",
+      "Frank Gore",
+      "Lamar Miller",
+      "Willis McGahee"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "rush_5k",
+    "right_category": "college_alabama",
+    "left_label": "5,000+ Rushing Yds",
+    "right_label": "Went to Alabama",
+    "valid_players": [
+      "Derrick Henry",
+      "Josh Jacobs",
+      "Mark Ingram",
+      "Shaun Alexander"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "college_alabama",
+    "right_category": "td_50",
+    "left_label": "Went to Alabama",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Amari Cooper",
+      "Derrick Henry",
+      "Julio Jones",
+      "Mark Ingram",
+      "Shaun Alexander",
+      "Tua Tagovailoa"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "team_browns",
+    "left_label": "50+ Career TDs",
+    "right_label": "Browns",
+    "valid_players": [
+      "Alex Smith",
+      "Amari Cooper",
+      "Baker Mayfield",
+      "Brian Hoyer",
+      "Case Keenum",
+      "Derek Anderson",
+      "Deshaun Watson",
+      "Jacoby Brissett",
+      "Jake Delhomme",
+      "Jamal Lewis",
+      "Jason Campbell",
+      "Jeff Garcia",
+      "Joe Flacco",
+      "Josh McCown",
+      "Kareem Hunt",
+      "Mike Evans",
+      "Nick Chubb",
+      "Odell Beckham Jr.",
+      "Robert Griffin III",
+      "Tim Couch",
+      "Trent Dilfer",
+      "Tyrod Taylor",
+      "Willis McGahee"
+    ],
+    "answer_count": 23
+  },
+  {
+    "left_category": "team_browns",
+    "right_category": "college_usc",
+    "left_label": "Browns",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Cody Kessler",
+      "Randall Telfer"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "pos_nfl_def",
+    "left_label": "Went to USC",
+    "right_label": "NFL Defensive Player",
+    "valid_players": [
+      "Adoree' Jackson",
+      "Allen Bradford",
+      "Everson Griffen",
+      "Ifeanyi Ohalete",
+      "Junior Seau",
+      "Malcolm Smith",
+      "Mike Morgan",
+      "Taylor Mays"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "pos_nfl_def",
+    "right_category": "college_kentucky",
+    "left_label": "NFL Defensive Player",
+    "right_label": "Went to Kentucky",
+    "valid_players": [
+      "Brandin Echols",
+      "Dean Wells"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_kentucky",
+    "right_category": "team_packers",
+    "left_label": "Went to Kentucky",
+    "right_label": "Packers",
+    "valid_players": [
+      "Randall Cobb",
+      "Tim Masthay"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_packers",
+    "right_category": "top10",
+    "left_label": "Packers",
+    "right_label": "Top 10 Pick",
+    "valid_players": [
+      "Cedric Benson",
+      "Desmond Howard",
+      "Julius Peppers",
+      "Terry Glenn"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "top10",
+    "right_category": "team_colts",
+    "left_label": "Top 10 Pick",
+    "right_label": "Colts",
+    "valid_players": [
+      "Charlie Johnson",
+      "Eddie Johnson",
+      "Kerry Collins",
+      "Matt Ryan",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Ricky Williams",
+      "Steve Walsh"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_colts",
+    "right_category": "team_saints",
+    "left_label": "Colts",
+    "right_label": "Saints",
+    "valid_players": [
+      "Coby Fleener",
+      "Jerome Pathon"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_saints",
+    "right_category": "pos_rb",
+    "left_label": "Saints",
+    "right_label": "Running Back",
+    "valid_players": [
+      "Aaron Craver",
+      "Aaron Stecker",
+      "Adam Prentice",
+      "Alvin Kamara",
+      "Anthony Thomas",
+      "Antowain Smith",
+      "Austin Johnson",
+      "Brian Leonard",
+      "Brian Milne",
+      "C.J. Spiller",
+      "Chad Morton",
+      "Chris Ivory",
+      "Curtis Keaton",
+      "Daniel Lasco",
+      "Darren Sproles",
+      "David Johnson",
+      "Deuce McAllister",
+      "Dino Philyaw",
+      "Dwayne Washington",
+      "Edwin Baker",
+      "Eno Benjamin",
+      "Erik Lorig",
+      "Fred McAfee",
+      "Heath Evans",
+      "Jamaal Branch",
+      "Jamaal Williams",
+      "James Fenderson",
+      "Jed Collins",
+      "Jerald Moore",
+      "John Kuhn",
+      "Jordan Howard",
+      "Jordan Mims",
+      "Julius Jones",
+      "Kendall Hunter",
+      "Kendre Miller",
+      "Khiry Robinson",
+      "Ki-Jana Carter",
+      "Kyle Eckel",
+      "Ladell Betts",
+      "Lamar Smith",
+      "Latavius Murray",
+      "Lynell Hamilton",
+      "Marcus Murphy",
+      "Mark Ingram",
+      "Marvin Powell",
+      "Michael Burton",
+      "Mike Bell",
+      "Mike Gillislee",
+      "Mike Karney",
+      "Olaniyi Sobomehin",
+      "Pierre Thomas",
+      "Reggie Bush",
+      "Ricky Ortiz",
+      "Ricky Williams",
+      "Terrelle Smith",
+      "Terry Allen",
+      "Tim Hightower",
+      "Tony Jones",
+      "Travaris Cadet",
+      "Trey Edmunds",
+      "Troy Davis",
+      "Wilmont Perry",
+      "Zach Line"
+    ],
+    "answer_count": 63
+  },
+  {
+    "left_category": "pos_rb",
+    "right_category": "college_lsu",
+    "left_label": "Running Back",
+    "right_label": "Went to LSU",
+    "valid_players": [
+      "Alfred Blue",
+      "Clyde Edwards-Helaire",
+      "Darrel Williams",
+      "Derrius Guice",
+      "Domanick Williams",
+      "Jacob Hester",
+      "Jeremy Hill",
+      "Joseph Addai",
+      "Keiland Williams",
+      "Kevin Faulk",
+      "LaBrandon Toefield",
+      "Leonard Fournette",
+      "Quinn Johnson",
+      "Richard Murphy",
+      "Rondell Mealey",
+      "Spencer Ware",
+      "Stevan Ridley",
+      "Terrence Magee",
+      "Tyrion Davis-Price"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "college_lsu",
+    "right_category": "team_seahawks",
+    "left_label": "Went to LSU",
+    "right_label": "Seahawks",
+    "valid_players": [
+      "Matt Flynn",
+      "Spencer Ware",
+      "Terrence Magee"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_seahawks",
+    "right_category": "td_150",
+    "left_label": "Seahawks",
+    "right_label": "150+ Career TDs",
+    "valid_players": [
+      "Jon Kitna",
+      "Matt Hasselbeck",
+      "Russell Wilson"
+    ],
+    "answer_count": 3
+  }
+]

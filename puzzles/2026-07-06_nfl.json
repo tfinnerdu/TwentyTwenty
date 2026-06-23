@@ -1,0 +1,375 @@
+[
+  {
+    "left_category": "college_texas",
+    "right_category": "team_colts",
+    "left_label": "Went to Texas",
+    "right_label": "Colts",
+    "valid_players": [
+      "Marcus Johnson",
+      "Sam Ehlinger"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_colts",
+    "right_category": "team_titans",
+    "left_label": "Colts",
+    "right_label": "Titans",
+    "valid_players": [
+      "Andre Johnson",
+      "Ben Hartsock",
+      "Charlie Whitehurst",
+      "Chester Rogers",
+      "Donnie Avery",
+      "Kerry Collins",
+      "Marcus Johnson",
+      "Matt Hasselbeck"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_titans",
+    "right_category": "team_steelers",
+    "left_label": "Titans",
+    "right_label": "Steelers",
+    "valid_players": [
+      "Joshua Dobbs",
+      "Justin Hunter",
+      "Kevin Rader",
+      "Nate Washington",
+      "Valentino Blake"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_steelers",
+    "right_category": "team_cowboys",
+    "left_label": "Steelers",
+    "right_label": "Cowboys",
+    "valid_players": [
+      "Felix Jones",
+      "Joey Galloway",
+      "Mat McBriar",
+      "Ryan Switzer"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_cowboys",
+    "right_category": "team_49ers",
+    "left_label": "Cowboys",
+    "right_label": "49ers",
+    "valid_players": [
+      "Alfred Morris",
+      "Antonio Bryant",
+      "Blake Bell",
+      "Terrell Owens"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_49ers",
+    "right_category": "team_panthers",
+    "left_label": "49ers",
+    "right_label": "Panthers",
+    "valid_players": [
+      "Chris Hetherington",
+      "Chris Weinke",
+      "Christian McCaffrey",
+      "David Carr",
+      "DeAndrew White",
+      "DeShaun Foster",
+      "Jamal Robertson",
+      "Jason Baker",
+      "Louis Murphy",
+      "Mike Davis",
+      "Sam Darnold",
+      "Ted Ginn",
+      "Torrey Smith",
+      "Trenton Cannon",
+      "Willie Snead"
+    ],
+    "answer_count": 15
+  },
+  {
+    "left_category": "team_panthers",
+    "right_category": "team_browns",
+    "left_label": "Panthers",
+    "right_label": "Browns",
+    "valid_players": [
+      "Armond Smith",
+      "Chris Ogbonnaya",
+      "Derek Anderson",
+      "Garrett Gilbert",
+      "Gary Barnidge",
+      "Jake Delhomme",
+      "Josh McCown",
+      "PJ Walker"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_browns",
+    "right_category": "college_alabama",
+    "left_label": "Browns",
+    "right_label": "Went to Alabama",
+    "valid_players": [
+      "Amari Cooper",
+      "Brad Smelley",
+      "Miller Forristall",
+      "Trent Richardson"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "college_alabama",
+    "right_category": "team_falcons",
+    "left_label": "Went to Alabama",
+    "right_label": "Falcons",
+    "valid_players": [
+      "Calvin Ridley",
+      "Chris Mohr",
+      "Julio Jones",
+      "Mike Johnson"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_falcons",
+    "right_category": "team_steelers",
+    "left_label": "Falcons",
+    "right_label": "Steelers",
+    "valid_players": [
+      "Allen Rossum",
+      "Byron Leftwich",
+      "Michael Palmer",
+      "Mike Vick",
+      "Stevan Ridley",
+      "Terance Mathis",
+      "Verron Haynes"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_steelers",
+    "right_category": "team_colts",
+    "left_label": "Steelers",
+    "right_label": "Colts",
+    "valid_players": [
+      "Brian Hoyer",
+      "Chris Rainey",
+      "Darrius Heyward-Bey",
+      "Eric Ebron",
+      "Jordan Todman",
+      "Mewelde Moore",
+      "Najeh Davenport",
+      "Weslye Saunders"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_colts",
+    "right_category": "rec_5k",
+    "left_label": "Colts",
+    "right_label": "5,000+ Receiving Yds",
+    "valid_players": [
+      "Andre Johnson",
+      "Brandon Stokley",
+      "Dallas Clark",
+      "Hakeem Nicks",
+      "Marvin Harrison",
+      "Pierre Garcon",
+      "Reggie Wayne",
+      "T.Y. Hilton"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "rec_5k",
+    "right_category": "team_lions",
+    "left_label": "5,000+ Receiving Yds",
+    "right_label": "Lions",
+    "valid_players": [
+      "Anquan Boldin",
+      "Calvin Johnson",
+      "Danny Amendola",
+      "Golden Tate",
+      "Johnnie Morton",
+      "Marvin Jones",
+      "Nate Burleson",
+      "Roy Williams",
+      "Zach Ertz"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_lions",
+    "right_category": "team_browns",
+    "left_label": "Lions",
+    "right_label": "Browns",
+    "valid_players": [
+      "Darren Fells",
+      "Dennis Northcutt",
+      "Donovan Peoples-Jones",
+      "Edgar Jones",
+      "Jeff Driskel",
+      "Jeff Garcia",
+      "Jerome Harrison",
+      "Josh McCown",
+      "KhaDarel Hodge",
+      "Marvin Hall",
+      "Mike Furrey",
+      "Reuben Droughns",
+      "Terrelle Smith",
+      "Ty Detmer"
+    ],
+    "answer_count": 14
+  },
+  {
+    "left_category": "team_browns",
+    "right_category": "team_bengals",
+    "left_label": "Browns",
+    "right_label": "Bengals",
+    "valid_players": [
+      "Alex Smith",
+      "Alex Smith",
+      "Andrew Hawkins",
+      "Bruce Gradkowski",
+      "Greg Little",
+      "Jason Campbell",
+      "Jeff Driskel",
+      "Josh Johnson",
+      "Orson Charles"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_bengals",
+    "right_category": "late_rd",
+    "left_label": "Bengals",
+    "right_label": "Undrafted or Late Round",
+    "valid_players": [
+      "AJ McCarron",
+      "Andrei Iosivas",
+      "Auden Tate",
+      "Bernard Scott",
+      "Brad St. Louis",
+      "Brandon Allen",
+      "Brandon Wilson",
+      "Brian Hill",
+      "Bruce Gradkowski",
+      "C.J. Uzomah",
+      "Cedric Peerman",
+      "Chase Brown",
+      "Chris Evans",
+      "Clayton Fejedelem",
+      "Cody Core",
+      "Dan Herron",
+      "Donald Lee",
+      "Gus Frerotte",
+      "J.T. O'Sullivan",
+      "James Wright",
+      "Jeff Blake",
+      "Jeff Driskel",
+      "Jordan Palmer",
+      "Josh Johnson",
+      "Kevin Huber",
+      "Kevin Walter",
+      "Marcus Maxwell",
+      "Mario Alford",
+      "Marvin Jones",
+      "Mason Schreck",
+      "Mike Thomas",
+      "Nate Lawrie",
+      "Neil Rackers",
+      "Nicolas Luchey",
+      "Quincy Wilson",
+      "Reggie McNeal",
+      "Rex Burkhead",
+      "Ryan Fitzpatrick",
+      "Ryan Whalen",
+      "Scott Covington",
+      "T.J. Houshmandzadeh",
+      "Tab Perry",
+      "Tony Stewart",
+      "Trayveon Williams",
+      "Trent Taylor"
+    ],
+    "answer_count": 45
+  },
+  {
+    "left_category": "late_rd",
+    "right_category": "pass_10k",
+    "left_label": "Undrafted or Late Round",
+    "right_label": "10,000+ Passing Yds",
+    "valid_players": [
+      "Brad Johnson",
+      "Derek Anderson",
+      "Elvis Grbac",
+      "Gus Frerotte",
+      "Marc Bulger",
+      "Mark Brunell",
+      "Matt Cassel",
+      "Matt Hasselbeck",
+      "Ryan Fitzpatrick",
+      "Tom Brady",
+      "Trent Green",
+      "Tyrod Taylor"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "pass_10k",
+    "right_category": "team_chargers",
+    "left_label": "10,000+ Passing Yds",
+    "right_label": "Chargers",
+    "valid_players": [
+      "Drew Brees",
+      "Geno Smith",
+      "Justin Herbert",
+      "Philip Rivers",
+      "Tyrod Taylor"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_chargers",
+    "right_category": "team_seahawks",
+    "left_label": "Chargers",
+    "right_label": "Seahawks",
+    "valid_players": [
+      "Bryan Walters",
+      "Charlie Whitehurst",
+      "Geno Smith",
+      "Gerald Everett",
+      "Kevin Williams",
+      "Nick Vannett",
+      "Troymaine Pope"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_seahawks",
+    "right_category": "rec_5k",
+    "left_label": "Seahawks",
+    "right_label": "5,000+ Receiving Yds",
+    "valid_players": [
+      "Bobby Engram",
+      "Brandon Stokley",
+      "Braylon Edwards",
+      "DK Metcalf",
+      "Darrell Jackson",
+      "Deion Branch",
+      "Doug Baldwin",
+      "Golden Tate",
+      "Greg Olsen",
+      "Jerry Rice",
+      "Jimmy Graham",
+      "Joey Galloway",
+      "Nate Burleson",
+      "T.J. Houshmandzadeh",
+      "Tyler Lockett"
+    ],
+    "answer_count": 15
+  }
+]

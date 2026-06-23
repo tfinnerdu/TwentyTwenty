@@ -1,0 +1,350 @@
+[
+  {
+    "left_category": "nba_5star",
+    "right_category": "nba_10star",
+    "left_label": "5+ All-Star Selections",
+    "right_label": "10+ All-Star Selections",
+    "valid_players": [
+      "Allen Iverson",
+      "Chris Paul",
+      "David Robinson",
+      "Dirk Nowitzki",
+      "Dwyane Wade",
+      "Jason Kidd",
+      "John Stockton",
+      "Karl Malone",
+      "Kevin Durant",
+      "Kevin Garnett",
+      "Kobe Bryant",
+      "LeBron James",
+      "Michael Jordan",
+      "Patrick Ewing",
+      "Shaquille O'Neal",
+      "Stephen Curry",
+      "Tim Duncan"
+    ],
+    "answer_count": 17
+  },
+  {
+    "left_category": "nba_10star",
+    "right_category": "nba_mvp",
+    "left_label": "10+ All-Star Selections",
+    "right_label": "NBA MVP",
+    "valid_players": [
+      "Allen Iverson",
+      "David Robinson",
+      "Dirk Nowitzki",
+      "Karl Malone",
+      "Kevin Durant",
+      "Kevin Garnett",
+      "Kobe Bryant",
+      "LeBron James",
+      "Michael Jordan",
+      "Shaquille O'Neal",
+      "Stephen Curry",
+      "Tim Duncan"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "nba_mvp",
+    "right_category": "nba_25ppg",
+    "left_label": "NBA MVP",
+    "right_label": "25+ PPG Career",
+    "valid_players": [
+      "Allen Iverson",
+      "Kevin Durant",
+      "Kobe Bryant",
+      "LeBron James"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_25ppg",
+    "right_category": "nba_20ppg",
+    "left_label": "25+ PPG Career",
+    "right_label": "20+ PPG Career",
+    "valid_players": [
+      "Allen Iverson",
+      "Anthony Davis",
+      "James Harden",
+      "Kevin Durant",
+      "Kobe Bryant",
+      "LeBron James"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "nba_20ppg",
+    "right_category": "nba_spurs",
+    "left_label": "20+ PPG Career",
+    "right_label": "Spurs",
+    "valid_players": [
+      "DeMar DeRozan",
+      "LaMarcus Aldridge"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nba_spurs",
+    "right_category": "nba_1000g",
+    "left_label": "Spurs",
+    "right_label": "1,000+ NBA Games",
+    "valid_players": [
+      "Richard Jefferson",
+      "Tim Duncan",
+      "Tony Parker"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "nba_1000g",
+    "right_category": "nba_20ppg",
+    "left_label": "1,000+ NBA Games",
+    "right_label": "20+ PPG Career",
+    "valid_players": [
+      "Carmelo Anthony",
+      "Dirk Nowitzki",
+      "Kobe Bryant",
+      "LeBron James",
+      "Paul Pierce"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "nba_20ppg",
+    "right_category": "nba_knicks",
+    "left_label": "20+ PPG Career",
+    "right_label": "Knicks",
+    "valid_players": [
+      "Allan Houston",
+      "Amar'e Stoudemire",
+      "Carmelo Anthony",
+      "Stephon Marbury"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_knicks",
+    "right_category": "nba_1000g",
+    "left_label": "Knicks",
+    "right_label": "1,000+ NBA Games",
+    "valid_players": [
+      "Carmelo Anthony",
+      "Jamal Crawford"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nba_1000g",
+    "right_category": "decade_10s",
+    "left_label": "1,000+ NBA Games",
+    "right_label": "Played in 2010s",
+    "valid_players": [
+      "Andre Iguodala",
+      "Andre Miller",
+      "Carmelo Anthony",
+      "Derek Fisher",
+      "Dirk Nowitzki",
+      "Dwight Howard",
+      "Jamal Crawford",
+      "Jason Terry",
+      "Joe Johnson",
+      "Kobe Bryant",
+      "Kyle Korver",
+      "LeBron James",
+      "Paul Pierce",
+      "Ray Allen",
+      "Richard Jefferson",
+      "Tim Duncan",
+      "Tony Parker",
+      "Vince Carter"
+    ],
+    "answer_count": 18
+  },
+  {
+    "left_category": "decade_10s",
+    "right_category": "nba_rings2",
+    "left_label": "Played in 2010s",
+    "right_label": "Multi NBA Champion",
+    "valid_players": [
+      "Dwyane Wade",
+      "Kawhi Leonard",
+      "Kevin Durant",
+      "Kobe Bryant",
+      "LeBron James",
+      "Shaquille O'Neal",
+      "Stephen Curry",
+      "Tim Duncan"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "nba_rings2",
+    "right_category": "pick1",
+    "left_label": "Multi NBA Champion",
+    "right_label": "#1 Overall Pick",
+    "valid_players": [
+      "David Robinson",
+      "LeBron James",
+      "Shaquille O'Neal",
+      "Tim Duncan"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pick1",
+    "right_category": "nba_bulls",
+    "left_label": "#1 Overall Pick",
+    "right_label": "Bulls",
+    "valid_players": [
+      "Derrick Rose",
+      "Elton Brand",
+      "Othella Harrington",
+      "Trenton Hassell"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "nba_bulls",
+    "right_category": "nba_warriors",
+    "left_label": "Bulls",
+    "right_label": "Warriors",
+    "valid_players": [
+      "C.J. Watson",
+      "Mike Dunleavy"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nba_warriors",
+    "right_category": "nba_1000g",
+    "left_label": "Warriors",
+    "right_label": "1,000+ NBA Games",
+    "valid_players": [
+      "Andre Iguodala",
+      "Derek Fisher",
+      "Richard Jefferson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "nba_1000g",
+    "right_category": "nba_celtics",
+    "left_label": "1,000+ NBA Games",
+    "right_label": "Celtics",
+    "valid_players": [
+      "Jason Terry",
+      "Paul Pierce",
+      "Ray Allen"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "nba_celtics",
+    "right_category": "decade_90s",
+    "left_label": "Celtics",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Adrian Griffin",
+      "Antoine Walker",
+      "Bryant Stith",
+      "Dana Barros",
+      "Eric Williams",
+      "Erick Strickland",
+      "Gary Payton",
+      "James Posey",
+      "Jason Terry",
+      "Kenny Anderson",
+      "Kevin Garnett",
+      "Mikki Moore",
+      "Paul Pierce",
+      "Raef LaFrentz",
+      "Rasheed Wallace",
+      "Ray Allen",
+      "Ricky Davis",
+      "Rodney Rogers",
+      "Sam Cassell",
+      "Tony Battie",
+      "Tony Delk",
+      "Vitaly Potapenko",
+      "Wally Szczerbiak",
+      "Walter McCarty"
+    ],
+    "answer_count": 24
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "decade_80s",
+    "left_label": "Played in 1990s",
+    "right_label": "Played in 1980s",
+    "valid_players": [
+      "A.C. Green",
+      "Avery Johnson",
+      "Brian Shaw",
+      "Charles Oakley",
+      "Cliff Robinson",
+      "Dan Majerle",
+      "Danny Manning",
+      "Dell Curry",
+      "Derrick McKey",
+      "Detlef Schrempf",
+      "Gerald Henderson",
+      "Greg Smith",
+      "Horace Grant",
+      "Jeff Hornacek",
+      "Jerome Kersey",
+      "John Starks",
+      "John Stockton",
+      "Johnny Newman",
+      "Karl Malone",
+      "Kevin Willis",
+      "Larry Johnson",
+      "Mark Bryant",
+      "Mark Jackson",
+      "Michael Jordan",
+      "Mike Dunleavy",
+      "Mitch Richmond",
+      "Muggsy Bogues",
+      "Olden Polynice",
+      "Patrick Ewing",
+      "Reggie Miller",
+      "Reggie Williams",
+      "Rik Smits",
+      "Rod Strickland",
+      "Ron Harper",
+      "Sam Perkins",
+      "Scottie Pippen",
+      "Steve Kerr",
+      "Terry Porter",
+      "Vinny Del Negro"
+    ],
+    "answer_count": 39
+  },
+  {
+    "left_category": "decade_80s",
+    "right_category": "nba_ring",
+    "left_label": "Played in 1980s",
+    "right_label": "NBA Champion",
+    "valid_players": [
+      "Michael Jordan",
+      "Scottie Pippen"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nba_ring",
+    "right_category": "decade_20s",
+    "left_label": "NBA Champion",
+    "right_label": "Played in 2020s",
+    "valid_players": [
+      "Dwight Howard",
+      "Giannis Antetokounmpo",
+      "Kawhi Leonard",
+      "Kevin Durant",
+      "LeBron James",
+      "Stephen Curry"
+    ],
+    "answer_count": 6
+  }
+]

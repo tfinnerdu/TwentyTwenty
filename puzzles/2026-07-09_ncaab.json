@@ -1,0 +1,326 @@
+[
+  {
+    "left_category": "ncaab_poy",
+    "right_category": "decade_90s",
+    "left_label": "College POY (M)",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Christian Laettner",
+      "Glenn Robinson",
+      "Shaquille O'Neal",
+      "Tim Duncan"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "college_duke",
+    "left_label": "Played in 1990s",
+    "right_label": "Went to Duke",
+    "valid_players": [
+      "Christian Laettner",
+      "Grant Hill"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_duke",
+    "right_category": "ncaab_20ppg",
+    "left_label": "Went to Duke",
+    "right_label": "20+ PPG in College (M)",
+    "valid_players": [
+      "Cameron Boozer",
+      "Marvin Bagley III",
+      "RJ Barrett",
+      "Zion Williamson"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "ncaab_20ppg",
+    "right_category": "decade_70s",
+    "left_label": "20+ PPG in College (M)",
+    "right_label": "Played in 1970s",
+    "valid_players": [
+      "Bill Walton",
+      "Larry Bird",
+      "Pete Maravich"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "decade_70s",
+    "right_category": "ncaab_aa",
+    "left_label": "Played in 1970s",
+    "right_label": "College All-American (M)",
+    "valid_players": [
+      "Bill Walton",
+      "Larry Bird",
+      "Pete Maravich"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "ncaab_aa",
+    "right_category": "ncaab_25ppg",
+    "left_label": "College All-American (M)",
+    "right_label": "25+ PPG in College (M)",
+    "valid_players": [
+      "Elgin Baylor",
+      "Glenn Robinson",
+      "Larry Bird",
+      "Lew Alcindor",
+      "Oscar Robertson",
+      "Pete Maravich",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "ncaab_25ppg",
+    "right_category": "ncaab_center",
+    "left_label": "25+ PPG in College (M)",
+    "right_label": "College Center (M)",
+    "valid_players": [
+      "Lew Alcindor",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "ncaab_center",
+    "right_category": "ncaab_poy",
+    "left_label": "College Center (M)",
+    "right_label": "College POY (M)",
+    "valid_players": [
+      "Bill Walton",
+      "David Robinson",
+      "Lew Alcindor",
+      "Shaquille O'Neal",
+      "Tim Duncan"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "ncaab_poy",
+    "right_category": "born_80s",
+    "left_label": "College POY (M)",
+    "right_label": "Born in the 1980s",
+    "valid_players": [
+      "J.J. Redick",
+      "Tyler Hansbrough"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "born_80s",
+    "right_category": "undrafted",
+    "left_label": "Born in the 1980s",
+    "right_label": "Undrafted",
+    "valid_players": [
+      "Carmelo Anthony",
+      "J.J. Redick",
+      "Tyler Hansbrough"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "undrafted",
+    "right_category": "ncaab_aa",
+    "left_label": "Undrafted",
+    "right_label": "College All-American (M)",
+    "valid_players": [
+      "Anthony Davis",
+      "Bill Russell",
+      "Bill Walton",
+      "Carmelo Anthony",
+      "Christian Laettner",
+      "Danny Manning",
+      "David Robinson",
+      "Elgin Baylor",
+      "Glenn Robinson",
+      "Grant Hill",
+      "Hakeem Olajuwon",
+      "J.J. Redick",
+      "Jerry West",
+      "Kemba Walker",
+      "Larry Bird",
+      "Lew Alcindor",
+      "Michael Jordan",
+      "Oscar Robertson",
+      "Patrick Ewing",
+      "Pete Maravich",
+      "Shaquille O'Neal",
+      "Tim Duncan",
+      "Tyler Hansbrough",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 24
+  },
+  {
+    "left_category": "ncaab_aa",
+    "right_category": "decade_90s",
+    "left_label": "College All-American (M)",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Christian Laettner",
+      "Glenn Robinson",
+      "Grant Hill",
+      "Shaquille O'Neal",
+      "Tim Duncan"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "decade_90s",
+    "right_category": "ncaab_aa",
+    "left_label": "Played in 1990s",
+    "right_label": "College All-American (M)",
+    "valid_players": [
+      "Christian Laettner",
+      "Glenn Robinson",
+      "Grant Hill",
+      "Shaquille O'Neal",
+      "Tim Duncan"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "ncaab_aa",
+    "right_category": "undrafted",
+    "left_label": "College All-American (M)",
+    "right_label": "Undrafted",
+    "valid_players": [
+      "Anthony Davis",
+      "Bill Russell",
+      "Bill Walton",
+      "Carmelo Anthony",
+      "Christian Laettner",
+      "Danny Manning",
+      "David Robinson",
+      "Elgin Baylor",
+      "Glenn Robinson",
+      "Grant Hill",
+      "Hakeem Olajuwon",
+      "J.J. Redick",
+      "Jerry West",
+      "Kemba Walker",
+      "Larry Bird",
+      "Lew Alcindor",
+      "Michael Jordan",
+      "Oscar Robertson",
+      "Patrick Ewing",
+      "Pete Maravich",
+      "Shaquille O'Neal",
+      "Tim Duncan",
+      "Tyler Hansbrough",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 24
+  },
+  {
+    "left_category": "undrafted",
+    "right_category": "ncaab_champ",
+    "left_label": "Undrafted",
+    "right_label": "NCAA Champion (M)",
+    "valid_players": [
+      "Anthony Davis",
+      "Bill Russell",
+      "Bill Walton",
+      "Carmelo Anthony",
+      "Christian Laettner",
+      "Danny Manning",
+      "Grant Hill",
+      "Kemba Walker",
+      "Lew Alcindor",
+      "Michael Jordan",
+      "Patrick Ewing",
+      "Tyler Hansbrough"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "ncaab_champ",
+    "right_category": "decade_80s",
+    "left_label": "NCAA Champion (M)",
+    "right_label": "Played in 1980s",
+    "valid_players": [
+      "Christian Laettner",
+      "Danny Manning",
+      "Michael Jordan",
+      "Patrick Ewing"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "decade_80s",
+    "right_category": "undrafted",
+    "left_label": "Played in 1980s",
+    "right_label": "Undrafted",
+    "valid_players": [
+      "Christian Laettner",
+      "Danny Manning",
+      "David Robinson",
+      "Hakeem Olajuwon",
+      "Michael Jordan",
+      "Patrick Ewing"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "undrafted",
+    "right_category": "ncaab_25ppg",
+    "left_label": "Undrafted",
+    "right_label": "25+ PPG in College (M)",
+    "valid_players": [
+      "Elgin Baylor",
+      "Glenn Robinson",
+      "Larry Bird",
+      "Lew Alcindor",
+      "Oscar Robertson",
+      "Pete Maravich",
+      "Wilt Chamberlain"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "ncaab_25ppg",
+    "right_category": "decade_20s",
+    "left_label": "25+ PPG in College (M)",
+    "right_label": "Played in 2020s",
+    "valid_players": [
+      "AJ Dybantsa",
+      "Antoine Davis",
+      "Lamine Diane"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "decade_20s",
+    "right_category": "college_oklahoma",
+    "left_label": "Played in 2020s",
+    "right_label": "Went to Oklahoma",
+    "valid_players": [
+      "Alondes Williams",
+      "Bijan Cortes",
+      "Brady Manek",
+      "C.J. Noland",
+      "Dayton Forsythe",
+      "De'Vion Harmon",
+      "Derrion Reid",
+      "Jacob Groves",
+      "Jalen Hill",
+      "Jalon Moore",
+      "Jamal Bieniemy",
+      "Jeremiah Fears",
+      "Jordan Shepherd",
+      "Kristian Doolittle",
+      "Kur Kuath",
+      "Luke Northweather",
+      "Matt Freeman",
+      "Mohamed Wague",
+      "Sam Godwin"
+    ],
+    "answer_count": 19
+  }
+]

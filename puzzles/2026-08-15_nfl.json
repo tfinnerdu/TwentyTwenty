@@ -1,0 +1,399 @@
+[
+  {
+    "left_category": "team_dolphins",
+    "right_category": "td_100",
+    "left_label": "Dolphins",
+    "right_label": "100+ Career TDs",
+    "valid_players": [
+      "Brian Griese",
+      "Chad Pennington",
+      "Daunte Culpepper",
+      "Jay Cutler",
+      "Ryan Fitzpatrick",
+      "Ryan Tannehill",
+      "Trent Green"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "td_100",
+    "right_category": "top5",
+    "left_label": "100+ Career TDs",
+    "right_label": "Top 5 Pick",
+    "valid_players": [
+      "Cam Newton",
+      "Carson Palmer",
+      "Donovan McNabb",
+      "Drew Bledsoe",
+      "Eli Manning",
+      "Kerry Collins",
+      "LaDainian Tomlinson",
+      "Larry Fitzgerald",
+      "Matt Ryan",
+      "Peyton Manning",
+      "Philip Rivers"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "top5",
+    "right_category": "rec_10k",
+    "left_label": "Top 5 Pick",
+    "right_label": "10,000+ Receiving Yds",
+    "valid_players": [
+      "A.J. Green",
+      "Calvin Johnson",
+      "Larry Fitzgerald"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "rec_10k",
+    "right_category": "born_90s",
+    "left_label": "10,000+ Receiving Yds",
+    "right_label": "Born in the 1990s",
+    "valid_players": [
+      "Davante Adams",
+      "DeAndre Hopkins",
+      "Keenan Allen",
+      "Mike Evans",
+      "Tyreek Hill"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "born_90s",
+    "right_category": "college_duke",
+    "left_label": "Born in the 1990s",
+    "right_label": "Went to Duke",
+    "valid_players": [
+      "Daniel Helm",
+      "Daniel Jones",
+      "Deon Jackson",
+      "Jamison Crowder",
+      "Juwan Thompson",
+      "Matt Skura",
+      "Max McCaffrey",
+      "Noah Gray",
+      "Sean Renfree",
+      "Shaun Wilson"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "college_duke",
+    "right_category": "pos_rb",
+    "left_label": "Went to Duke",
+    "right_label": "Running Back",
+    "valid_players": [
+      "Deon Jackson",
+      "Juwan Thompson",
+      "Shaun Wilson"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "pos_rb",
+    "right_category": "team_vikings",
+    "left_label": "Running Back",
+    "right_label": "Vikings",
+    "valid_players": [
+      "Adrian Peterson",
+      "Albert Young",
+      "Alexander Mattison",
+      "Ameer Abdullah",
+      "Artose Pinner",
+      "C.J. Ham",
+      "Cam Akers",
+      "Charles Stackhouse",
+      "Chester Taylor",
+      "Ciatrick Fason",
+      "Cordarrelle Patterson",
+      "Dalvin Cook",
+      "Darius Reynaud",
+      "David Palmer",
+      "Doug Chapman",
+      "Harold Morrow",
+      "James Robinson",
+      "Jerick McKinnon",
+      "Jerome Felton",
+      "Joe Banyard",
+      "John Avery",
+      "John Henry Mills",
+      "Kene Nwangwu",
+      "Larry Ned",
+      "Latavius Murray",
+      "Leroy Hoard",
+      "Lorenzo Booker",
+      "Mack Brown",
+      "Matt Asiata",
+      "Mewelde Moore",
+      "Michael Bennett",
+      "Mike Boone",
+      "Moe Williams",
+      "Naufahu Tahi",
+      "Onterrio Smith",
+      "Roc Thomas",
+      "Thomas Tapeh",
+      "Toby Gerhart",
+      "Tony Brooks-James",
+      "Tony Richardson",
+      "Travis Prentice",
+      "Ty Chandler",
+      "Wayne Gallman",
+      "Zach Line"
+    ],
+    "answer_count": 44
+  },
+  {
+    "left_category": "team_vikings",
+    "right_category": "team_eagles",
+    "left_label": "Vikings",
+    "right_label": "Eagles",
+    "valid_players": [
+      "Billy McMullen",
+      "Donovan McNabb",
+      "Greg Lewis",
+      "Hank Baskett",
+      "Jalen Reagor",
+      "Lorenzo Booker",
+      "Mike Brown",
+      "Mike Wallace",
+      "Sam Bradford",
+      "Thomas Tapeh"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "team_eagles",
+    "right_category": "late_rd",
+    "left_label": "Eagles",
+    "right_label": "Undrafted or Late Round",
+    "valid_players": [
+      "A.J. Feeley",
+      "Boston Scott",
+      "Braden Mann",
+      "Brent Celek",
+      "Brian Mitchell",
+      "Bruce Perry",
+      "Bryce Brown",
+      "Cecil Martin",
+      "Charles Jones",
+      "Darnerien McCants",
+      "Dietrich Jells",
+      "Dion Lewis",
+      "Donnie Jones",
+      "Dorsey Levens",
+      "Gardner Minshew",
+      "Grant Calcaterra",
+      "Greg Lewis",
+      "Jake Elliott",
+      "James Casey",
+      "Jason Huntley",
+      "Jay Ajayi",
+      "Jed Weaver",
+      "Jeff Blake",
+      "John Hightower",
+      "Jordan Howard",
+      "Kenjon Barner",
+      "Kenny Gainwell",
+      "Koy Detmer",
+      "Luther Broughton",
+      "Marvin McNutt",
+      "Mike McMahon",
+      "Najee Goode",
+      "Nate Sudfeld",
+      "Owen Schmitt",
+      "Quez Watkins",
+      "Riley Cooper",
+      "Robert Davis",
+      "Shelton Gibson",
+      "Stanley Havili",
+      "Thomas Tapeh",
+      "Tony Stewart",
+      "Torrance Small",
+      "Travis Fulgham",
+      "Troy Smith",
+      "Tyrie Cleveland",
+      "Wendell Smallwood"
+    ],
+    "answer_count": 46
+  },
+  {
+    "left_category": "late_rd",
+    "right_category": "pos_nfl_ol",
+    "left_label": "Undrafted or Late Round",
+    "right_label": "NFL Offensive Lineman",
+    "valid_players": [
+      "Adam Timmerman",
+      "Andrew Gardner",
+      "Brian Mihalik",
+      "Charlie Johnson",
+      "Chris Villarrial",
+      "Conor McDermott",
+      "Danny Pinter",
+      "David Quessenberry",
+      "Dennis Kelly",
+      "Eugene Amano",
+      "Jacob Bell",
+      "Jeromey Clary",
+      "Kevin Boothe",
+      "Lance Louis",
+      "Mark Tauscher",
+      "Matt Slauson",
+      "Matt Tennant",
+      "Michael Otto",
+      "Mike Gibson",
+      "Senio Kelemete",
+      "Wesley Johnson",
+      "Will Svitek",
+      "Wyatt Teller",
+      "Zach Strief"
+    ],
+    "answer_count": 24
+  },
+  {
+    "left_category": "pos_nfl_ol",
+    "right_category": "team_rams",
+    "left_label": "NFL Offensive Lineman",
+    "right_label": "Rams",
+    "valid_players": [
+      "Adam Timmerman",
+      "John St. Clair",
+      "Ryan Tucker"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_rams",
+    "right_category": "born_60s",
+    "left_label": "Rams",
+    "right_label": "Born in the 1960s",
+    "valid_players": [
+      "Chris Chandler",
+      "Matt Turk",
+      "Paul Justin",
+      "Ricky Proehl"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "born_60s",
+    "right_category": "team_colts",
+    "left_label": "Born in the 1960s",
+    "right_label": "Colts",
+    "valid_players": [
+      "Mark Rypien",
+      "Ricky Proehl",
+      "Steve Walsh"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "team_colts",
+    "right_category": "team_falcons",
+    "left_label": "Colts",
+    "right_label": "Falcons",
+    "valid_players": [
+      "Ben Hartsock",
+      "Jacob Tamme",
+      "Jerome Pathon",
+      "Matt Ryan"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "team_falcons",
+    "right_category": "pos_nfl_def",
+    "left_label": "Falcons",
+    "right_label": "NFL Defensive Player",
+    "valid_players": [
+      "Allen Rossum",
+      "Darrick Vaughn",
+      "DeAngelo Hall",
+      "Demorrio Williams",
+      "Lorenzo Carter",
+      "Sharrod Neasman",
+      "Travis Williams"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "pos_nfl_def",
+    "right_category": "college_nd",
+    "left_label": "NFL Defensive Player",
+    "right_label": "Went to Notre Dame",
+    "valid_players": [
+      "Allen Rossum",
+      "David Bruton",
+      "Matthias Farley",
+      "Todd Lyght"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "college_nd",
+    "right_category": "td_50",
+    "left_label": "Went to Notre Dame",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Jerome Bettis",
+      "Kyle Rudolph",
+      "Steve Beuerlein"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "team_patriots",
+    "left_label": "50+ Career TDs",
+    "right_label": "Patriots",
+    "valid_players": [
+      "Antonio Brown",
+      "Brandin Cooks",
+      "Brian Hoyer",
+      "Cam Newton",
+      "Chad Johnson",
+      "Corey Dillon",
+      "Doug Flutie",
+      "Drew Bledsoe",
+      "Ezekiel Elliott",
+      "Jacoby Brissett",
+      "Jimmy Garoppolo",
+      "LeGarrette Blount",
+      "Matt Cassel",
+      "Randy Moss",
+      "Rob Gronkowski",
+      "Steven Jackson",
+      "Tom Brady",
+      "Vinny Testaverde",
+      "Wes Welker"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "team_patriots",
+    "right_category": "pb_5",
+    "left_label": "Patriots",
+    "right_label": "5+ Pro Bowls",
+    "valid_players": [
+      "Randy Moss",
+      "Rob Gronkowski",
+      "Tom Brady"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "pb_5",
+    "right_category": "born_60s",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "Born in the 1960s",
+    "valid_players": [
+      "Brett Favre",
+      "Dan Marino",
+      "Emmitt Smith",
+      "Jerry Rice"
+    ],
+    "answer_count": 4
+  }
+]

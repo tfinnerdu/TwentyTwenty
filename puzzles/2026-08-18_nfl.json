@@ -1,0 +1,396 @@
+[
+  {
+    "left_category": "td_150",
+    "right_category": "top5",
+    "left_label": "150+ Career TDs",
+    "right_label": "Top 5 Pick",
+    "valid_players": [
+      "Cam Newton",
+      "Carson Palmer",
+      "Donovan McNabb",
+      "Eli Manning",
+      "Kerry Collins",
+      "LaDainian Tomlinson",
+      "Matt Ryan",
+      "Peyton Manning",
+      "Philip Rivers"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "top5",
+    "right_category": "nfl_mvp",
+    "left_label": "Top 5 Pick",
+    "right_label": "NFL MVP",
+    "valid_players": [
+      "LaDainian Tomlinson",
+      "Peyton Manning"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "nfl_mvp",
+    "right_category": "td_200",
+    "left_label": "NFL MVP",
+    "right_label": "200+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "td_200",
+    "right_category": "pos_qb",
+    "left_label": "200+ Career TDs",
+    "right_label": "Quarterback",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Alex Smith",
+      "Andy Dalton",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Cam Newton",
+      "Carson Palmer",
+      "Dak Prescott",
+      "Derek Carr",
+      "Donovan McNabb",
+      "Drew Brees",
+      "Eli Manning",
+      "Jay Cutler",
+      "Joe Flacco",
+      "Josh Allen",
+      "Kirk Cousins",
+      "Kurt Warner",
+      "Matt Hasselbeck",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Patrick Mahomes",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Russell Wilson",
+      "Ryan Fitzpatrick",
+      "Ryan Tannehill",
+      "Tom Brady",
+      "Tony Romo"
+    ],
+    "answer_count": 28
+  },
+  {
+    "left_category": "pos_qb",
+    "right_category": "team_patriots",
+    "left_label": "Quarterback",
+    "right_label": "Patriots",
+    "valid_players": [
+      "Bailey Zappe",
+      "Brian Hoyer",
+      "Cam Newton",
+      "Damon Huard",
+      "Doug Flutie",
+      "Drew Bledsoe",
+      "Jacoby Brissett",
+      "Jarrett Stidham",
+      "Jimmy Garoppolo",
+      "John Friesz",
+      "Kevin O'Connell",
+      "Mac Jones",
+      "Matt Cassel",
+      "Matt Gutierrez",
+      "Michael Bishop",
+      "Rohan Davey",
+      "Ryan Mallett",
+      "Tom Brady",
+      "Vinny Testaverde"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "team_patriots",
+    "right_category": "team_lions",
+    "left_label": "Patriots",
+    "right_label": "Lions",
+    "valid_players": [
+      "Danny Amendola",
+      "Devine Ozigbo",
+      "Lamont Warren",
+      "LeGarrette Blount",
+      "Matt Cassel",
+      "Matthew Mulligan",
+      "Mohamed Sanu",
+      "Shawn Jefferson",
+      "Timothy Wright"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_lions",
+    "right_category": "college_oklahoma",
+    "left_label": "Lions",
+    "right_label": "Went to Oklahoma",
+    "valid_players": [
+      "Adrian Peterson",
+      "Ryan Broyles",
+      "Stephen Alexander"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "college_oklahoma",
+    "right_category": "team_eagles",
+    "left_label": "Went to Oklahoma",
+    "right_label": "Eagles",
+    "valid_players": [
+      "DeMarco Murray",
+      "Sam Bradford"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_eagles",
+    "right_category": "college_usc",
+    "left_label": "Eagles",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Deontay Burnett",
+      "Mark Sanchez",
+      "Matt Barkley",
+      "Nelson Agholor",
+      "Stanley Havili",
+      "Steve Smith"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "team_raiders",
+    "left_label": "Went to USC",
+    "right_label": "Raiders",
+    "valid_players": [
+      "Carson Palmer",
+      "Chris McFoy",
+      "David Ausberry",
+      "Isaac Whitney",
+      "Matt Leinart",
+      "Nelson Agholor",
+      "Rob Johnson",
+      "Will Buchanon"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_raiders",
+    "right_category": "team_bears",
+    "left_label": "Raiders",
+    "right_label": "Bears",
+    "valid_players": [
+      "Brian Hoyer",
+      "Cordarrelle Patterson",
+      "DeAndre Carter",
+      "Jason Campbell",
+      "Jesper Horsted",
+      "Josh McCown",
+      "Michael Bush",
+      "Mike Glennon",
+      "Nathan Peterman"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_bears",
+    "right_category": "late_rd",
+    "left_label": "Bears",
+    "right_label": "Undrafted or Late Round",
+    "valid_players": [
+      "Adrian Peterson",
+      "Autry Denson",
+      "Bobby Wade",
+      "Brock Forsey",
+      "Charles Jones",
+      "Chester Taylor",
+      "Chris Villarrial",
+      "Collin Johnson",
+      "Corey Graham",
+      "Craig Krenzel",
+      "Daimon Shelton",
+      "Daniel Braverman",
+      "Dante Rosario",
+      "Darnell Mooney",
+      "David Fales",
+      "Dazz Newsome",
+      "DeAndre Houston-Carson",
+      "Desmond Clark",
+      "Devin Aromashodu",
+      "Eddie Berlin",
+      "Equanimeous St. Brown",
+      "Eric Saubert",
+      "Fred Baxter",
+      "Isaiah Coulter",
+      "Jacquizz Rodgers",
+      "Jakeem Grant",
+      "Javon Wims",
+      "Jeff Blake",
+      "Jerry Azumah",
+      "Jesse James",
+      "Jim Miller",
+      "John Gilmore",
+      "Johnny Knox",
+      "Jordan Howard",
+      "Josh Morgan",
+      "Justin Gage",
+      "Kellen Davis",
+      "Khalil Herbert",
+      "Lance Louis",
+      "Marc Mariani",
+      "Marquess Wilson",
+      "Michael Burton",
+      "Michael Gaines",
+      "MyCole Pruitt",
+      "Nathan Peterman",
+      "Pat O'Donnell",
+      "Patrick Mannelly",
+      "Paul Edinger",
+      "Rodney Adams",
+      "Ryan Griffin",
+      "Steve Johnson",
+      "Travis Homer",
+      "Trent Taylor",
+      "Trestan Ebner",
+      "Trevor Siemian",
+      "Ty Hallock",
+      "Zach Miller",
+      "Zack Bowman"
+    ],
+    "answer_count": 58
+  },
+  {
+    "left_category": "late_rd",
+    "right_category": "td_200",
+    "left_label": "Undrafted or Late Round",
+    "right_label": "200+ Career TDs",
+    "valid_players": [
+      "Matt Hasselbeck",
+      "Ryan Fitzpatrick",
+      "Tom Brady"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "td_200",
+    "right_category": "pick1",
+    "left_label": "200+ Career TDs",
+    "right_label": "#1 Overall Pick",
+    "valid_players": [
+      "Cam Newton",
+      "Carson Palmer",
+      "Eli Manning",
+      "Peyton Manning"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pick1",
+    "right_category": "td_100",
+    "left_label": "#1 Overall Pick",
+    "right_label": "100+ Career TDs",
+    "valid_players": [
+      "Cam Newton",
+      "Carson Palmer",
+      "Drew Bledsoe",
+      "Eli Manning",
+      "Peyton Manning"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "td_100",
+    "right_category": "team_bears",
+    "left_label": "100+ Career TDs",
+    "right_label": "Bears",
+    "valid_players": [
+      "Andy Dalton",
+      "Brian Griese",
+      "Jay Cutler",
+      "Josh McCown",
+      "Kyle Orton"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "team_bears",
+    "right_category": "team_vikings",
+    "left_label": "Bears",
+    "right_label": "Vikings",
+    "valid_players": [
+      "Bernard Berrian",
+      "Bobby Wade",
+      "Chester Taylor",
+      "Cordarrelle Patterson",
+      "D'Wayne Bates",
+      "Devin Aromashodu",
+      "John Davis",
+      "Marcus Robinson",
+      "Mike Brown",
+      "MyCole Pruitt",
+      "Steve Johnson"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "team_vikings",
+    "right_category": "td_50",
+    "left_label": "Vikings",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Adam Thielen",
+      "Adrian Peterson",
+      "Brad Johnson",
+      "Brett Favre",
+      "Case Keenum",
+      "Dalvin Cook",
+      "Daunte Culpepper",
+      "Donovan McNabb",
+      "Greg Jennings",
+      "Gus Frerotte",
+      "Kirk Cousins",
+      "Kyle Rudolph",
+      "Latavius Murray",
+      "Matt Cassel",
+      "Mike Wallace",
+      "Randy Moss",
+      "Sam Bradford",
+      "Shaun Hill",
+      "Stefon Diggs",
+      "Teddy Bridgewater"
+    ],
+    "answer_count": 20
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "college_usc",
+    "left_label": "50+ Career TDs",
+    "right_label": "Went to USC",
+    "valid_players": [
+      "Carson Palmer",
+      "Mark Sanchez",
+      "Matt Cassel",
+      "Reggie Bush",
+      "Sam Darnold"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "college_usc",
+    "right_category": "team_cardinals",
+    "left_label": "Went to USC",
+    "right_label": "Cardinals",
+    "valid_players": [
+      "Carson Palmer",
+      "Johnny McWilliams",
+      "Keaontay Ingram",
+      "Matt Leinart"
+    ],
+    "answer_count": 4
+  }
+]

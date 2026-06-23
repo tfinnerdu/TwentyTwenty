@@ -1,0 +1,360 @@
+[
+  {
+    "left_category": "td_400",
+    "right_category": "pass_10k",
+    "left_label": "400+ Career TDs",
+    "right_label": "10,000+ Passing Yds",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Drew Brees",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Tom Brady"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "pass_10k",
+    "right_category": "team_giants",
+    "left_label": "10,000+ Passing Yds",
+    "right_label": "Giants",
+    "valid_players": [
+      "Daniel Jones",
+      "David Carr",
+      "Eli Manning",
+      "Geno Smith",
+      "Kerry Collins",
+      "Kurt Warner",
+      "Tyrod Taylor"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "team_giants",
+    "right_category": "team_cardinals",
+    "left_label": "Giants",
+    "right_label": "Cardinals",
+    "valid_players": [
+      "Alfred Morris",
+      "Colt McCoy",
+      "Elijhaa Penny",
+      "Hakeem Valles",
+      "Jake Ballard",
+      "Kurt Warner",
+      "Mike Glennon",
+      "Pharoh Cooper",
+      "Tim Hasselbeck"
+    ],
+    "answer_count": 9
+  },
+  {
+    "left_category": "team_cardinals",
+    "right_category": "college_michigan",
+    "left_label": "Cardinals",
+    "right_label": "Went to Michigan",
+    "valid_players": [
+      "Clarence Williams",
+      "Jay Feely",
+      "Jerame Tuman",
+      "John Navarre",
+      "Steve Breaston"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "college_michigan",
+    "right_category": "round1",
+    "left_label": "Went to Michigan",
+    "right_label": "1st Round Pick",
+    "valid_players": [
+      "Braylon Edwards",
+      "Charles Woodson",
+      "Chris Perry",
+      "David Terrell",
+      "Derrick Alexander",
+      "Desmond Howard",
+      "Jim Harbaugh",
+      "Taylor Lewan",
+      "Tim Biakabutuka",
+      "Tyrone Wheatley"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "round1",
+    "right_category": "college_nd",
+    "left_label": "1st Round Pick",
+    "right_label": "Went to Notre Dame",
+    "valid_players": [
+      "Brady Quinn",
+      "Derek Brown",
+      "Irv Smith",
+      "Jeff Faine",
+      "Jerome Bettis",
+      "Michael Floyd",
+      "Quenton Nelson",
+      "Rick Mirer",
+      "Tim Brown",
+      "Todd Lyght",
+      "Tyler Eifert",
+      "Will Fuller"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "college_nd",
+    "right_category": "pos_nfl_ol",
+    "left_label": "Went to Notre Dame",
+    "right_label": "NFL Offensive Lineman",
+    "valid_players": [
+      "Jeff Faine",
+      "Quenton Nelson"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "pos_nfl_ol",
+    "right_category": "team_dolphins",
+    "left_label": "NFL Offensive Lineman",
+    "right_label": "Dolphins",
+    "valid_players": [
+      "Michael Deiter",
+      "Will Yeatman"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "team_dolphins",
+    "right_category": "top10",
+    "left_label": "Dolphins",
+    "right_label": "Top 10 Pick",
+    "valid_players": [
+      "Cris Carter",
+      "Joey Harrington",
+      "Reggie Bush",
+      "Ricky Williams"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "top10",
+    "right_category": "pos_nfl_def",
+    "left_label": "Top 10 Pick",
+    "right_label": "NFL Defensive Player",
+    "valid_players": [
+      "Antrel Rolle",
+      "Brian Urlacher",
+      "Champ Bailey",
+      "Charles Woodson",
+      "Chris McAlister",
+      "Corey Simon",
+      "Edgar Jones",
+      "George Wilson",
+      "John Henderson",
+      "Julius Peppers",
+      "Junior Seau",
+      "Mike Jackson",
+      "Terence Newman",
+      "Terrell Buckley",
+      "Todd Lyght"
+    ],
+    "answer_count": 15
+  },
+  {
+    "left_category": "pos_nfl_def",
+    "right_category": "top10",
+    "left_label": "NFL Defensive Player",
+    "right_label": "Top 10 Pick",
+    "valid_players": [
+      "Antrel Rolle",
+      "Brian Urlacher",
+      "Champ Bailey",
+      "Charles Woodson",
+      "Chris McAlister",
+      "Corey Simon",
+      "Edgar Jones",
+      "George Wilson",
+      "John Henderson",
+      "Julius Peppers",
+      "Junior Seau",
+      "Mike Jackson",
+      "Terence Newman",
+      "Terrell Buckley",
+      "Todd Lyght"
+    ],
+    "answer_count": 15
+  },
+  {
+    "left_category": "top10",
+    "right_category": "team_cardinals",
+    "left_label": "Top 10 Pick",
+    "right_label": "Cardinals",
+    "valid_players": [
+      "A.J. Green",
+      "Adrian Peterson",
+      "Antrel Rolle",
+      "Bob Christian",
+      "Carson Palmer",
+      "Derrick Coleman",
+      "Eddie Johnson",
+      "Fred Taylor",
+      "George Wilson",
+      "Kevin Johnson",
+      "Larry Fitzgerald",
+      "Matt Leinart",
+      "Michael Crabtree",
+      "Thomas Jones"
+    ],
+    "answer_count": 14
+  },
+  {
+    "left_category": "team_cardinals",
+    "right_category": "pb_5",
+    "left_label": "Cardinals",
+    "right_label": "5+ Pro Bowls",
+    "valid_players": [
+      "Adrian Peterson",
+      "Emmitt Smith",
+      "Larry Fitzgerald"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "pb_5",
+    "right_category": "td_50",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Adrian Peterson",
+      "Brett Favre",
+      "Drew Brees",
+      "LaDainian Tomlinson",
+      "Larry Fitzgerald",
+      "Peyton Manning",
+      "Randy Moss",
+      "Rob Gronkowski",
+      "Terrell Owens",
+      "Tom Brady",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 12
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "team_saints",
+    "left_label": "50+ Career TDs",
+    "right_label": "Saints",
+    "valid_players": [
+      "Aaron Brooks",
+      "Alvin Kamara",
+      "Andy Dalton",
+      "Brandin Cooks",
+      "Brandon Marshall",
+      "Darren Sproles",
+      "David Johnson",
+      "Derek Carr",
+      "Deuce McAllister",
+      "Drew Brees",
+      "Emmanuel Sanders",
+      "Jake Delhomme",
+      "Jameis Winston",
+      "Jeff Blake",
+      "Jimmy Graham",
+      "Joe Horn",
+      "Latavius Murray",
+      "Mark Brunell",
+      "Mark Ingram",
+      "Marques Colston",
+      "Reggie Bush",
+      "Ricky Williams",
+      "Teddy Bridgewater"
+    ],
+    "answer_count": 23
+  },
+  {
+    "left_category": "team_saints",
+    "right_category": "team_texans",
+    "left_label": "Saints",
+    "right_label": "Texans",
+    "valid_players": [
+      "Billy Miller",
+      "Brandin Cooks",
+      "David Johnson",
+      "Derrick Lewis",
+      "Jake Delhomme",
+      "Kenny Stills"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "team_texans",
+    "right_category": "round1",
+    "left_label": "Texans",
+    "right_label": "1st Round Pick",
+    "valid_players": [
+      "Andre Johnson",
+      "Brandin Cooks",
+      "Brandon Weeden",
+      "Bryant Johnson",
+      "C.J. Stroud",
+      "David Carr",
+      "DeAndre Hopkins",
+      "Demaryius Thomas",
+      "Deshaun Watson",
+      "Eric Moulds",
+      "J.J. Watt",
+      "Mark Bruener",
+      "Matt Leinart",
+      "O.J. Howard",
+      "Phillip Dorsett",
+      "Rex Grossman",
+      "Ron Dayne",
+      "Ronnie Brown",
+      "Will Fuller"
+    ],
+    "answer_count": 19
+  },
+  {
+    "left_category": "round1",
+    "right_category": "sb_2",
+    "left_label": "1st Round Pick",
+    "right_label": "Multi SB Champion",
+    "valid_players": [
+      "Emmitt Smith",
+      "Jerry Rice",
+      "Peyton Manning"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "sb_2",
+    "right_category": "pb_3",
+    "left_label": "Multi SB Champion",
+    "right_label": "3+ Pro Bowls",
+    "valid_players": [
+      "Emmitt Smith",
+      "Jerry Rice",
+      "Peyton Manning",
+      "Rob Gronkowski",
+      "Tom Brady"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "pb_3",
+    "right_category": "rec_5k",
+    "left_label": "3+ Pro Bowls",
+    "right_label": "5,000+ Receiving Yds",
+    "valid_players": [
+      "Jerry Rice",
+      "Larry Fitzgerald",
+      "Randy Moss",
+      "Rob Gronkowski",
+      "Terrell Owens",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 6
+  }
+]
