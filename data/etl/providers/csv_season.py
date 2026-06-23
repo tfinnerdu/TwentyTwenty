@@ -26,6 +26,7 @@ from typing import Iterable
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 from data.etl.providers.base import Provider
+from data.etl.teams import ABBR2NICK as NFL_ABBR2NICK
 
 log = logging.getLogger(__name__)
 
@@ -229,24 +230,11 @@ class NFLProvider(CsvSeasonProvider):
     source_name = "nflverse"
     SUM_COLS = ("g", "pass_yds", "rush_yds", "rec_yds",
                 "pass_td", "rush_td", "rec_td", "sacks", "interceptions")
-    TEAM_MAP = {
-        "NWE": "Patriots", "DAL": "Cowboys", "SFO": "49ers", "DEN": "Broncos",
-        "PIT": "Steelers", "GNB": "Packers", "KAN": "Chiefs", "IND": "Colts",
-        "SDG": "Chargers", "LAC": "Chargers", "MIN": "Vikings", "LAR": "Rams",
-        "STL": "Rams", "BAL": "Ravens", "NYG": "Giants", "PHI": "Eagles",
-        "ARI": "Cardinals", "CHI": "Bears", "MIA": "Dolphins", "DET": "Lions",
-        "BUF": "Bills", "ATL": "Falcons", "NOR": "Saints", "SEA": "Seahawks",
-        "OAK": "Raiders", "LVR": "Raiders", "HOU": "Texans", "CIN": "Bengals",
-        "CLE": "Browns", "NYJ": "Jets", "CAR": "Panthers", "TEN": "Titans",
-        "TAM": "Buccaneers", "WAS": "Redskins", "JAX": "Jaguars",
-        # nflverse / nfl_data_py emit these standard codes (the entries above are
-        # the Pro-Football-Reference style). Without them, team-seasons silently
-        # drop and players lose teams -- e.g. NE+TB left Tom Brady with none, and
-        # LA left Jared Goff without his Rams years.
-        "NE": "Patriots", "TB": "Buccaneers", "GB": "Packers", "KC": "Chiefs",
-        "NO": "Saints", "SF": "49ers", "LA": "Rams", "SD": "Chargers",
-        "LV": "Raiders", "ARZ": "Cardinals", "JAC": "Jaguars", "WFT": "Redskins",
-    }
+    # Single source of truth: the franchise registry (data/etl/teams.py). It maps
+    # every nflverse city code + PFR franchise code to a canonical nickname, with
+    # relocations collapsed and renames resolved. Unmapped codes return None (the
+    # base class drops them) -- run `python -m data.etl.teams --audit` to catch any.
+    TEAM_MAP = NFL_ABBR2NICK
 
     def stat_fields(self, s):
         return {"pass_yds": int(s["pass_yds"]), "rush_yds": int(s["rush_yds"]),
