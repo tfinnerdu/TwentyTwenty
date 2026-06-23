@@ -40,13 +40,23 @@ def _int(rec, *names):
         return 0
 
 
-def export(out_dir: str, start: int = 1999, end: int = 2023):
+def _current_nfl_season() -> int:
+    """Latest COMPLETE NFL season. Seasons start in September, so before then the
+    prior year is the most recent complete one. Keeps the export from freezing at
+    a hard-coded year (which truncates newer players + mid-trade teams)."""
+    from datetime import date
+    t = date.today()
+    return t.year if t.month >= 9 else t.year - 1
+
+
+def export(out_dir: str, start: int = 1999, end: int | None = None):
     import nfl_data_py as nfl  # noqa: imported lazily so the app needn't have it
     os.makedirs(out_dir, exist_ok=True)
+    if end is None:
+        end = _current_nfl_season()
     years = list(range(start, end + 1))
 
     seasonal = nfl.import_seasonal_data(years).to_dict("records")
-    rosters = nfl.import_seasonal_rosters(years).to_dict("records")
     people = nfl.import_players().to_dict("records")
 
     bio = {}
@@ -55,10 +65,24 @@ def export(out_dir: str, start: int = 1999, end: int = 2023):
         if pid:
             bio[pid] = p
 
-    team_by = {}            # (pid, season) -> team abbrev
-    for r in rosters:
-        pid = _val(r, "player_id", "gsis_id")
-        team_by[(pid, _int(r, "season"))] = _val(r, "team", "recent_team")
+    # ALL teams per (pid, season), in chronological order. Weekly rosters catch
+    # mid-season trades (e.g. Baker Mayfield 2022 = Panthers AND Rams) that the
+    # seasonal roster -- one team per season -- silently drops. Fall back to the
+    # seasonal roster if the weekly endpoint isn't available.
+    teams_by: dict = {}        # (pid, season) -> [team, ...]
+
+    def _add(pid, season, team):
+        if pid and team:
+            lst = teams_by.setdefault((pid, season), [])
+            if team not in lst:
+                lst.append(team)
+
+    try:
+        for r in nfl.import_weekly_rosters(years).to_dict("records"):
+            _add(_val(r, "player_id", "gsis_id"), _int(r, "season"), _val(r, "team", "recent_team"))
+    except Exception:
+        for r in nfl.import_seasonal_rosters(years).to_dict("records"):
+            _add(_val(r, "player_id", "gsis_id"), _int(r, "season"), _val(r, "team", "recent_team"))
 
     seasons, pids = [], set()
     for s in seasonal:
@@ -66,12 +90,15 @@ def export(out_dir: str, start: int = 1999, end: int = 2023):
         if not pid:
             continue
         yr = _int(s, "season")
-        seasons.append([pid, yr, team_by.get((pid, yr), ""),
+        tlist = teams_by.get((pid, yr)) or [""]
+        seasons.append([pid, yr, tlist[0],
                         _int(s, "games", "g"),
                         _int(s, "passing_yards"), _int(s, "rushing_yards"),
                         _int(s, "receiving_yards"), _int(s, "passing_tds"),
                         _int(s, "rushing_tds"), _int(s, "receiving_tds"),
                         0, 0])   # sacks, interceptions (defensive; not in feed)
+        for extra in tlist[1:]:        # team-only rows so every franchise registers
+            seasons.append([pid, yr, extra, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         pids.add(pid)
 
     players = []
@@ -105,7 +132,7 @@ def _write(out_dir, sport, season_hdr, season_rows, player_hdr, player_rows):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", type=int, default=1999)
-    ap.add_argument("--end", type=int, default=2023)
+    ap.add_argument("--end", type=int, default=None, help="last season (default: current complete season)")
     ap.add_argument("--out", default="./nfl_csv")
     args = ap.parse_args()
     p, s = export(args.out, args.start, args.end)
