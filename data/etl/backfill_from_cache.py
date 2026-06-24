@@ -30,21 +30,18 @@ or mis-parsed page can't regress a good average. Both NFL & NBA.
 """
 
 import argparse
-import glob
 import json
 import logging
 import os
-import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, ROOT)
 
-from data.etl.backfill_sr import _soup, parse_meta, is_empty, CACHE_DIR
+from data.etl.backfill_sr import is_empty, CACHE_DIR
+from data.etl.cache_index import refresh as refresh_cache_index, by_name, _norm
 from data.etl.load import rebuild_categories
 from data.etl.schema import get_conn, migrate
-from data.etl.teams import nfl_teams_from_page
-from data.etl.sr_history import _career_stats, _find_table
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s",
                     datefmt="%H:%M:%S")
@@ -55,104 +52,19 @@ DEFAULT_FIELDS = ("birth_state,birth_city,draft_year,draft_round,draft_pick,"
                   "position,college,height_inches,weight_lbs")
 
 
-def _norm(s):
-    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
-
-
-# PFR career-stat parse for NFL. Mirrors the db_all passing / rush-rec split but
-# ALSO takes passing TDs -- db_all's cfg sums only rush+rec TDs, which is fine for
-# its rough totals but undercounts a QB badly. total_tds = pass + rush + rec TDs.
-NFL_STAT_CFG = {"stat_tables": [
-    ("passing", {"pass_yds": "pass_yds", "pass_td": "pass_td"}),
-    ("rushing_and_receiving", {"rush_yds": "rush_yds", "rec_yds": "rec_yds",
-                               "rush_receive_td": "rr_td"}),
-]}
-
-
-def _nfl_stats_from_page(soup):
-    """Career {pass_yds, rush_yds, rec_yds, total_tds} off the PFR page, or {}.
-    total_tds sums passing + rushing + receiving TDs so QBs aren't undercounted."""
-    raw = _career_stats(soup, NFL_STAT_CFG)
-    if not raw:
-        return {}
-    out = {c: int(raw[c]) for c in ("pass_yds", "rush_yds", "rec_yds") if c in raw}
-    if "pass_td" in raw or "rr_td" in raw:
-        out["total_tds"] = int(raw.get("pass_td", 0)) + int(raw.get("rr_td", 0))
-    return out
-
-
-# bbref career-stat parse for NBA: the per_game_stats footer carries career averages
-# + total games (validated on Wembanyama: 23.4/11.0/3.5 over 181 G). No stat_league
-# (the footer row is "N Yrs"/"Career", not league-tagged).
-NBA_STAT_CFG = {"stat_table": "per_game_stats",
-                "stat_cols": {"pts_per_g": "nba_points", "trb_per_g": "nba_rebounds",
-                              "ast_per_g": "nba_assists", "games": "nba_games"}}
-
-
-def _nba_stats_from_page(soup):
-    """Career {nba_points, nba_rebounds, nba_assists, nba_games} off the bbref page."""
-    raw = _career_stats(soup, NBA_STAT_CFG)
-    return {k: raw[k] for k in ("nba_points", "nba_rebounds", "nba_assists", "nba_games") if k in raw}
-
-
-def _nba_teams_from_page(soup):
-    """Ordered, de-duped NBA franchises off the bbref per_game_stats rows
-    (team_name_abbr -> NBAProvider.TEAM_MAP). Skips the multi-team TOT/2TM rows."""
-    from data.etl.providers.csv_season import NBAProvider
-    tmap = NBAProvider.TEAM_MAP
-    table = _find_table(soup, "per_game_stats")
-    teams = []
-    if not table:
-        return teams
-    for row in table.select("tbody tr"):
-        cell = (row.select_one("[data-stat='team_name_abbr']")
-                or row.select_one("[data-stat='team_id']") or row.select_one("[data-stat='team']"))
-        abbr = cell.get_text(strip=True) if cell else ""
-        if not abbr or abbr.upper() in ("TOT", "2TM", "3TM", "4TM", ""):
-            continue
-        nick = tmap.get(abbr.upper())
-        if nick and nick not in teams:
-            teams.append(nick)
-    return teams
-
-
-# Sports with a cached-page teams/stats refresh, and how to parse each.
-_PAGE_TEAMS = {"NFL": nfl_teams_from_page, "NBA": _nba_teams_from_page}
-_PAGE_STATS = {"NFL": _nfl_stats_from_page, "NBA": _nba_stats_from_page}
-REBUILD_SPORTS = set(_PAGE_TEAMS)            # NFL, NBA
+# NFL & NBA are the sports with a cached-page teams/stats rebuild. The actual
+# parsing now lives in cache_index (NFL keeps pass_td separate from rush+rec TD so
+# a QB's total isn't undercounted; NBA teams come off per_game_stats, no unmapped
+# junk) -- see cache_index.INDEX_CFG / _derive_stats.
+REBUILD_SPORTS = {"NFL", "NBA"}
 
 
 def build_cache_index(sport="NFL", with_teams=False, with_stats=False):
-    """Parse every cached SR page -> {norm_name: [(meta, birth_year, teams, stats), ...]}.
-    teams (canonical franchises off the page's tables) and stats (career line) are
-    parsed with the SPORT's parser only when requested -- solely for --rebuild-*."""
-    teams_fn = _PAGE_TEAMS.get(sport)
-    stats_fn = _PAGE_STATS.get(sport)
-    files = glob.glob(os.path.join(CACHE_DIR, "*.html"))
-    log.info(f"scanning {len(files)} cached pages in {CACHE_DIR}")
-    idx, parsed = {}, 0
-    for i, fn in enumerate(files, 1):
-        if i % 5000 == 0 or i == len(files):       # progress -- the scan is silent otherwise
-            log.info(f"  scanned {i}/{len(files)} pages ({parsed} player pages so far)")
-        try:
-            soup = _soup(open(fn, encoding="utf-8", errors="ignore").read())
-        except Exception:
-            continue
-        if not soup.select_one("div#meta"):     # not a player page (search/index/etc.)
-            continue
-        h = soup.select_one("div#meta h1")
-        name = h.get_text(strip=True) if h else None
-        if not name:
-            continue
-        meta = parse_meta(soup)
-        teams = teams_fn(soup) if (with_teams and teams_fn) else []
-        stats = stats_fn(soup) if (with_stats and stats_fn) else {}
-        if not meta and not teams and not stats:
-            continue
-        idx.setdefault(_norm(name), []).append((meta, meta.get("birth_year"), teams, stats))
-        parsed += 1
-    log.info(f"parsed {parsed} player pages -> {len(idx)} distinct names")
-    return idx
+    """{norm_name: [(meta, birth_year, teams, stats), ...]} for `sport`, served from
+    the PERSISTENT cache index (data/cache/sr_index.json): only pages that are new
+    or changed since last time are parsed, the rest are reused. teams/stats are
+    filled only when --rebuild-* asked for them. Drop-in for the old full re-scan."""
+    return by_name(refresh_cache_index(), sport, with_teams=with_teams, with_stats=with_stats)
 
 
 def _pick(cands, birth_year):

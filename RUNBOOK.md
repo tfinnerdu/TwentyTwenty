@@ -67,6 +67,12 @@ git add puzzles; git commit -m "data: full refresh"; git pull --no-rebase --no-e
 but all resumable — if a cookie expires or you Ctrl-C, refresh the cookie and re-run
 the same line; it picks up where it left off (pages already fetched are cached).
 
+> The cached-page steps (5, and `db_all --from-cache` below) share a **persistent
+> parse index** (`data/cache/sr_index.json`, auto-built, gitignored): each page is
+> parsed once and only re-parsed when it actually changes, so the second cache step
+> and every later one skip the slow HTML scan. It's a pure derived artifact — delete
+> it and it just rebuilds. Warm it explicitly anytime with `python -m data.etl.cache_index`.
+
 ---
 
 ## db_all — the unpruned research DB (separate, optional)
