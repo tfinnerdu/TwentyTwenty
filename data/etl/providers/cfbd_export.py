@@ -107,9 +107,12 @@ def export(start: int, end: int, out_dir: str, key: str):
 
 
 def main():
+    from datetime import date
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", type=int, default=2015)
-    ap.add_argument("--end", type=int, default=2023)
+    # latest COMPLETE CFB season (numbered by its August start, so current year
+    # isn't played yet -> year-1). Don't freeze at a fixed year.
+    ap.add_argument("--end", type=int, default=date.today().year - 1)
     ap.add_argument("--out", default="./ncaaf_csv")
     ap.add_argument("--key", default=os.environ.get("CFBD_API_KEY"))
     args = ap.parse_args()
