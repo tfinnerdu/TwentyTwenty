@@ -57,9 +57,12 @@ def _params(season: int) -> dict:
     return p
 
 
-def export(out_dir: str, start: int = 1997, end: int = 2024, delay: float = 0.6,
+def export(out_dir: str, start: int = 1997, end: int | None = None, delay: float = 0.6,
            timeout: int = 60, retries: int = 4, force_ipv4: bool = True):
+    from datetime import date
     import requests
+    if end is None:                     # track the current season, don't freeze at a fixed year
+        end = date.today().year
     if force_ipv4:
         _force_ipv4()
     os.makedirs(out_dir, exist_ok=True)

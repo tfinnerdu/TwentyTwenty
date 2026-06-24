@@ -28,7 +28,7 @@ Flags:
     --fixtures           use bundled fixtures for NBA/NHL/WNBA/NFL (skip real pulls)
     --mlb-fixture        use the MLB fixture instead of downloading Lahman
     --ncaaf-curated      use the curated NCAAF set even if a CFBD key is present
-    --cfbd-start/-end    CFBD season range (default 2005..2023)
+    --cfbd-start/-end    CFBD season range (default 2005..latest complete season)
     --{nba,nhl,wnba,nfl}-dir   pre-exported season-stats CSVs to ingest directly
     --length N           puzzle length (default 20)   --days N  puzzle days (default 7)
     --skip-puzzles
@@ -192,7 +192,9 @@ def main():
     ap.add_argument("--mlb-fixture", action="store_true")
     ap.add_argument("--ncaaf-curated", action="store_true")
     ap.add_argument("--cfbd-start", type=int, default=2005)
-    ap.add_argument("--cfbd-end", type=int, default=2023)
+    # latest COMPLETE CFB season: a season is numbered by its August start, so the
+    # current calendar year isn't played yet -> year-1. Don't freeze at a fixed year.
+    ap.add_argument("--cfbd-end", type=int, default=date.today().year - 1)
     ap.add_argument("--nba-dir"); ap.add_argument("--nhl-dir")
     ap.add_argument("--wnba-dir"); ap.add_argument("--nfl-dir")
     ap.add_argument("--ncaab-dir"); ap.add_argument("--ncaaw-dir")

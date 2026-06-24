@@ -48,10 +48,13 @@ def _height_in(h) -> int:
         return 0
 
 
-def export(out_dir: str, start: int = 1996, end: int = 2024,
+def export(out_dir: str, start: int = 1996, end: int | None = None,
            enrich: bool = False, delay: float = 0.6, timeout: int = 90,
            retries: int = 4, force_ipv4: bool = True):
+    from datetime import date
     from nba_api.stats.endpoints import leaguedashplayerstats
+    if end is None:                     # track the current season, don't freeze at a fixed year
+        end = date.today().year
     if force_ipv4:
         _force_ipv4()
     os.makedirs(out_dir, exist_ok=True)

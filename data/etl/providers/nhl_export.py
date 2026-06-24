@@ -58,7 +58,10 @@ def _name(obj):
     return obj.get("default", "") if isinstance(obj, dict) else (obj or "")
 
 
-def export(out_dir: str, start: int = 2000, end: int = 2024, delay: float = 0.4):
+def export(out_dir: str, start: int = 2000, end: int | None = None, delay: float = 0.4):
+    from datetime import date
+    if end is None:                     # track the current season, don't freeze at a fixed year
+        end = date.today().year
     os.makedirs(out_dir, exist_ok=True)
 
     # 1. collect player ids from rosters
