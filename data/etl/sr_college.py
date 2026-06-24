@@ -451,7 +451,9 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
                 rec = parse_player_history(soup, cfg.get("team_map", {}), cfg)
             else:
                 rec = parse_college_player(soup, sport, cfg)
-            rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{_sr_id(url)}", "name": name})
+            h1 = soup.select_one("div#meta h1")    # full name, not the abbreviated index text
+            rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{_sr_id(url)}",
+                        "name": (h1.get_text(strip=True) if h1 else "") or name})
             for c in cols:
                 rec[c] = 1
             batch.append(rec)
@@ -591,7 +593,9 @@ def crawl_index(sport, db, limit, delay, dry_run, cf_clearance, user_agent):
             if soup is None:
                 continue
             rec = parse_college_player(soup, sport, cfg)
-            rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{slug}", "name": name})
+            h1 = soup.select_one("div#meta h1")    # full name, not the abbreviated index text
+            rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{slug}",
+                        "name": (h1.get_text(strip=True) if h1 else "") or name})
             batch.append(rec)
             parsed += 1
             if len(batch) >= CHECKPOINT:

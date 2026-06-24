@@ -345,7 +345,12 @@ def crawl(sport, db, limit, delay, dry_run, cf_clearance, user_agent, cutoff=Non
             if soup is None:
                 continue
             rec = parse_player_history(soup, cfg["team_map"], cfg)
-            rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{srid}", "name": name})
+            # Prefer the page's <h1> full name ("Victor Wembanyama") over the alpha-
+            # index link text, which abbreviates some first names ("V. Wembanyama") --
+            # those break name search, answer validation, and cross-sport matching.
+            h1 = soup.select_one("div#meta h1")
+            full = h1.get_text(strip=True) if h1 else ""
+            rec.update({"sport": sport, "sr_id": f"{sport.lower()}_{srid}", "name": full or name})
             batch.append(rec)
             if len(batch) >= CHECKPOINT:
                 flush()
