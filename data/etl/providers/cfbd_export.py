@@ -108,6 +108,8 @@ def export(start: int, end: int, out_dir: str, key: str):
 
 def main():
     from datetime import date
+    from data.etl.dbconfig import load_env
+    load_env()                          # pull CFBD_API_KEY out of .env into os.environ
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", type=int, default=2015)
     # latest COMPLETE CFB season (numbered by its August start, so current year
