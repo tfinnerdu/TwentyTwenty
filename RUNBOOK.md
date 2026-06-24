@@ -51,6 +51,8 @@ python -m data.etl.backfill_from_cache --sport NBA --rebuild-teams --rebuild-sta
 
 # 6 ─ Finalize
 python -m data.etl.reconcile_debut --sport ALL
+python -m data.etl.prune --sport ALL              # preview the notability cut (no deletes)
+python -m data.etl.prune --sport ALL --apply      # trim the game pool to notable players, THEN puzzles
 python rebuild_puzzles.py
 
 # 7 ─ Deploy
@@ -64,6 +66,41 @@ git add puzzles; git commit -m "data: full refresh"; git pull --no-rebase --no-e
 (6) read the finished DB; Postgres (7) ships it. The `⏳` crawls are the time sinks
 but all resumable — if a cookie expires or you Ctrl-C, refresh the cookie and re-run
 the same line; it picks up where it left off (pages already fetched are cached).
+
+---
+
+## db_all — the unpruned research DB (separate, optional)
+
+`db_all.db` is the everything-database: every player we've pulled, **never pruned**.
+The game (`nfl.db`) doesn't depend on it — build it only if you want the full
+research set, including the players prune cut from the game pool. It shares the page
+cache, so there are two ways to fill it.
+
+**Fast — straight from the cache (no network, no cookie, minutes):** ingests every
+pro player page already in `data/cache/sr/`. Prune deletes DB rows, never cached
+pages, so this recovers the cut players for free. It's "everything we've ever
+fetched, un-pruned" — *not* the full SR universe (only pages a prior crawl actually
+pulled), which is almost always what you want.
+
+```powershell
+python -m data.etl.db_all --from-cache --dry-run     # report per-sport counts first (confirms the cache has canonical links)
+python -m data.etl.db_all --from-cache               # ingest cached NBA+WNBA+NHL+NFL pages into db_all.db
+```
+
+**Exhaustive — the full network alpha crawl (slow):** only for the never-fetched
+long tail. Refresh the sources (step 1) first; it shares the cache, so whichever you
+run second is mostly cache-fast.
+
+```powershell
+python run_full.py --skip-puzzles --db data/db_all.db          # bulk (MLB + college)
+python -m data.etl.db_all --sport ALL                          # ⏳   NBA+WNBA+NHL full alpha (no cookie)
+python -m data.etl.db_all --sport NFL                          # 🔑⏳ PFR full alpha (~28k, slow)
+python -m data.etl.db_all --sport COLLEGE                      # ⏳   NCAAF/B/W full index (no cookie)
+python -m data.etl.sr_college --sport ALL --db data/db_all.db  # ⏳   awards + pre-bulk legends
+python -m data.etl.reconcile_debut --sport ALL --db data/db_all.db
+```
+
+No prune in either path — `db_all` keeps everyone by design (pruning is `nfl.db`-only).
 
 ---
 
