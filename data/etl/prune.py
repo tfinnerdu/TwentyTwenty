@@ -113,31 +113,33 @@ def prune(sport, db, apply, min_games=None, force=False):
     conn = get_conn(db)
 
     honor_clause = " OR ".join(f"COALESCE({h},0)>0" for h in cfg["honors"])
-    keep = {r[0] for r in conn.execute(
-        f"SELECT id FROM players WHERE sport=? AND ({honor_clause})", (sport,))}
-    n_honored = len(keep)
     seasons_csv = os.path.join(ROOT, "data", "cache", "exports", sport.lower(),
                                f"{sport.lower()}_seasons.csv")
-    keep |= _games_keep(conn, sport, min_games, seasons_csv)
-    n_career = 0
-    if cfg.get("min_career"):
-        career_ids = _career_keep(conn, sport, cfg["min_career"])
-        n_career = len(career_ids)
-        keep |= career_ids
 
     sources = cfg["source"] if isinstance(cfg["source"], (list, tuple)) else [cfg["source"]]
     qs = ",".join("?" for _ in sources)
-    bulk = [r[0] for r in conn.execute(
-        f"SELECT id FROM players WHERE sport=? AND data_source IN ({qs})", (sport, *sources))]
+    bulk = {r[0] for r in conn.execute(
+        f"SELECT id FROM players WHERE sport=? AND data_source IN ({qs})", (sport, *sources))}
+
+    honored_ids = {r[0] for r in conn.execute(
+        f"SELECT id FROM players WHERE sport=? AND ({honor_clause})", (sport,))}
+    games_ids = _games_keep(conn, sport, min_games, seasons_csv)
+    career_ids = _career_keep(conn, sport, cfg["min_career"]) if cfg.get("min_career") else set()
+    keep = honored_ids | games_ids | career_ids
+
     to_delete = [pid for pid in bulk if pid not in keep]
     kept = len(bulk) - len(to_delete)
+    # report each criterion's contribution WITHIN the prunable bulk, so the parts
+    # line up with `keep` (an honored/high-stat sr_college row isn't in the bulk, so
+    # it doesn't count here even though it exists).
     crit_bits = []
     if min_games:
-        crit_bits.append(f"best-season>={min_games}G")
+        crit_bits.append(f"best-season>={min_games}G={len(games_ids & bulk)}")
     if cfg.get("min_career"):
-        crit_bits.append("career[" + "/".join(f"{c}>={t}" for c, t in cfg["min_career"]) + f"]={n_career}")
+        crit_bits.append("career[" + "/".join(f"{c}>={t}" for c, t in cfg["min_career"])
+                         + f"]={len(career_ids & bulk)}")
     crit = ("  " + "  ".join(crit_bits)) if crit_bits else ""
-    log.info(f"[{sport}] bulk={len(bulk)}  honored={n_honored}{crit}"
+    log.info(f"[{sport}] bulk={len(bulk)}  honored={len(honored_ids & bulk)}{crit}"
              f"  -> keep {kept}, prune {len(to_delete)}")
 
     if not apply:
