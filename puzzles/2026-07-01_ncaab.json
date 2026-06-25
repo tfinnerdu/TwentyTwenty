@@ -1,407 +1,257 @@
 [
   {
     "left_category": "ncaab_20ppg",
-    "right_category": "college_kentucky",
+    "right_category": "college_duke",
     "left_label": "20+ PPG in College (M)",
-    "right_label": "Went to Kentucky",
+    "right_label": "Went to Duke",
     "valid_players": [
-      "Jamal Murray",
-      "Malik Monk"
+      "Cameron Boozer",
+      "Marvin Bagley III",
+      "RJ Barrett",
+      "Zion Williamson"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "college_duke",
+    "right_category": "decade_90s",
+    "left_label": "Went to Duke",
+    "right_label": "Played in 1990s",
+    "valid_players": [
+      "Christian Laettner",
+      "Grant Hill"
     ],
     "answer_count": 2
   },
   {
-    "left_category": "college_kentucky",
-    "right_category": "decade_10s",
-    "left_label": "Went to Kentucky",
-    "right_label": "Played in 2010s",
+    "left_category": "decade_90s",
+    "right_category": "ncaab_aa",
+    "left_label": "Played in 1990s",
+    "right_label": "College All-American (M)",
     "valid_players": [
-      "A.J. Stewart",
-      "Aaron Harrison",
-      "Alex Poythress",
-      "Andrew Harrison",
-      "Anthony Davis",
-      "Archie Goodwin",
-      "Ashton Hagans",
-      "Bam Adebayo",
-      "Brandon Knight",
-      "Dakari Johnson",
-      "Daniel Orton",
-      "Darius Miller",
-      "Darnell Dodson",
-      "De'Aaron Fox",
-      "DeAndre Liggins",
-      "DeMarcus Cousins",
-      "Derek Willis",
-      "Devin Booker",
-      "Dominique Hawkins",
-      "Doron Lamb",
-      "EJ Montgomery",
-      "Eric Bledsoe",
-      "Hamidou Diallo",
-      "Immanuel Quickley",
-      "Isaac Humphries",
-      "Isaiah Briscoe",
-      "Jamal Murray",
-      "James Young",
-      "Jarrod Polson",
-      "John Wall",
-      "Josh Harrellson",
-      "Julius Randle",
-      "Karl-Anthony Towns",
-      "Keldon Johnson",
-      "Kevin Knox II",
-      "Malik Monk",
-      "Marcus Lee",
-      "Marquis Teague",
-      "Michael Kidd-Gilchrist",
-      "Mychal Mulder",
-      "Nick Richards",
-      "P.J. Washington",
-      "Patrick Patterson",
-      "Perry Stevenson",
-      "Quade Green",
-      "Ramon Harris",
-      "Sacha Killeya-Jones",
-      "Shai Gilgeous-Alexander",
-      "Skal Labissiere",
-      "Terrence Jones",
-      "Trey Lyles",
-      "Tyler Herro",
-      "Tyler Ulis",
-      "Wenyen Gabriel",
-      "Willie Cauley-Stein"
-    ],
-    "answer_count": 55
-  },
-  {
-    "left_category": "decade_10s",
-    "right_category": "college_unc",
-    "left_label": "Played in 2010s",
-    "right_label": "Went to UNC",
-    "valid_players": [
-      "Alex Stepheson",
-      "Andrew Platek",
-      "Brandon Huffman",
-      "Brandon Robinson",
-      "Brice Johnson",
-      "Coby White",
-      "Deon Thompson",
-      "Dexter Strickland",
-      "Ed Davis",
-      "Garrison Brooks",
-      "Harrison Barnes",
-      "Isaiah Hicks",
-      "J.P. Tokoto",
-      "Jackson Simmons",
-      "James Michael McAdoo",
-      "Joel Berry II",
-      "Joel James",
-      "John Henson",
-      "Justin Jackson",
-      "Justin Watts",
-      "Kendall Marshall",
-      "Kennedy Meeks",
-      "Kenny Williams",
-      "Larry Drew II",
-      "Leaky Black",
-      "Leslie McDonald",
-      "Luke Davis",
-      "Luke Maye",
-      "Marcus Ginyard",
-      "Marcus Paige",
-      "Nassir Little",
-      "Nate Britt",
-      "P.J. Hairston",
-      "Reggie Bullock",
-      "Seventh Woods",
-      "Sterling Manley",
-      "Theo Pinson",
-      "Tony Bradley",
-      "Tyler Zeller",
-      "Walker Miller",
-      "Will Graves"
-    ],
-    "answer_count": 41
-  },
-  {
-    "left_category": "college_unc",
-    "right_category": "undrafted",
-    "left_label": "Went to UNC",
-    "right_label": "Undrafted",
-    "valid_players": [
-      "Michael Jordan",
-      "Tyler Hansbrough"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "undrafted",
-    "right_category": "ncaab_25ppg",
-    "left_label": "Undrafted",
-    "right_label": "25+ PPG in College (M)",
-    "valid_players": [
-      "Elgin Baylor",
+      "Christian Laettner",
       "Glenn Robinson",
-      "Larry Bird",
-      "Lew Alcindor",
-      "Oscar Robertson",
-      "Pete Maravich",
-      "Wilt Chamberlain"
-    ],
-    "answer_count": 7
-  },
-  {
-    "left_category": "ncaab_25ppg",
-    "right_category": "ncaab_poy",
-    "left_label": "25+ PPG in College (M)",
-    "right_label": "College POY (M)",
-    "valid_players": [
-      "Glenn Robinson",
-      "Larry Bird",
-      "Lew Alcindor",
-      "Oscar Robertson",
-      "Pete Maravich"
+      "Grant Hill",
+      "Shaquille O'Neal",
+      "Tim Duncan"
     ],
     "answer_count": 5
   },
   {
-    "left_category": "ncaab_poy",
-    "right_category": "born_60s",
-    "left_label": "College POY (M)",
-    "right_label": "Born in the 1960s",
+    "left_category": "ncaab_aa",
+    "right_category": "born_80s",
+    "left_label": "College All-American (M)",
+    "right_label": "Born in the 1980s",
     "valid_players": [
-      "Christian Laettner",
-      "Danny Manning",
-      "David Robinson",
-      "Michael Jordan"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "born_60s",
-    "right_category": "ncaab_champ",
-    "left_label": "Born in the 1960s",
-    "right_label": "NCAA Champion (M)",
-    "valid_players": [
-      "Christian Laettner",
-      "Danny Manning",
-      "Michael Jordan",
-      "Patrick Ewing"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "ncaab_champ",
-    "right_category": "ncaab_ucla",
-    "left_label": "NCAA Champion (M)",
-    "right_label": "Played at UCLA (M)",
-    "valid_players": [
-      "Bill Walton",
-      "Lew Alcindor"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "ncaab_ucla",
-    "right_category": "ncaab_10rpg",
-    "left_label": "Played at UCLA (M)",
-    "right_label": "10+ RPG in College (M)",
-    "valid_players": [
-      "Bill Walton",
-      "Kevin Love",
-      "Lew Alcindor"
+      "Carmelo Anthony",
+      "J.J. Redick",
+      "Tyler Hansbrough"
     ],
     "answer_count": 3
   },
   {
-    "left_category": "ncaab_10rpg",
-    "right_category": "born_60s",
-    "left_label": "10+ RPG in College (M)",
-    "right_label": "Born in the 1960s",
+    "left_category": "born_80s",
+    "right_category": "ncaab_forward",
+    "left_label": "Born in the 1980s",
+    "right_label": "College Forward (M)",
     "valid_players": [
-      "David Robinson",
-      "Hakeem Olajuwon"
+      "Carmelo Anthony",
+      "Tyler Hansbrough"
     ],
     "answer_count": 2
   },
   {
-    "left_category": "born_60s",
-    "right_category": "ncaab_champ",
-    "left_label": "Born in the 1960s",
-    "right_label": "NCAA Champion (M)",
+    "left_category": "ncaab_forward",
+    "right_category": "college_unc",
+    "left_label": "College Forward (M)",
+    "right_label": "Went to UNC",
     "valid_players": [
-      "Christian Laettner",
-      "Danny Manning",
-      "Michael Jordan",
-      "Patrick Ewing"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "ncaab_champ",
-    "right_category": "ncaab_20ppg",
-    "left_label": "NCAA Champion (M)",
-    "right_label": "20+ PPG in College (M)",
-    "valid_players": [
-      "Bill Russell",
-      "Bill Walton",
-      "Carmelo Anthony",
-      "Danny Manning",
-      "Lew Alcindor",
+      "Armando Bacot",
+      "Harrison Barnes",
+      "John Henson",
+      "Sean May",
       "Tyler Hansbrough"
     ],
-    "answer_count": 6
+    "answer_count": 5
   },
   {
-    "left_category": "ncaab_20ppg",
-    "right_category": "ncaab_25ppg",
-    "left_label": "20+ PPG in College (M)",
-    "right_label": "25+ PPG in College (M)",
+    "left_category": "college_unc",
+    "right_category": "ncaab_unc",
+    "left_label": "Went to UNC",
+    "right_label": "Played at UNC (M)",
     "valid_players": [
-      "AJ Dybantsa",
-      "Andre Collins",
-      "Antoine Davis",
-      "Elgin Baylor",
-      "Gary Neal",
-      "Glenn Robinson",
-      "Kevin Durant",
-      "Keydren (Keekee) Clark",
-      "Lamine Diane",
-      "Larry Bird",
-      "Lester Hudson",
-      "Lew Alcindor",
-      "Michael Beasley",
-      "Oscar Robertson",
-      "Pete Maravich",
-      "Taylor Coppenrath",
-      "Trae Young",
-      "Trey Johnson",
-      "Wilt Chamberlain"
+      "Armando Bacot",
+      "Coby White",
+      "Harrison Barnes",
+      "John Henson",
+      "Kendall Marshall",
+      "Michael Jordan",
+      "Rashad McCants",
+      "Raymond Felton",
+      "Sean May",
+      "Tyler Hansbrough"
     ],
-    "answer_count": 19
+    "answer_count": 10
   },
   {
-    "left_category": "ncaab_25ppg",
-    "right_category": "ncaab_10rpg",
-    "left_label": "25+ PPG in College (M)",
-    "right_label": "10+ RPG in College (M)",
+    "left_category": "ncaab_unc",
+    "right_category": "ncaab_guard",
+    "left_label": "Played at UNC (M)",
+    "right_label": "College Guard (M)",
     "valid_players": [
-      "Elgin Baylor",
-      "Kevin Durant",
-      "Lamine Diane",
-      "Larry Bird",
-      "Lew Alcindor",
-      "Michael Beasley",
-      "Oscar Robertson",
-      "Wilt Chamberlain"
+      "Coby White",
+      "Kendall Marshall",
+      "Michael Jordan",
+      "Rashad McCants",
+      "Raymond Felton"
     ],
-    "answer_count": 8
+    "answer_count": 5
   },
   {
-    "left_category": "ncaab_10rpg",
-    "right_category": "ncaab_20ppg",
-    "left_label": "10+ RPG in College (M)",
-    "right_label": "20+ PPG in College (M)",
+    "left_category": "ncaab_guard",
+    "right_category": "college_lsu",
+    "left_label": "College Guard (M)",
+    "right_label": "Went to LSU",
     "valid_players": [
-      "Bill Russell",
-      "Bill Walton",
-      "Cameron Boozer",
-      "Carmelo Anthony",
-      "David Robinson",
-      "Deandre Ayton",
-      "Elgin Baylor",
-      "Jerry West",
-      "Juan Mendez",
-      "Kenny Adeleke",
-      "Kevin Durant",
-      "Lamine Diane",
-      "Larry Bird",
-      "Leon Powe",
-      "Lew Alcindor",
-      "Marvin Bagley III",
-      "Michael Beasley",
-      "Nick Fazekas",
-      "Oscar Robertson",
-      "Paul Millsap",
-      "Shaquille O'Neal",
-      "Wilt Chamberlain"
+      "Cam Thomas",
+      "Marcus Thornton",
+      "Pete Maravich"
     ],
-    "answer_count": 22
+    "answer_count": 3
   },
   {
-    "left_category": "ncaab_20ppg",
-    "right_category": "ncaab_aa",
-    "left_label": "20+ PPG in College (M)",
-    "right_label": "College All-American (M)",
+    "left_category": "college_lsu",
+    "right_category": "decade_00s",
+    "left_label": "Went to LSU",
+    "right_label": "Played in 2000s",
     "valid_players": [
-      "Bill Russell",
-      "Bill Walton",
-      "Carmelo Anthony",
-      "Danny Manning",
-      "David Robinson",
-      "Elgin Baylor",
-      "Glenn Robinson",
-      "Jerry West",
-      "Larry Bird",
-      "Lew Alcindor",
-      "Oscar Robertson",
-      "Pete Maravich",
-      "Shaquille O'Neal",
-      "Tyler Hansbrough",
-      "Wilt Chamberlain"
+      "Anthony Randolph",
+      "Brandon Bass",
+      "Glen Davis",
+      "Marcus Thornton",
+      "Tyrus Thomas"
     ],
-    "answer_count": 15
+    "answer_count": 5
   },
   {
-    "left_category": "ncaab_aa",
-    "right_category": "ncaab_10rpg",
-    "left_label": "College All-American (M)",
-    "right_label": "10+ RPG in College (M)",
+    "left_category": "decade_00s",
+    "right_category": "college_unc",
+    "left_label": "Played in 2000s",
+    "right_label": "Went to UNC",
     "valid_players": [
-      "Anthony Davis",
-      "Bill Russell",
-      "Bill Walton",
-      "Carmelo Anthony",
-      "David Robinson",
-      "Elgin Baylor",
-      "Hakeem Olajuwon",
-      "Jerry West",
-      "Larry Bird",
-      "Lew Alcindor",
-      "Oscar Robertson",
-      "Shaquille O'Neal",
-      "Tim Duncan",
-      "Wilt Chamberlain"
-    ],
-    "answer_count": 14
-  },
-  {
-    "left_category": "ncaab_10rpg",
-    "right_category": "ncaab_kentucky",
-    "left_label": "10+ RPG in College (M)",
-    "right_label": "Played at Kentucky (M)",
-    "valid_players": [
-      "Anthony Davis",
-      "DeMarcus Cousins",
-      "Julius Randle",
-      "Oscar Tshiebwe"
+      "Rashad McCants",
+      "Raymond Felton",
+      "Sean May",
+      "Tyler Hansbrough"
     ],
     "answer_count": 4
   },
   {
-    "left_category": "ncaab_kentucky",
-    "right_category": "ncaab_center",
-    "left_label": "Played at Kentucky (M)",
-    "right_label": "College Center (M)",
+    "left_category": "college_unc",
+    "right_category": "ncaab_forward",
+    "left_label": "Went to UNC",
+    "right_label": "College Forward (M)",
     "valid_players": [
-      "Brandon Garrison",
-      "Dakari Johnson",
-      "Jarrod Polson",
-      "Lukasz Obrzut",
-      "Malachi Moreno",
-      "Shagari Alleyne"
+      "Armando Bacot",
+      "Harrison Barnes",
+      "John Henson",
+      "Sean May",
+      "Tyler Hansbrough"
     ],
-    "answer_count": 6
+    "answer_count": 5
+  },
+  {
+    "left_category": "ncaab_forward",
+    "right_category": "college_ohio_st",
+    "left_label": "College Forward (M)",
+    "right_label": "Went to Ohio State",
+    "valid_players": [
+      "Brice Sensabaugh",
+      "Jared Sullinger"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_ohio_st",
+    "right_category": "ncaab_guard",
+    "left_label": "Went to Ohio State",
+    "right_label": "College Guard (M)",
+    "valid_players": [
+      "Bruce Thornton",
+      "D'Angelo Russell",
+      "Mike Conley"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "ncaab_guard",
+    "right_category": "college_nd",
+    "left_label": "College Guard (M)",
+    "right_label": "Went to Notre Dame",
+    "valid_players": [
+      "Chris Thomas",
+      "Markus Burton"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_nd",
+    "right_category": "decade_00s",
+    "left_label": "Went to Notre Dame",
+    "right_label": "Played in 2000s",
+    "valid_players": [
+      "Chris Thomas",
+      "Luke Harangody",
+      "Torin Francis"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "decade_00s",
+    "right_category": "college_michigan",
+    "left_label": "Played in 2000s",
+    "right_label": "Went to Michigan",
+    "valid_players": [
+      "Daniel Horton",
+      "Manny Harris"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_michigan",
+    "right_category": "ncaab_guard",
+    "left_label": "Went to Michigan",
+    "right_label": "College Guard (M)",
+    "valid_players": [
+      "Daniel Horton",
+      "Manny Harris",
+      "Trey Burke"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "ncaab_guard",
+    "right_category": "college_lsu",
+    "left_label": "College Guard (M)",
+    "right_label": "Went to LSU",
+    "valid_players": [
+      "Cam Thomas",
+      "Marcus Thornton",
+      "Pete Maravich"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "college_lsu",
+    "right_category": "ncaab_20ppg",
+    "left_label": "Went to LSU",
+    "right_label": "20+ PPG in College (M)",
+    "valid_players": [
+      "Cam Thomas",
+      "Marcus Thornton",
+      "Pete Maravich",
+      "Shaquille O'Neal"
+    ],
+    "answer_count": 4
   }
 ]

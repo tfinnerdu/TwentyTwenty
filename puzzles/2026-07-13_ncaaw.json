@@ -1,37 +1,15 @@
 [
   {
-    "left_category": "college_duke",
+    "left_category": "college_michigan",
     "right_category": "decade_10s",
-    "left_label": "Went to Duke",
+    "left_label": "Went to Michigan",
     "right_label": "Played in 2010s",
     "valid_players": [
-      "Amber Henson",
-      "Angela Salvadores",
-      "Azura Stevens",
-      "Crystal Primm",
-      "Elizabeth Balogun",
-      "Elizabeth Williams",
-      "Erin Mathias",
-      "Faith Suggs",
-      "Haley Gorecki",
-      "Haley McCloskey Peters",
-      "Jade Williams",
-      "Jayda Adams",
-      "Ka'lia Johnson",
-      "Kendall Cooper",
-      "Kyra Lambert",
-      "Leaonna Odom",
-      "Lexie Brown",
-      "Lyne\u00e9 Belton",
-      "Miela Goodchild",
-      "Mikayla Boykin",
-      "Oderah Chidom",
-      "Onome Akinbode-James",
-      "Rebecca Greenwell",
-      "Richa Jackson",
-      "Tricia Liston"
+      "Cyesha Damian Goree",
+      "Katelynn Flaherty",
+      "Naz Hillmon"
     ],
-    "answer_count": 25
+    "answer_count": 3
   },
   {
     "left_category": "decade_10s",
@@ -39,318 +17,91 @@
     "left_label": "Played in 2010s",
     "right_label": "Played at Stanford (W)",
     "valid_players": [
-      "Alanna Smith",
-      "Alexa Romano",
-      "Alyssa Jerome",
-      "Amber Orrange",
-      "Anna Wilson",
-      "Bonnie Samuelson",
-      "Briana Roberson",
-      "Brittany McPhee",
       "Chiney Ogwumike",
-      "DiJonai Carrington",
-      "Erica McCall",
-      "Estella Moschkau",
-      "Jenna Brown",
-      "Kailee Johnson",
-      "Karlie Samuelson",
-      "Kaylee Johnson",
-      "Kiana Williams",
-      "Lacie Hull",
-      "Lexie Hull",
-      "Lili Thompson",
-      "Marta Sniezek",
-      "Maya Dodson",
       "Mikaela Ruef",
-      "Nadia Fingall",
-      "Nneka Ogwumike",
-      "Shannon Coffee",
-      "Taylor Greenfield"
+      "Nneka Ogwumike"
     ],
-    "answer_count": 27
+    "answer_count": 3
   },
   {
     "left_category": "ncaaw_stanford",
-    "right_category": "decade_20s",
+    "right_category": "decade_10s",
     "left_label": "Played at Stanford (W)",
-    "right_label": "Played in 2020s",
+    "right_label": "Played in 2010s",
     "valid_players": [
-      "Agnes Emma-Nnopu",
-      "Alexandra Eschmeyer",
-      "Alyssa Jerome",
-      "Anna Wilson",
-      "Ashten Prechtel",
-      "Brooke Demetre",
-      "Cameron Brink",
-      "Chloe Clardy",
-      "Courtney Ogden",
-      "DiJonai Carrington",
-      "Elena Bosgana",
-      "Estella Moschkau",
-      "Francesca Belibi",
-      "Hailee Swain",
-      "Haley Jones",
-      "Hannah Jump",
-      "Jenna Brown",
-      "Jzaniya Harriel",
-      "Kiana Williams",
-      "Kiki Iriafen",
-      "Lacie Hull",
-      "Lara Somfai",
-      "Lexie Hull",
-      "Marta Sniezek",
-      "Mary Ashley Stevenson",
-      "Maya Dodson",
-      "Nadia Fingall",
-      "Nunu Agara",
-      "Shay Ijiwoye",
-      "Talana Lepolo"
+      "Chiney Ogwumike",
+      "Mikaela Ruef",
+      "Nneka Ogwumike"
     ],
-    "answer_count": 30
+    "answer_count": 3
   },
   {
-    "left_category": "decade_20s",
-    "right_category": "college_penn_st",
-    "left_label": "Played in 2020s",
-    "right_label": "Went to Penn State",
+    "left_category": "decade_10s",
+    "right_category": "college_kentucky",
+    "left_label": "Played in 2010s",
+    "right_label": "Went to Kentucky",
     "valid_players": [
-      "Ali Brigham",
-      "Alisia Smith",
-      "Alli Campbell",
-      "Anna Camden",
-      "Ashanti Thomas",
-      "Chanaya Pinto",
-      "Grace Hall",
-      "Gracie Merkle",
-      "Jayla Oden",
-      "Kamaria McDaniel",
-      "Kayla Thomas",
-      "Kiyomi McMiller",
-      "Lauren Ebo",
-      "Leilani Kapinus",
-      "Makenna Marisa",
-      "Moriah Murray",
-      "Nyla McFadden",
-      "Sha'Lynn Hagans",
-      "Siyeh Frazier",
-      "Tea Cleante",
-      "Viktoria Ranisavljevic",
-      "Vitoria Santana"
+      "Evelyn Akhator",
+      "Rhyne Howard",
+      "Samarie Walker"
     ],
-    "answer_count": 22
+    "answer_count": 3
   },
   {
-    "left_category": "college_penn_st",
+    "left_category": "college_kentucky",
+    "right_category": "decade_10s",
+    "left_label": "Went to Kentucky",
+    "right_label": "Played in 2010s",
+    "valid_players": [
+      "Evelyn Akhator",
+      "Rhyne Howard",
+      "Samarie Walker"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "decade_10s",
     "right_category": "ncaaw_20ppg",
-    "left_label": "Went to Penn State",
+    "left_label": "Played in 2010s",
     "right_label": "20+ PPG in College (W)",
     "valid_players": [
-      "Kiyomi McMiller",
-      "Maggie Lucas"
+      "Brittney Griner",
+      "Camille Zimmerman",
+      "Chelsea Welch",
+      "Chennedy Carter",
+      "Chiney Ogwumike",
+      "Chrishae Rowe",
+      "Courtney Williams",
+      "Dearica Hamby",
+      "Dezz Ramos",
+      "Elena Delle Donne",
+      "Jennie Simms",
+      "Jessica Kovatch",
+      "Jordan Hooper",
+      "Katelynn Flaherty",
+      "Ke'Shunan James",
+      "Kelsey Mitchell",
+      "Kelsey Plum",
+      "Kristine Anigwe",
+      "Larissa Lurken",
+      "Lizzy Wendell",
+      "Maggie Lucas",
+      "Megan Gustafson",
+      "Mikayla Ferenz",
+      "Natasha Howard",
+      "Odyssey Sims",
+      "Precious Hall",
+      "Rachel Banham",
+      "Randi Brown",
+      "Rhyne Howard"
     ],
-    "answer_count": 2
+    "answer_count": 29
   },
   {
     "left_category": "ncaaw_20ppg",
-    "right_category": "ncaaw_iowa",
-    "left_label": "20+ PPG in College (W)",
-    "right_label": "Played at Iowa (W)",
-    "valid_players": [
-      "Caitlin Clark",
-      "Megan Gustafson"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "ncaaw_iowa",
-    "right_category": "decade_10s",
-    "left_label": "Played at Iowa (W)",
-    "right_label": "Played in 2010s",
-    "valid_players": [
-      "Alexa Kastanek",
-      "Alexis Sevillian",
-      "Ally Disterhoft",
-      "Amanda Ollinger",
-      "Bethany Doolittle",
-      "Carly Mohns",
-      "Chase Coley",
-      "Christina Buttenham",
-      "Claire Till",
-      "Hannah Stewart",
-      "Kali Peschel",
-      "Kathleen Doyle",
-      "Logan Cook",
-      "Makenzie Meyer",
-      "Megan Gustafson",
-      "Melissa Dixon",
-      "Monika Czinano",
-      "Samantha Logic",
-      "Tania Davis",
-      "Theairra Taylor",
-      "Tomi Taiwo"
-    ],
-    "answer_count": 21
-  },
-  {
-    "left_category": "decade_10s",
-    "right_category": "college_texas",
-    "left_label": "Played in 2010s",
-    "right_label": "Went to Texas",
-    "valid_players": [
-      "Ariel Atkins",
-      "Audrey Warren",
-      "Audrey-Ann Caron-Goudreau",
-      "Brady Sanders",
-      "Brianna Taylor",
-      "Brooke McCarty-Williams",
-      "Celina Rodrigo",
-      "Charli Collier",
-      "Chassidy Fussell",
-      "Empress Davenport",
-      "Imani McGee-Stafford",
-      "Jada Underwood",
-      "Jatarie White",
-      "Joanne Allen-Taylor",
-      "Jordan Hosey",
-      "Joyner Holmes",
-      "Kelsey Lang",
-      "Krystle Henderson",
-      "Lashann Higgs",
-      "Nneka Enemkpali",
-      "Olamide Aborowa",
-      "Sug Sutton",
-      "Tasia Foman"
-    ],
-    "answer_count": 23
-  },
-  {
-    "left_category": "college_texas",
-    "right_category": "decade_10s",
-    "left_label": "Went to Texas",
-    "right_label": "Played in 2010s",
-    "valid_players": [
-      "Ariel Atkins",
-      "Audrey Warren",
-      "Audrey-Ann Caron-Goudreau",
-      "Brady Sanders",
-      "Brianna Taylor",
-      "Brooke McCarty-Williams",
-      "Celina Rodrigo",
-      "Charli Collier",
-      "Chassidy Fussell",
-      "Empress Davenport",
-      "Imani McGee-Stafford",
-      "Jada Underwood",
-      "Jatarie White",
-      "Joanne Allen-Taylor",
-      "Jordan Hosey",
-      "Joyner Holmes",
-      "Kelsey Lang",
-      "Krystle Henderson",
-      "Lashann Higgs",
-      "Nneka Enemkpali",
-      "Olamide Aborowa",
-      "Sug Sutton",
-      "Tasia Foman"
-    ],
-    "answer_count": 23
-  },
-  {
-    "left_category": "decade_10s",
-    "right_category": "born_90s",
-    "left_label": "Played in 2010s",
-    "right_label": "Born in the 1990s",
-    "valid_players": [
-      "A'ja Wilson",
-      "Breanna Stewart",
-      "Brittney Griner",
-      "Nneka Ogwumike",
-      "Sabrina Ionescu"
-    ],
-    "answer_count": 5
-  },
-  {
-    "left_category": "born_90s",
-    "right_category": "ncaaw_champ",
-    "left_label": "Born in the 1990s",
-    "right_label": "NCAA Champion (W)",
-    "valid_players": [
-      "A'ja Wilson",
-      "Breanna Stewart",
-      "Brittney Griner"
-    ],
-    "answer_count": 3
-  },
-  {
-    "left_category": "ncaaw_champ",
-    "right_category": "decade_90s",
-    "left_label": "NCAA Champion (W)",
-    "right_label": "Played in 1990s",
-    "valid_players": [
-      "Chamique Holdsclaw",
-      "Sheryl Swoopes",
-      "Tamika Catchings"
-    ],
-    "answer_count": 3
-  },
-  {
-    "left_category": "decade_90s",
     "right_category": "ncaaw_aa",
-    "left_label": "Played in 1990s",
+    "left_label": "20+ PPG in College (W)",
     "right_label": "College All-American (W)",
-    "valid_players": [
-      "Chamique Holdsclaw",
-      "Lisa Leslie",
-      "Sheryl Swoopes",
-      "Tamika Catchings"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "ncaaw_aa",
-    "right_category": "ncaaw_champ",
-    "left_label": "College All-American (W)",
-    "right_label": "NCAA Champion (W)",
-    "valid_players": [
-      "A'ja Wilson",
-      "Breanna Stewart",
-      "Brittney Griner",
-      "Candace Parker",
-      "Chamique Holdsclaw",
-      "Cheryl Miller",
-      "Diana Taurasi",
-      "Maya Moore",
-      "Sheryl Swoopes",
-      "Sue Bird",
-      "Tamika Catchings"
-    ],
-    "answer_count": 11
-  },
-  {
-    "left_category": "ncaaw_champ",
-    "right_category": "undrafted",
-    "left_label": "NCAA Champion (W)",
-    "right_label": "Undrafted",
-    "valid_players": [
-      "A'ja Wilson",
-      "Breanna Stewart",
-      "Brittney Griner",
-      "Candace Parker",
-      "Chamique Holdsclaw",
-      "Cheryl Miller",
-      "Diana Taurasi",
-      "Maya Moore",
-      "Sheryl Swoopes",
-      "Sue Bird",
-      "Tamika Catchings"
-    ],
-    "answer_count": 11
-  },
-  {
-    "left_category": "undrafted",
-    "right_category": "ncaaw_20ppg",
-    "left_label": "Undrafted",
-    "right_label": "20+ PPG in College (W)",
     "valid_players": [
       "Brittney Griner",
       "Caitlin Clark",
@@ -363,108 +114,200 @@
     "answer_count": 7
   },
   {
-    "left_category": "ncaaw_20ppg",
-    "right_category": "college_usc",
-    "left_label": "20+ PPG in College (W)",
-    "right_label": "Went to USC",
+    "left_category": "ncaaw_aa",
+    "right_category": "ncaaw_tennessee",
+    "left_label": "College All-American (W)",
+    "right_label": "Played at Tennessee (W)",
     "valid_players": [
-      "Cheryl Miller",
-      "JuJu Watkins",
-      "Lisa Leslie"
+      "Candace Parker",
+      "Chamique Holdsclaw",
+      "Tamika Catchings"
     ],
     "answer_count": 3
   },
   {
-    "left_category": "college_usc",
+    "left_category": "ncaaw_tennessee",
+    "right_category": "ncaaw_aa",
+    "left_label": "Played at Tennessee (W)",
+    "right_label": "College All-American (W)",
+    "valid_players": [
+      "Candace Parker",
+      "Chamique Holdsclaw",
+      "Tamika Catchings"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "ncaaw_aa",
+    "right_category": "ncaaw_poy",
+    "left_label": "College All-American (W)",
+    "right_label": "College POY (W)",
+    "valid_players": [
+      "A'ja Wilson",
+      "Breanna Stewart",
+      "Brittney Griner",
+      "Caitlin Clark",
+      "Candace Parker",
+      "Chamique Holdsclaw",
+      "Cheryl Miller",
+      "Diana Taurasi",
+      "Elena Delle Donne",
+      "Maya Moore",
+      "Nneka Ogwumike",
+      "Sabrina Ionescu",
+      "Sheryl Swoopes",
+      "Sue Bird",
+      "Tamika Catchings"
+    ],
+    "answer_count": 15
+  },
+  {
+    "left_category": "ncaaw_poy",
+    "right_category": "ncaaw_20ppg",
+    "left_label": "College POY (W)",
+    "right_label": "20+ PPG in College (W)",
+    "valid_players": [
+      "Brittney Griner",
+      "Caitlin Clark",
+      "Chamique Holdsclaw",
+      "Cheryl Miller",
+      "Elena Delle Donne",
+      "Sheryl Swoopes"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "ncaaw_20ppg",
+    "right_category": "undrafted",
+    "left_label": "20+ PPG in College (W)",
+    "right_label": "Undrafted",
+    "valid_players": [
+      "Brittney Griner",
+      "Caitlin Clark",
+      "Chamique Holdsclaw",
+      "Cheryl Miller",
+      "Elena Delle Donne",
+      "Lisa Leslie",
+      "Sheryl Swoopes"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "undrafted",
+    "right_category": "ncaaw_poy",
+    "left_label": "Undrafted",
+    "right_label": "College POY (W)",
+    "valid_players": [
+      "A'ja Wilson",
+      "Breanna Stewart",
+      "Brittney Griner",
+      "Caitlin Clark",
+      "Candace Parker",
+      "Chamique Holdsclaw",
+      "Cheryl Miller",
+      "Diana Taurasi",
+      "Elena Delle Donne",
+      "Maya Moore",
+      "Nneka Ogwumike",
+      "Sabrina Ionescu",
+      "Sheryl Swoopes",
+      "Sue Bird",
+      "Tamika Catchings"
+    ],
+    "answer_count": 15
+  },
+  {
+    "left_category": "ncaaw_poy",
+    "right_category": "ncaaw_champ",
+    "left_label": "College POY (W)",
+    "right_label": "NCAA Champion (W)",
+    "valid_players": [
+      "A'ja Wilson",
+      "Breanna Stewart",
+      "Brittney Griner",
+      "Candace Parker",
+      "Chamique Holdsclaw",
+      "Cheryl Miller",
+      "Diana Taurasi",
+      "Maya Moore",
+      "Sheryl Swoopes",
+      "Sue Bird",
+      "Tamika Catchings"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "ncaaw_champ",
+    "right_category": "born_90s",
+    "left_label": "NCAA Champion (W)",
+    "right_label": "Born in the 1990s",
+    "valid_players": [
+      "A'ja Wilson",
+      "Breanna Stewart",
+      "Brittney Griner"
+    ],
+    "answer_count": 3
+  },
+  {
+    "left_category": "born_90s",
     "right_category": "decade_10s",
-    "left_label": "Went to USC",
+    "left_label": "Born in the 1990s",
     "right_label": "Played in 2010s",
     "valid_players": [
-      "Alexis Lloyd",
-      "Alexyz Vaioletama",
-      "Aliyah Mazyck",
-      "Ariya Crook",
-      "Asiah Jones",
-      "Brianna Barrett",
-      "Cassie Harberts",
-      "Courtney Jaco",
-      "Desiree Caldwell",
-      "Desire\u00e9  Bradley",
-      "Ja'Tavia Tapley",
-      "Jordan Adams",
-      "Kaneisha Horn",
-      "Kayla Overbeck",
-      "Kiki Alofaituli",
-      "Kristen Simon",
-      "Marguerite Effa",
-      "McKenzie Calvert",
-      "Minyon Moore",
-      "Sadie Edwards",
-      "Shalexxus Aaron",
-      "Temi Fagbenle",
-      "Valerie Higgins"
+      "A'ja Wilson",
+      "Breanna Stewart",
+      "Brittney Griner",
+      "Nneka Ogwumike",
+      "Sabrina Ionescu"
     ],
-    "answer_count": 23
+    "answer_count": 5
   },
   {
     "left_category": "decade_10s",
-    "right_category": "college_penn_st",
+    "right_category": "college_nd",
     "left_label": "Played in 2010s",
-    "right_label": "Went to Penn State",
+    "right_label": "Went to Notre Dame",
     "valid_players": [
-      "Alisia Smith",
-      "Amari Carter",
-      "Ariel Edwards",
-      "Ashanti Thomas",
-      "Candice Agee",
-      "Dara Taylor",
-      "De'Janae Boykin",
-      "Jaida Travascio-Green",
-      "Jaylen Williams",
-      "Kaliyah Mitchell",
-      "Kamaria McDaniel",
-      "Keke Sevillian",
-      "Lauren Ebo",
-      "Lindsey Spann",
-      "Maggie Lucas",
-      "Peyton Whitted",
-      "Sierra Moore",
-      "Siyeh Frazier",
-      "Talia East",
-      "Teniya Page",
-      "Tori Waldner"
+      "Arike Ogunbowale",
+      "Jessica Shepard",
+      "Jewell Loyd",
+      "Kayla McBride"
     ],
-    "answer_count": 21
+    "answer_count": 4
   },
   {
-    "left_category": "college_penn_st",
+    "left_category": "college_nd",
+    "right_category": "decade_10s",
+    "left_label": "Went to Notre Dame",
+    "right_label": "Played in 2010s",
+    "valid_players": [
+      "Arike Ogunbowale",
+      "Jessica Shepard",
+      "Jewell Loyd",
+      "Kayla McBride"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "decade_10s",
+    "right_category": "college_unc",
+    "left_label": "Played in 2010s",
+    "right_label": "Went to UNC",
+    "valid_players": [
+      "Janelle Bailey",
+      "Stephanie Mavunga"
+    ],
+    "answer_count": 2
+  },
+  {
+    "left_category": "college_unc",
     "right_category": "decade_20s",
-    "left_label": "Went to Penn State",
+    "left_label": "Went to UNC",
     "right_label": "Played in 2020s",
     "valid_players": [
-      "Ali Brigham",
-      "Alisia Smith",
-      "Alli Campbell",
-      "Anna Camden",
-      "Ashanti Thomas",
-      "Chanaya Pinto",
-      "Grace Hall",
-      "Gracie Merkle",
-      "Jayla Oden",
-      "Kamaria McDaniel",
-      "Kayla Thomas",
-      "Kiyomi McMiller",
-      "Lauren Ebo",
-      "Leilani Kapinus",
-      "Makenna Marisa",
-      "Moriah Murray",
-      "Nyla McFadden",
-      "Sha'Lynn Hagans",
-      "Siyeh Frazier",
-      "Tea Cleante",
-      "Viktoria Ranisavljevic",
-      "Vitoria Santana"
+      "Alyssa Ustby",
+      "Janelle Bailey"
     ],
-    "answer_count": 22
+    "answer_count": 2
   }
 ]

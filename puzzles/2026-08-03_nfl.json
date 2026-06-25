@@ -1,268 +1,512 @@
 [
   {
     "left_category": "team_saints",
-    "right_category": "team_broncos",
+    "right_category": "team_packers",
     "left_label": "Saints",
-    "right_label": "Broncos",
+    "right_label": "Packers",
     "valid_players": [
-      "Aaron Craver",
-      "Adam Trautman",
-      "Bennie Fowler",
-      "Billy Miller",
-      "Brandon Marshall",
-      "Emmanuel Sanders",
-      "Keith Poole",
-      "Latavius Murray",
-      "Lil'Jordan Humphrey",
-      "Michael Burton",
-      "Mike Bell",
-      "Nick Vannett",
-      "Teddy Bridgewater",
-      "Trevor Siemian"
+      "Chris Banjo",
+      "DeShawn Wynn",
+      "Equanimeous St. Brown",
+      "Jamaal Williams",
+      "Jamal Jones",
+      "James Robinson",
+      "Jared Cook",
+      "Jimmy Graham",
+      "John Kuhn",
+      "Lamont Hall",
+      "Mark Brunell",
+      "Marquez Valdes-Scantling",
+      "Matt Giordano",
+      "Samori Toure",
+      "Tory Humphrey",
+      "Ty Montgomery",
+      "Wesley Walls"
     ],
-    "answer_count": 14
+    "answer_count": 17
   },
   {
-    "left_category": "team_broncos",
+    "left_category": "team_packers",
     "right_category": "pass_30k",
-    "left_label": "Broncos",
+    "left_label": "Packers",
     "right_label": "30,000+ Passing Yds",
     "valid_players": [
-      "Jay Cutler",
-      "Joe Flacco",
-      "Peyton Manning",
-      "Russell Wilson"
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Mark Brunell",
+      "Matt Hasselbeck"
     ],
     "answer_count": 4
   },
   {
     "left_category": "pass_30k",
-    "right_category": "pb_3",
+    "right_category": "top5",
     "left_label": "30,000+ Passing Yds",
-    "right_label": "3+ Pro Bowls",
+    "right_label": "Top 5 Pick",
+    "valid_players": [
+      "Cam Newton",
+      "Carson Palmer",
+      "Donovan McNabb",
+      "Eli Manning",
+      "Jared Goff",
+      "Kerry Collins",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Steve McNair"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "top5",
+    "right_category": "team_rams",
+    "left_label": "Top 5 Pick",
+    "right_label": "Rams",
+    "valid_players": [
+      "Baker Mayfield",
+      "Blake Bortles",
+      "Cadillac Williams",
+      "Carson Wentz",
+      "Jared Goff",
+      "Marshall Faulk",
+      "Matthew Stafford",
+      "Sammy Watkins"
+    ],
+    "answer_count": 8
+  },
+  {
+    "left_category": "team_rams",
+    "right_category": "team_falcons",
+    "left_label": "Rams",
+    "right_label": "Falcons",
+    "valid_players": [
+      "Austin Trammell",
+      "Brandon Powell",
+      "Chris Miller",
+      "Daren Bates",
+      "Jerious Norwood",
+      "KhaDarel Hodge",
+      "Laurent Robinson",
+      "Steven Jackson",
+      "Todd Gurley",
+      "Van Jefferson"
+    ],
+    "answer_count": 10
+  },
+  {
+    "left_category": "team_falcons",
+    "right_category": "pos_qb",
+    "left_label": "Falcons",
+    "right_label": "Quarterback",
+    "valid_players": [
+      "Billy Joe Tolliver",
+      "Brett Favre",
+      "Byron Leftwich",
+      "Chris Miller",
+      "Chris Redman",
+      "Desmond Ridder",
+      "Dominique Davis",
+      "Doug Johnson",
+      "Joey Harrington",
+      "Josh Rosen",
+      "Kirk Cousins",
+      "Kurt Kittner",
+      "Logan Woodside",
+      "Luke McCown",
+      "Marcus Mariota",
+      "Matt Ryan",
+      "Matt Schaub",
+      "Michael Penix Jr.",
+      "Mike Vick",
+      "Sean Renfree",
+      "T.J. Yates",
+      "Taylor Heinicke",
+      "Tony Graziani"
+    ],
+    "answer_count": 23
+  },
+  {
+    "left_category": "pos_qb",
+    "right_category": "pass_50k",
+    "left_label": "Quarterback",
+    "right_label": "50,000+ Passing Yds",
     "valid_players": [
       "Aaron Rodgers",
+      "Ben Roethlisberger",
       "Brett Favre",
+      "Dan Marino",
       "Drew Brees",
+      "Eli Manning",
+      "Matt Ryan",
+      "Matthew Stafford",
       "Peyton Manning",
+      "Philip Rivers",
       "Tom Brady"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "pass_50k",
+    "right_category": "td_200",
+    "left_label": "50,000+ Passing Yds",
+    "right_label": "200+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Ben Roethlisberger",
+      "Brett Favre",
+      "Dan Marino",
+      "Drew Brees",
+      "Eli Manning",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Tom Brady"
+    ],
+    "answer_count": 11
+  },
+  {
+    "left_category": "td_200",
+    "right_category": "round1",
+    "left_label": "200+ Career TDs",
+    "right_label": "1st Round Pick",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Alex Smith",
+      "Baker Mayfield",
+      "Ben Roethlisberger",
+      "Cam Newton",
+      "Carson Palmer",
+      "Dan Marino",
+      "Donovan McNabb",
+      "Eli Manning",
+      "Jared Goff",
+      "Jay Cutler",
+      "Joe Flacco",
+      "Josh Allen",
+      "Matt Ryan",
+      "Matthew Stafford",
+      "Patrick Mahomes",
+      "Peyton Manning",
+      "Philip Rivers",
+      "Ryan Tannehill",
+      "Steve McNair"
+    ],
+    "answer_count": 20
+  },
+  {
+    "left_category": "round1",
+    "right_category": "pb_10",
+    "left_label": "1st Round Pick",
+    "right_label": "10+ Pro Bowls",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Jerry Rice",
+      "Larry Fitzgerald",
+      "Peyton Manning",
+      "Tony Gonzalez"
     ],
     "answer_count": 5
   },
   {
-    "left_category": "pb_3",
-    "right_category": "team_49ers",
-    "left_label": "3+ Pro Bowls",
-    "right_label": "49ers",
+    "left_category": "pb_10",
+    "right_category": "td_50",
+    "left_label": "10+ Pro Bowls",
+    "right_label": "50+ Career TDs",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Drew Brees",
+      "Larry Fitzgerald",
+      "Peyton Manning",
+      "Tom Brady",
+      "Tony Gonzalez"
+    ],
+    "answer_count": 7
+  },
+  {
+    "left_category": "td_50",
+    "right_category": "college_nd",
+    "left_label": "50+ Career TDs",
+    "right_label": "Went to Notre Dame",
+    "valid_players": [
+      "Jerome Bettis",
+      "Kyle Rudolph",
+      "Rick Mirer",
+      "Ricky Watters",
+      "Steve Beuerlein"
+    ],
+    "answer_count": 5
+  },
+  {
+    "left_category": "college_nd",
+    "right_category": "born_80s",
+    "left_label": "Went to Notre Dame",
+    "right_label": "Born in the 1980s",
+    "valid_players": [
+      "Anthony Fasano",
+      "Armando Allen",
+      "Arnaz Battle",
+      "Brady Quinn",
+      "Carlyle Holiday",
+      "Darius Walker",
+      "David Bruton",
+      "David Givens",
+      "Golden Tate",
+      "Javin Hunter",
+      "Jeff Faine",
+      "Jimmy Clausen",
+      "John Carlson",
+      "John Owens",
+      "Julius Jones",
+      "Kyle Rudolph",
+      "Maurice Stovall",
+      "Michael Floyd",
+      "Robert Hughes",
+      "Ryan Grant"
+    ],
+    "answer_count": 20
+  },
+  {
+    "left_category": "born_80s",
+    "right_category": "team_saints",
+    "left_label": "Born in the 1980s",
+    "right_label": "Saints",
+    "valid_players": [
+      "Adrian Arrington",
+      "Adrian Peterson",
+      "Akiem Hicks",
+      "Andy Dalton",
+      "Austin Johnson",
+      "Benjamin Watson",
+      "Brandon Tate",
+      "Brian Leonard",
+      "Bryce Harris",
+      "Buck Ortega",
+      "C.J. Spiller",
+      "Chase Daniel",
+      "Chris Barclay",
+      "Chris Hogan",
+      "Chris Ivory",
+      "Coby Fleener",
+      "Colby Bockwoldt",
+      "Courtney Roby",
+      "Curtis Deloatch",
+      "Darian Barnes",
+      "Darren Sproles",
+      "David Thomas",
+      "DeShawn Wynn",
+      "Devery Henderson",
+      "Donte' Stallworth",
+      "Emmanuel Sanders",
+      "Erik Lorig",
+      "Greg Camarillo",
+      "Isa Abdul-Quddus",
+      "Jabari Greer",
+      "Jamaal Branch",
+      "Jamal Jones",
+      "Jared Cook",
+      "Jed Collins",
+      "Jeff Faine",
+      "Jeremy Shockey",
+      "Jimmy Graham",
+      "John Kuhn",
+      "John Owens",
+      "John Phillips",
+      "Joseph Morgan",
+      "Julius Jones",
+      "Kendall Hunter",
+      "Khiry Robinson",
+      "Kyle Eckel",
+      "Lance Moore",
+      "Luke McCown",
+      "Lynell Hamilton",
+      "Marques Colston",
+      "Matt Giordano",
+      "Matt Tennant",
+      "Michael Floyd",
+      "Michael Hoomanawanui",
+      "Mike Bell",
+      "Mike Higgins",
+      "Mike Karney",
+      "Mike McGlynn",
+      "Nate Lawrie",
+      "Nick Toon",
+      "Olaniyi Sobomehin",
+      "Pierre Thomas",
+      "Reggie Bush",
+      "Robert Meachem",
+      "Sean Ryan",
+      "Shaun Smith",
+      "Shiloh Keo",
+      "Skyler Green",
+      "Steve Weatherford",
+      "Talman Gardner",
+      "Tauren Poole",
+      "Ted Ginn",
+      "Terrance Copper",
+      "Thomas Morstead",
+      "Tim Hightower",
+      "Tory Humphrey",
+      "Travaris Cadet",
+      "Trevor Graham",
+      "Zach Hilton",
+      "Zach Strief"
+    ],
+    "answer_count": 79
+  },
+  {
+    "left_category": "team_saints",
+    "right_category": "pos_wr",
+    "left_label": "Saints",
+    "right_label": "Wide Receiver",
+    "valid_players": [
+      "A.T. Perry",
+      "Adrian Arrington",
+      "Albert Connell",
+      "Andre Hastings",
+      "Austin Carr",
+      "Az-Zahir Hakim",
+      "Bennie Fowler",
+      "Brandin Cooks",
+      "Brandon Coleman",
+      "Brandon Tate",
+      "Brett Bech",
+      "Bub Means",
+      "Cameron Meredith",
+      "Cedrick Wilson Jr.",
+      "Chris Hogan",
+      "Chris Olave",
+      "Courtney Roby",
+      "Dante Pettis",
+      "David Patten",
+      "Deonte Harty",
+      "Derrick Lewis",
+      "Devaughn Vele",
+      "Devery Henderson",
+      "Donte' Stallworth",
+      "Easop Winston",
+      "Eddie Kennison",
+      "Emmanuel Sanders",
+      "Equanimeous St. Brown",
+      "Greg Camarillo",
+      "Jake Reed",
+      "Jalen Saunders",
+      "Jamal Jones",
+      "Jarvis Landry",
+      "Jermaine Jackson",
+      "Jerome Pathon",
+      "Joe Horn",
+      "Joseph Morgan",
+      "Keith Kirkwood",
+      "Keith Poole",
+      "Kenny Stills",
+      "Kevin Austin Jr.",
+      "Kevin White",
+      "Kirk Merritt",
+      "Krishawn Hogan",
+      "Lance Moore",
+      "Lawrence Dawsey",
+      "Lil'Jordan Humphrey",
+      "Lynn Bowden",
+      "Marques Colston",
+      "Marquez Callaway",
+      "Marquez Valdes-Scantling",
+      "Mason Tipton",
+      "Michael Floyd",
+      "Michael L. Lewis",
+      "Michael Thomas",
+      "Mike Strachan",
+      "Nate Poole",
+      "Nick Toon",
+      "Qadry Ismail",
+      "Quinn Early",
+      "Rashid Shaheed",
+      "Robert Meachem",
+      "Ronnie Bell",
+      "Samori Toure",
+      "Seantavius Jones",
+      "Skyler Green",
+      "Talman Gardner",
+      "Ted Ginn",
+      "Terrance Copper",
+      "Tommylee Lewis",
+      "Torrance Small",
+      "Tre'Quan Smith",
+      "Trevor Graham",
+      "Ty Montgomery",
+      "Velus Jones Jr.",
+      "Wane McGarity",
+      "Willie Jackson",
+      "Willie Snead"
+    ],
+    "answer_count": 78
+  },
+  {
+    "left_category": "pos_wr",
+    "right_category": "pb_5",
+    "left_label": "Wide Receiver",
+    "right_label": "5+ Pro Bowls",
     "valid_players": [
       "Jerry Rice",
+      "Larry Fitzgerald",
       "Randy Moss",
       "Terrell Owens"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "pb_5",
+    "right_category": "pos_qb",
+    "left_label": "5+ Pro Bowls",
+    "right_label": "Quarterback",
+    "valid_players": [
+      "Aaron Rodgers",
+      "Brett Favre",
+      "Dan Marino",
+      "Drew Brees",
+      "Peyton Manning",
+      "Tom Brady"
+    ],
+    "answer_count": 6
+  },
+  {
+    "left_category": "pos_qb",
+    "right_category": "college_lsu",
+    "left_label": "Quarterback",
+    "right_label": "Went to LSU",
+    "valid_players": [
+      "JaMarcus Russell",
+      "Matt Flynn",
+      "Matt Mauck",
+      "Rohan Davey"
+    ],
+    "answer_count": 4
+  },
+  {
+    "left_category": "college_lsu",
+    "right_category": "team_49ers",
+    "left_label": "Went to LSU",
+    "right_label": "49ers",
+    "valid_players": [
+      "Russell Gage",
+      "Trindon Holliday",
+      "Tyrion Davis-Price"
     ],
     "answer_count": 3
   },
   {
     "left_category": "team_49ers",
-    "right_category": "pick1",
-    "left_label": "49ers",
-    "right_label": "#1 Overall Pick",
-    "valid_players": [
-      "David Carr",
-      "Steve Young"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "pick1",
-    "right_category": "pass_30k",
-    "left_label": "#1 Overall Pick",
-    "right_label": "30,000+ Passing Yds",
-    "valid_players": [
-      "Cam Newton",
-      "Carson Palmer",
-      "Eli Manning",
-      "Peyton Manning"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "pass_30k",
-    "right_category": "team_patriots",
-    "left_label": "30,000+ Passing Yds",
-    "right_label": "Patriots",
-    "valid_players": [
-      "Cam Newton",
-      "Tom Brady"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "team_patriots",
-    "right_category": "team_rams",
-    "left_label": "Patriots",
-    "right_label": "Rams",
-    "valid_players": [
-      "Brandin Cooks",
-      "Brandon Lloyd",
-      "Cameron Cleeland",
-      "Cody Davis",
-      "Daniel Fells",
-      "Danny Amendola",
-      "Kenny Britt",
-      "Matthew Mulligan",
-      "Michael Hoomanawanui",
-      "Sony Michel",
-      "Steven Jackson",
-      "Wes Welker"
-    ],
-    "answer_count": 12
-  },
-  {
-    "left_category": "team_rams",
-    "right_category": "college_penn_st",
-    "left_label": "Rams",
-    "right_label": "Went to Penn State",
-    "valid_players": [
-      "Allen Robinson",
-      "Nick Scott"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "college_penn_st",
-    "right_category": "team_browns",
-    "left_label": "Went to Penn State",
-    "right_label": "Browns",
-    "valid_players": [
-      "Joe Jurevicius",
-      "Jordan Norwood",
-      "Kevin Thompson"
-    ],
-    "answer_count": 3
-  },
-  {
-    "left_category": "team_browns",
-    "right_category": "college_usc",
-    "left_label": "Browns",
-    "right_label": "Went to USC",
-    "valid_players": [
-      "Cody Kessler",
-      "Randall Telfer"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "college_usc",
-    "right_category": "team_saints",
-    "left_label": "Went to USC",
-    "right_label": "Saints",
-    "valid_players": [
-      "Billy Miller",
-      "Chad Morton",
-      "Marvin Powell",
-      "Reggie Bush"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "team_saints",
-    "right_category": "college_oklahoma",
-    "left_label": "Saints",
-    "right_label": "Went to Oklahoma",
-    "valid_players": [
-      "Jerald Moore",
-      "Kenny Stills"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "college_oklahoma",
-    "right_category": "team_broncos",
-    "left_label": "Went to Oklahoma",
-    "right_label": "Broncos",
-    "valid_players": [
-      "Marvin Mims Jr.",
-      "Quentin Griffin",
-      "Samaje Perine",
-      "Stephen Alexander"
-    ],
-    "answer_count": 4
-  },
-  {
-    "left_category": "team_broncos",
     "right_category": "college_texas",
-    "left_label": "Broncos",
+    "left_label": "49ers",
     "right_label": "Went to Texas",
     "valid_players": [
-      "Andrew Beck",
-      "Chris Simms",
-      "Jamaal Charles",
-      "Lil'Jordan Humphrey",
-      "Selvin Young"
+      "Alfred Collins",
+      "Colt McCoy",
+      "Marquise Goodwin",
+      "Phil Dawson"
     ],
-    "answer_count": 5
-  },
-  {
-    "left_category": "college_texas",
-    "right_category": "team_chiefs",
-    "left_label": "Went to Texas",
-    "right_label": "Chiefs",
-    "valid_players": [
-      "Jamaal Charles",
-      "Priest Holmes"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "team_chiefs",
-    "right_category": "college_alabama",
-    "left_label": "Chiefs",
-    "right_label": "Went to Alabama",
-    "valid_players": [
-      "Brodie Croyle",
-      "Daniel Pope",
-      "Javier Arenas",
-      "Le'Ron McClain",
-      "Tim Castille"
-    ],
-    "answer_count": 5
-  },
-  {
-    "left_category": "college_alabama",
-    "right_category": "team_packers",
-    "left_label": "Went to Alabama",
-    "right_label": "Packers",
-    "valid_players": [
-      "Eddie Lacy",
-      "J.K. Scott",
-      "Kenyan Drake"
-    ],
-    "answer_count": 3
-  },
-  {
-    "left_category": "team_packers",
-    "right_category": "nfl_mvp",
-    "left_label": "Packers",
-    "right_label": "NFL MVP",
-    "valid_players": [
-      "Aaron Rodgers",
-      "Brett Favre"
-    ],
-    "answer_count": 2
-  },
-  {
-    "left_category": "nfl_mvp",
-    "right_category": "decade_10s",
-    "left_label": "NFL MVP",
-    "right_label": "Played in 2010s",
-    "valid_players": [
-      "Aaron Rodgers",
-      "Adrian Peterson",
-      "Brett Favre",
-      "LaDainian Tomlinson",
-      "Peyton Manning",
-      "Tom Brady"
-    ],
-    "answer_count": 6
+    "answer_count": 4
   }
 ]
