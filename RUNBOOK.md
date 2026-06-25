@@ -10,7 +10,20 @@ fresh `SR_CF_CLEARANCE` cookie in `.env` (Pro-Football-Reference only — it's
 Cloudflare-gated; basketball-/hockey-/sports-reference are not).
 
 **`.env` prerequisites:** `SR_CF_CLEARANCE` (NFL crawls), `CFBD_API_KEY` (NCAAF),
-`POSTGRES_DB_URL` (deploy).
+`POSTGRES_DB_URL` (deploy), `ADMIN_PW` (the `/admin` audit UI — set it in Render;
+leave it unset to disable `/admin` entirely).
+
+**Admin audit (`/admin`):** password-gated (single `ADMIN_PW`). Lists every category
+with its answers grouped by sport, last name A→Z; each name links to an editable
+`/admin/player/<id>` record (fix a transfer's college, a wrong team, etc.) that
+re-derives that player's categories on save. Edits write straight to the live DB,
+so a later full ETL reload (`run_full` → `load_to_postgres`) overwrites them —
+audit *after* the data is finalized, or fold durable fixes into a curated overlay.
+
+**Puzzle difficulty:** easy = most answers/clue and **no** born-in-decade clues;
+medium = mid answer counts, born-in-decade allowed; hard = fewest answers/clue,
+born-in-decade allowed. Only newly generated *easy* puzzles change — re-run
+`python rebuild_puzzles.py` to apply it to existing ones.
 
 ---
 

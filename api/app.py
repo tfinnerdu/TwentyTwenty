@@ -12,10 +12,15 @@ Endpoints:
 import json
 import os
 import sys
+import hmac
+import hashlib
 import sqlite3
+from functools import wraps
 from datetime import date, datetime, timedelta
-from flask import Flask, jsonify, request, send_from_directory
+from flask import (Flask, jsonify, request, send_from_directory,
+                   session, redirect, abort, Response)
 from flask_cors import CORS
+from markupsafe import escape
 
 # Allow imports from parent dir
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -25,9 +30,38 @@ try:
     HAS_ETL_SCHEMA = True
 except ImportError:
     HAS_ETL_SCHEMA = False
+try:
+    # pure (no-DB) category rule fns, reused to re-derive one player's categories
+    # after an admin edit -- get_categories()/player_matches() touch no database.
+    from data.etl.load import get_categories as _get_categories, player_matches as _player_matches
+    HAS_CATEGORY_RULES = True
+except Exception:
+    HAS_CATEGORY_RULES = False
 
 app = Flask(__name__, static_folder="../static")
 CORS(app)
+
+# --- Admin auth ------------------------------------------------------------
+# /admin* is gated by a single shared password in ADMIN_PW (set it in Render).
+# If ADMIN_PW is unset the whole admin surface is disabled (no default password).
+# The session secret is derived from ADMIN_PW so logins survive restarts without
+# a second env var; override with SECRET_KEY if you prefer.
+ADMIN_PW = os.environ.get("ADMIN_PW")
+app.secret_key = os.environ.get("SECRET_KEY") or (
+    hashlib.sha256(("2020-admin|" + ADMIN_PW).encode()).hexdigest()
+    if ADMIN_PW else "dev-insecure-key-admin-disabled")
+
+
+def require_admin(fn):
+    """Gate a route behind the ADMIN_PW session login."""
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not ADMIN_PW:
+            return Response("Admin is disabled (set the ADMIN_PW env var).", 503)
+        if not session.get("admin_ok"):
+            return redirect("/admin/login")
+        return fn(*args, **kwargs)
+    return wrapper
 
 BASE_DIR   = os.path.dirname(os.path.dirname(__file__))
 DB_PATH    = os.path.join(BASE_DIR, "data", "nfl.db")
@@ -795,6 +829,296 @@ def puzzle_by_slug(slug):
         return jsonify({"error": "Puzzle file missing", "code": "NOT_FOUND"}), 404
 
     return jsonify(puzzle_response(d, chain, sport_mode, default_difficulty()))
+
+
+# ---------------------------------------------------------------------------
+# Admin: category/answer audit + editable player records (gated by ADMIN_PW)
+# ---------------------------------------------------------------------------
+SCOPE_ORDER = ["NFL", "NBA", "MLB", "NHL", "WNBA", "NCAAF", "NCAAB", "NCAAW", "ALL"]
+ADMIN_EDIT_EXCLUDE = {"id", "sr_id", "data_source", "last_updated", "etl_run_id"}
+ADMIN_JSON_LIST = {"teams", "active_decades"}      # stored as JSON arrays, edited as comma lists
+# Audit-relevant fields first (college transfers etc.), then everything else.
+ADMIN_FIELD_PRIORITY = [
+    "name", "sport", "position", "position_group", "college", "high_school",
+    "birth_year", "birth_date", "birth_city", "birth_state", "birth_country",
+    "height_inches", "weight_lbs", "draft_year", "draft_round", "draft_pick",
+    "draft_team", "debut_year", "final_year", "active_decades", "teams",
+]
+
+_ADMIN_NUMERIC = None       # (int_cols, real_cols), computed once per process
+
+
+def _admin_numeric_cols(conn):
+    """Which players columns are int vs real, so admin edits write the right Python
+    type (Postgres won't implicitly cast a text param into a numeric column)."""
+    global _ADMIN_NUMERIC
+    if _ADMIN_NUMERIC is not None:
+        return _ADMIN_NUMERIC
+    ints, reals = set(), set()
+    if USE_PG:
+        cur = conn.execute("SELECT column_name, data_type FROM information_schema.columns "
+                           "WHERE table_name='players'")
+        for r in cur.fetchall():
+            name, t = r[0], r[1]
+            if t in ("integer", "bigint", "smallint"):
+                ints.add(name)
+            elif t in ("real", "double precision", "numeric"):
+                reals.add(name)
+    else:
+        cur = conn.execute("PRAGMA table_info(players)")
+        for r in cur.fetchall():
+            name, t = r[1], (r[2] or "").upper()
+            if "INT" in t:
+                ints.add(name)
+            elif any(k in t for k in ("REAL", "FLOA", "DOUB", "NUM")):
+                reals.add(name)
+    _ADMIN_NUMERIC = (ints, reals)
+    return _ADMIN_NUMERIC
+
+
+def rederive_player_categories(conn, pid):
+    """Recompute one player's category memberships after an edit, using the pure
+    rule fns from load.py. DELETE-then-INSERT (no upsert) so it's portable across
+    SQLite and Postgres."""
+    cur = conn.execute("SELECT * FROM players WHERE id=?", (pid,))
+    r = cur.fetchone()
+    if not r:
+        return
+    cols = [d[0] for d in cur.description]
+    player = {c: r[c] for c in cols}
+    for f in ("teams", "active_decades"):
+        try:
+            player[f] = json.loads(player[f]) if player[f] else []
+        except Exception:
+            player[f] = []
+    sport = player.get("sport")
+    conn.execute("DELETE FROM player_categories WHERE player_id=?", (pid,))
+    for cat in _get_categories():
+        scope = cat["scope"]
+        if scope != "ALL" and scope != sport:
+            continue
+        if _player_matches(player, cat):
+            conn.execute("INSERT INTO player_categories (player_id, category_id) VALUES (?,?)",
+                         (pid, cat["id"]))
+    conn.commit()
+
+
+def _scope_rank(s):
+    return SCOPE_ORDER.index(s) if s in SCOPE_ORDER else len(SCOPE_ORDER)
+
+
+def _lastname_key(name):
+    """Sort key: last name ascending, then full name as a tiebreak."""
+    parts = (name or "").split()
+    return (parts[-1].lower() if parts else (name or "").lower(), (name or "").lower())
+
+
+_ADMIN_CSS = """
+ body{font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#0f1115;color:#e6e6e6}
+ header{background:#171a21;padding:12px 20px;border-bottom:1px solid #2a2f3a;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:5}
+ header h1{font-size:16px;margin:0;font-weight:600}
+ a{color:#7aa2ff;text-decoration:none}
+ .wrap{max-width:1100px;margin:0 auto;padding:20px}
+ .scope{margin:26px 0 8px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8b93a7;border-bottom:1px solid #2a2f3a;padding-bottom:6px}
+ details{background:#171a21;border:1px solid #2a2f3a;border-radius:8px;margin:8px 0;padding:6px 12px}
+ summary{cursor:pointer;font-weight:600;outline:none}
+ summary .meta{color:#8b93a7;font-weight:400}
+ .sport-grp{margin:8px 0 4px}
+ .sport-grp b{display:inline-block;min-width:64px;color:#cbb26b}
+ .ans a{display:inline-block;margin:2px 10px 2px 0;white-space:nowrap}
+ .empty{color:#6b7280;font-style:italic}
+ input[type=text],input[type=password]{width:100%;box-sizing:border-box;background:#0f1115;border:1px solid #2a2f3a;color:#e6e6e6;border-radius:6px;padding:7px 9px;font:inherit}
+ label.f{display:block;margin:10px 0 2px;color:#8b93a7;font-size:12px}
+ .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 18px}
+ .save{background:#2a6df4;color:#fff;border:0;border-radius:6px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;margin-top:18px}
+ .banner{background:#16361f;border:1px solid #2e6b3e;color:#9fe0b0;padding:8px 12px;border-radius:6px;margin-bottom:14px}
+ .hint{color:#6b7280;font-size:11px}
+"""
+
+_FILTER_SCRIPT = """
+<script>
+var f=document.getElementById('filter');
+if(f){f.addEventListener('input',function(){
+  var q=this.value.toLowerCase();
+  document.querySelectorAll('details[data-label]').forEach(function(d){
+    d.style.display=d.getAttribute('data-label').indexOf(q)>-1?'':'none';});
+  document.querySelectorAll('.scope').forEach(function(s){s.style.display=q?'none':'';});
+});}
+</script>
+"""
+
+
+def _admin_shell(title, body, nav=True):
+    header = ('<header><h1>20/20 Admin</h1>'
+              '<a href="/admin">Categories</a><a href="/admin/logout">Log out</a></header>'
+              if nav else '<header><h1>20/20 Admin</h1></header>')
+    return (f'<!doctype html><html><head><meta charset="utf-8">'
+            f'<meta name="viewport" content="width=device-width, initial-scale=1">'
+            f'<title>{escape(title)}</title><style>{_ADMIN_CSS}</style></head><body>'
+            f'{header}<div class="wrap">{body}</div></body></html>')
+
+
+def render_admin_login(error):
+    err = (f'<div class="banner" style="background:#3a1620;border-color:#6b2e3a;color:#e0a0ac">'
+           f'{escape(error)}</div>') if error else ""
+    body = (f'<h2>Admin Login</h2>{err}'
+            f'<form method="post" action="/admin/login" style="max-width:320px">'
+            f'<label class="f" for="password">Password</label>'
+            f'<input type="password" id="password" name="password" autofocus>'
+            f'<button class="save" type="submit">Enter</button></form>')
+    return _admin_shell("Admin Login", body, nav=False)
+
+
+def render_admin_index(by_scope, members):
+    total = sum(len(v) for v in by_scope.values())
+    parts = [f'<p class="hint">{total} categories. Click one to expand its answers '
+             f'(grouped by sport, last name A→Z). Each player links to an editable record.</p>',
+             '<input id="filter" type="text" placeholder="Filter categories…">']
+    for scope in [s for s in SCOPE_ORDER if s in by_scope] + \
+                 [s for s in by_scope if s not in SCOPE_ORDER]:
+        parts.append(f'<div class="scope">{escape(scope)}</div>')
+        for cat in by_scope[scope]:
+            mem = members.get(cat["id"], [])
+            data_label = escape((cat["label"] + " " + scope).lower())
+            parts.append(f'<details data-label="{data_label}">'
+                         f'<summary>{escape(cat["label"])} '
+                         f'<span class="meta">· {escape(scope)} · {len(mem)} answers</span></summary>')
+            if not mem:
+                parts.append('<div class="empty">(no answers)</div>')
+            else:
+                bysport = {}
+                for name, sp, pid in mem:
+                    bysport.setdefault(sp, []).append((name, pid))
+                for sp in sorted(bysport, key=_scope_rank):
+                    links = sorted(bysport[sp], key=lambda t: _lastname_key(t[0]))
+                    anchors = " ".join(f'<a href="/admin/player/{pid}">{escape(name)}</a>'
+                                       for name, pid in links)
+                    parts.append(f'<div class="sport-grp"><b>{escape(sp or "?")}</b> '
+                                 f'<span class="ans">{anchors}</span></div>')
+            parts.append('</details>')
+    return "".join(parts) + _FILTER_SCRIPT
+
+
+def render_player_form(pid, cols, valmap, saved):
+    editable = [c for c in cols if c not in ADMIN_EDIT_EXCLUDE]
+    ordered = [c for c in ADMIN_FIELD_PRIORITY if c in editable] + \
+              [c for c in editable if c not in ADMIN_FIELD_PRIORITY]
+    name = valmap.get("name") or f"player {pid}"
+    parts = ['<p><a href="/admin">← all categories</a></p>']
+    if saved:
+        parts.append('<div class="banner">Saved ✓ — categories re-derived for this player.</div>')
+    parts.append(f'<h2 style="margin:6px 0">{escape(name)} '
+                 f'<span class="hint">#{pid} · {escape(valmap.get("sport") or "")} · '
+                 f'sr_id {escape(valmap.get("sr_id") or "—")}</span></h2>')
+    parts.append(f'<form method="post" action="/admin/player/{pid}"><div class="grid">')
+    for col in ordered:
+        v = valmap.get(col)
+        if col in ADMIN_JSON_LIST:
+            try:
+                lst = json.loads(v) if v else []
+            except Exception:
+                lst = []
+            disp, hint = ", ".join(str(x) for x in lst), ' <span class="hint">(comma-separated)</span>'
+        else:
+            disp, hint = ("" if v is None else str(v)), ""
+        parts.append(f'<div><label class="f" for="{escape(col)}">{escape(col)}{hint}</label>'
+                     f'<input type="text" id="{escape(col)}" name="{escape(col)}" '
+                     f'value="{escape(disp)}"></div>')
+    parts.append('</div><button class="save" type="submit">Save changes</button></form>')
+    return _admin_shell(f"Edit · {name}", "".join(parts))
+
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if not ADMIN_PW:
+        return Response("Admin is disabled (set the ADMIN_PW env var).", 503)
+    error = ""
+    if request.method == "POST":
+        if hmac.compare_digest((request.form.get("password") or ""), ADMIN_PW):
+            session["admin_ok"] = True
+            return redirect("/admin")
+        error = "Incorrect password."
+    return Response(render_admin_login(error), mimetype="text/html")
+
+
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin_ok", None)
+    return redirect("/admin/login")
+
+
+@app.route("/admin")
+@require_admin
+def admin_index():
+    conn = get_conn()
+    cats = conn.execute(
+        "SELECT id, label, sport_scope FROM categories ORDER BY sport_scope, label").fetchall()
+    rows = conn.execute(
+        "SELECT pc.category_id AS cid, p.id AS pid, p.name AS name, p.sport AS sport "
+        "FROM player_categories pc JOIN players p ON p.id = pc.player_id").fetchall()
+    conn.close()
+
+    members = {}
+    for r in rows:
+        members.setdefault(r["cid"], []).append((r["name"], r["sport"], r["pid"]))
+    by_scope = {}
+    for cat in cats:
+        by_scope.setdefault(cat["sport_scope"], []).append(cat)
+
+    return Response(_admin_shell("Categories", render_admin_index(by_scope, members)),
+                    mimetype="text/html")
+
+
+@app.route("/admin/player/<int:pid>", methods=["GET", "POST"])
+@require_admin
+def admin_player(pid):
+    conn = get_conn()
+    cur = conn.execute("SELECT * FROM players WHERE id=?", (pid,))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        abort(404)
+    cols = [d[0] for d in cur.description]
+
+    if request.method == "POST":
+        int_cols, real_cols = _admin_numeric_cols(conn)
+        updates = {}
+        for col in cols:
+            if col in ADMIN_EDIT_EXCLUDE or col not in request.form:
+                continue
+            raw = (request.form.get(col) or "").strip()
+            if col in ADMIN_JSON_LIST:
+                updates[col] = json.dumps([x.strip() for x in raw.split(",") if x.strip()])
+            elif raw == "":
+                updates[col] = None
+            elif col in int_cols:
+                try:
+                    updates[col] = int(float(raw))
+                except ValueError:
+                    updates[col] = None
+            elif col in real_cols:
+                try:
+                    updates[col] = float(raw)
+                except ValueError:
+                    updates[col] = None
+            else:
+                updates[col] = raw
+        if updates:
+            sets = ", ".join(f"{c}=?" for c in updates)
+            conn.execute(f"UPDATE players SET {sets} WHERE id=?", [*updates.values(), pid])
+            conn.commit()
+            if HAS_CATEGORY_RULES:
+                try:
+                    rederive_player_categories(conn, pid)
+                except Exception as e:
+                    app.logger.warning(f"category rederive failed for player {pid}: {e}")
+        conn.close()
+        return redirect(f"/admin/player/{pid}?saved=1")
+
+    valmap = {c: row[c] for c in cols}
+    conn.close()
+    return Response(render_player_form(pid, cols, valmap, saved=bool(request.args.get("saved"))),
+                    mimetype="text/html")
 
 
 # Serve the frontend for any non-API route

@@ -29,11 +29,23 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "../data/nfl.db")
 # ---------------------------------------------------------------------------
 # Target answer-count range per node.  Nodes outside this band aren't
 # forbidden, but the scorer deprioritizes them.
+#   easy   -> the MOST answers per clue (generous, well-known pools)
+#   medium -> middle-of-the-pack answer counts
+#   hard   -> the FEWEST answers per clue (tight intersections only)
 DIFFICULTY_PRESETS = {
     "easy":   (6, 30),   # generous answer pools
     "medium": (3, 12),   # the sweet spot
     "hard":   (2, 5),    # tight intersections only
     "any":    (2, 999),  # no preference
+}
+
+# Category fields excluded at a given difficulty. 'Born in the 19X0s' clues
+# (field=birth_year) are birthday trivia, not the well-known team/college/award
+# pools -- so EASY puzzles leave them out, while medium/hard keep them as an
+# extra constraining layer. (The 'Played in the 19X0s' active_decades clues are
+# a different field and stay in at every difficulty.)
+DIFFICULTY_EXCLUDE_FIELDS = {
+    "easy": {"birth_year"},
 }
 
 # How many recent hops to remember for the cooldown window
@@ -80,14 +92,14 @@ def get_categories_for_mode(conn, sport_mode: str) -> list:
     c = conn.cursor()
 
     if sport_mode == "ALL":
-        c.execute("SELECT id, sport_scope, label FROM categories")
+        c.execute("SELECT id, sport_scope, label, field FROM categories")
     else:
         # Build the set of scopes to include: the named sport(s) + ALL
         requested = [s.strip().upper() for s in sport_mode.split(",")]
         requested_plus_all = list(set(requested + ["ALL"]))
         placeholders = ",".join("?" * len(requested_plus_all))
         c.execute(
-            f"SELECT id, sport_scope, label FROM categories WHERE sport_scope IN ({placeholders})",
+            f"SELECT id, sport_scope, label, field FROM categories WHERE sport_scope IN ({placeholders})",
             requested_plus_all,
         )
 
@@ -403,6 +415,16 @@ def generate_chain(
 
     # 1. Load categories for this sport mode
     categories = get_categories_for_mode(conn, sport_mode)
+
+    # Difficulty-specific category exclusions (e.g. no born-in-decade clues on easy)
+    drop_fields = DIFFICULTY_EXCLUDE_FIELDS.get(difficulty, set())
+    if drop_fields:
+        n0 = len(categories)
+        categories = [c for c in categories if c.get("field") not in drop_fields]
+        if len(categories) != n0:
+            print(f"[generator] {difficulty}: excluded {n0 - len(categories)} "
+                  f"category(ies) with field in {sorted(drop_fields)}")
+
     print(f"[generator] sport_mode={sport_mode!r}  difficulty={difficulty!r}  "
           f"categories={len(categories)}  target_answers={target_min}-{target_max}")
 
