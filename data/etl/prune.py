@@ -48,14 +48,14 @@ PRUNE = {
               # separate rows), so awards-only would delete ~everything. Keep the
               # statistically notable instead: a real career average in ANY of pts/
               # reb/ast. Tune these against the dry-run counts.
-              "min_career": [("ncaab_points", 12.0), ("ncaab_rebounds", 6.0),
-                             ("ncaab_assists", 4.0)]},
+              "min_career": [("ncaab_points", 16.0), ("ncaab_rebounds", 8.0),
+                             ("ncaab_assists", 6.0)]},
     "NCAAW": {"source": "ncaaw_csv",
               "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships",
                          "ncaab_all_conference"],
               "min_season_games": None,
-              "min_career": [("ncaab_points", 12.0), ("ncaab_rebounds", 6.0),
-                             ("ncaab_assists", 4.0)]},
+              "min_career": [("ncaab_points", 16.0), ("ncaab_rebounds", 8.0),
+                             ("ncaab_assists", 6.0)]},
     "NCAAF": {"source": "cfbd",
               "honors": ["ncaaf_all_american", "ncaaf_heisman", "ncaaf_all_conference"],
               "min_season_games": None,
