@@ -19,6 +19,9 @@ with its answers grouped by sport, last name A→Z; each name links to an editab
 re-derives that player's categories on save. Edits write straight to the live DB,
 so a later full ETL reload (`run_full` → `load_to_postgres`) overwrites them —
 audit *after* the data is finalized, or fold durable fixes into a curated overlay.
+To pull the live DB (admin edits included) back down to local SQLite, run
+`python load_from_postgres.py` — the inverse of `load_to_postgres.py` (URL from
+`.env`; `--sqlite PATH` writes a snapshot instead of replacing `data/nfl.db`).
 
 **Puzzle difficulty:** easy = most answers/clue and **no** born-in-decade clues;
 medium = mid answer counts, born-in-decade allowed; hard = fewest answers/clue,
