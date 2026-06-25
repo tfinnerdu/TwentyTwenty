@@ -67,9 +67,14 @@ python -m data.etl.backfill_from_cache --sport NBA --rebuild-teams --rebuild-sta
 
 # 6 ─ Finalize
 python -m data.etl.reconcile_debut --sport ALL
-python -m data.etl.prune --sport ALL              # preview the notability cut (no deletes)
+python -m data.etl.prune --sport ALL              # PREVIEW first -- eyeball the keep/prune counts
 python -m data.etl.prune --sport ALL --apply      # trim the game pool to notable players, THEN puzzles
 python rebuild_puzzles.py
+#   Keep rule: WNBA/NHL = a real rotation season (best-season games); college
+#   (NCAAB/NCAAW/NCAAF) = a notable career stat line (no award overlay exists for
+#   them, so awards-only would delete ~everything). Thresholds live in prune.py's
+#   PRUNE config -- sanity-check the dry-run counts and tune them there if a sport
+#   keeps too many / too few before you --apply.
 
 # 7 ─ Deploy
 python load_to_postgres.py

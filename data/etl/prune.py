@@ -43,14 +43,27 @@ PRUNE = {
     "NCAAB": {"source": "ncaab_csv",
               "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships",
                          "ncaab_all_conference"],
-              "min_season_games": None},                      # awards-only (incl. all-conference)
+              "min_season_games": None,
+              # College bulk carries no award flags (no overlay; sr_college writes
+              # separate rows), so awards-only would delete ~everything. Keep the
+              # statistically notable instead: a real career average in ANY of pts/
+              # reb/ast. Tune these against the dry-run counts.
+              "min_career": [("ncaab_points", 12.0), ("ncaab_rebounds", 6.0),
+                             ("ncaab_assists", 4.0)]},
     "NCAAW": {"source": "ncaaw_csv",
               "honors": ["ncaab_all_american", "ncaab_player_of_year", "ncaab_championships",
                          "ncaab_all_conference"],
-              "min_season_games": None},
+              "min_season_games": None,
+              "min_career": [("ncaab_points", 12.0), ("ncaab_rebounds", 6.0),
+                             ("ncaab_assists", 4.0)]},
     "NCAAF": {"source": "cfbd",
               "honors": ["ncaaf_all_american", "ncaaf_heisman", "ncaaf_all_conference"],
-              "min_season_games": None},
+              "min_season_games": None,
+              # cfbd hardcodes games=12, so a games threshold is meaningless here --
+              # keep by career production instead (a multi-year starter / star in ANY
+              # of pass/rush/rec yards or TDs).
+              "min_career": [("ncaaf_pass_yds", 4000), ("ncaaf_rush_yds", 2000),
+                             ("ncaaf_rec_yds", 1500), ("ncaaf_tds", 20)]},
     "WNBA":  {"source": "wnba_csv",
               "honors": ["wnba_championships", "wnba_mvps", "wnba_finals_mvps", "wnba_all_star"],
               "min_season_games": 25},
@@ -82,6 +95,18 @@ def _games_keep(conn, sport, min_games, seasons_csv):
     return {id_by_srid[s] for s in srids if s in id_by_srid}
 
 
+def _career_keep(conn, sport, specs):
+    """DB ids of players whose CAREER stat clears ANY (column >= threshold). For the
+    college bulk, which carries no award flags -- keeps the statistically notable
+    instead of pruning to nothing."""
+    if not specs:
+        return set()
+    clause = " OR ".join(f"COALESCE({col},0) >= ?" for col, _ in specs)
+    params = [thr for _, thr in specs]
+    return {r[0] for r in conn.execute(
+        f"SELECT id FROM players WHERE sport=? AND ({clause})", (sport, *params))}
+
+
 def prune(sport, db, apply, min_games=None, force=False):
     cfg = PRUNE[sport]
     min_games = cfg["min_season_games"] if min_games is None else min_games
@@ -94,6 +119,11 @@ def prune(sport, db, apply, min_games=None, force=False):
     seasons_csv = os.path.join(ROOT, "data", "cache", "exports", sport.lower(),
                                f"{sport.lower()}_seasons.csv")
     keep |= _games_keep(conn, sport, min_games, seasons_csv)
+    n_career = 0
+    if cfg.get("min_career"):
+        career_ids = _career_keep(conn, sport, cfg["min_career"])
+        n_career = len(career_ids)
+        keep |= career_ids
 
     sources = cfg["source"] if isinstance(cfg["source"], (list, tuple)) else [cfg["source"]]
     qs = ",".join("?" for _ in sources)
@@ -101,7 +131,12 @@ def prune(sport, db, apply, min_games=None, force=False):
         f"SELECT id FROM players WHERE sport=? AND data_source IN ({qs})", (sport, *sources))]
     to_delete = [pid for pid in bulk if pid not in keep]
     kept = len(bulk) - len(to_delete)
-    crit = f"  best-season>={min_games}G" if min_games else ""
+    crit_bits = []
+    if min_games:
+        crit_bits.append(f"best-season>={min_games}G")
+    if cfg.get("min_career"):
+        crit_bits.append("career[" + "/".join(f"{c}>={t}" for c, t in cfg["min_career"]) + f"]={n_career}")
+    crit = ("  " + "  ".join(crit_bits)) if crit_bits else ""
     log.info(f"[{sport}] bulk={len(bulk)}  honored={n_honored}{crit}"
              f"  -> keep {kept}, prune {len(to_delete)}")
 
