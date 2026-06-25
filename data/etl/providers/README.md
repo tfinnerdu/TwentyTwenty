@@ -120,21 +120,23 @@ honors, so no `mlb.json` is needed.
 | WNBA  | `wnba_csv`   | wehoop data releases | `awards/wnba.json` |
 | NHL   | `nhl_api`    | api-web.nhle.com export | `awards/nhl.json` |
 | NFL   | `nflverse`   | nflverse / nfl_data_py | `awards/nfl.json` |
-| NCAAF | `curated_ncaaf` / `ncaaf_csv` | curated, or CollegeFootballData API | inline / `awards/ncaaf.json` |
-| NCAAB | `curated_ncaab` | curated (`curated/ncaab.json`) | inline |
-| NCAAW | `curated_ncaaw` | curated (`curated/ncaaw.json`) | inline |
+| NCAAF | `ncaaf_csv` / `curated_ncaaf` | CollegeFootballData API (`cfbd_export`), or curated fallback | `awards/ncaaf.json` + `sr_college` |
+| NCAAB | `ncaab_csv` / `curated_ncaab` | hoopR via `ncaa_hoops_export`, or curated fallback | `sr_college` award flags / inline |
+| NCAAW | `ncaaw_csv` / `curated_ncaaw` | hoopR via `ncaa_hoops_export`, or curated fallback | `sr_college` award flags / inline |
 
-NBA, WNBA, NHL, NFL and NCAAF share `csv_season.py` — each is a ~20-line
-subclass declaring its team map, the season columns to sum, and how those map
-onto the stat columns. NCAA basketball is hand-curated via `CuratedProvider`,
-which *creates* full player rows from `curated/<sport>.json` (honors inline).
+NBA, WNBA, NHL, NFL, NCAAF and NCAAB/NCAAW share `csv_season.py` — each is a
+~20-line subclass declaring its team map, the season columns to sum, and how
+those map onto the stat columns. NCAAB/NCAAW bulk now comes from hoopR via
+`ncaa_hoops_export` (the `ncaab_csv` / `ncaaw_csv` providers, run automatically by
+`run_full`); `CuratedProvider` (`curated/<sport>.json`, honors inline) remains an
+offline fallback.
 
 - The wyattowalsh **nbadb** SQLite is game-level (team box + play-by-play) — no
   per-player career averages — so `nba_csv` reads a season-stats table instead.
-- **NCAA:** no clean free historical source, so basketball is curated and
-  football defaults to curated; `cfbd_export.py` upgrades NCAAF to real
-  CollegeFootballData with your key. A henrygd/ncaa-api instance is great for
-  *live* scores but isn't a historical player catalog, so it's not wired in here.
+- **NCAA:** basketball bulk is hoopR (`ncaa_hoops_export`); football is real
+  CollegeFootballData via `cfbd_export.py` (your `CFBD_API_KEY`), with the curated
+  sets as offline fallbacks. The hoopR/CFBD bulks ship stat lines but no honors —
+  `sr_college` flags the awards (All-American / POY / Heisman) on top.
 - **Known gaps:** Lahman has no amateur-draft data or WAR; the non-MLB honors
   come from curated data (box scores carry no MVP/ring/All-NBA/Heisman).
 - **Cross-sport** `college` / birth / decade categories connect every sport in

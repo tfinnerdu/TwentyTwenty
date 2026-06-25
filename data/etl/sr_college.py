@@ -197,8 +197,8 @@ HONORS = {
 # player, not just the award winners the HONORS crawl keeps. Reuses each sport's
 # award-crawl stat tables/cols and the same SR college player-page parser, so the
 # only new thing here is enumerating the letter indexes. cbb's letter pages are
-# shared by men and women -- women's player ids carry a '-w' suffix (see
-# scrape_ncaab) -- so NCAAB and NCAAW point at the same pages and split on it.
+# shared by men and women -- women's player ids carry a '-w' suffix -- so NCAAB
+# and NCAAW point at the same pages and split on that suffix.
 INDEX = {
     "NCAAF": {
         "domain":  "https://www.sports-reference.com",

@@ -17,6 +17,10 @@ data/cache/
 # DO commit: puzzles/ JSON files (pre-generated, served by the app)
 # DO commit: data/seed.py (hand-curated fallback)
 # DO NOT commit: data/nfl.db (binary, regenerated from seed or ETL)
-/.vs/TwentyTwenty/v18
-/.vs/TwentyTwenty/FileContentIndex
+# Visual Studio local cache (regenerated; never share). The .sln/.pyproj are
+# tracked on purpose -- this project is opened in Visual Studio.
+/.vs/
 *.csv
+
+# Cache index sidecar (derived artifact under data/cache/, already ignored above,
+# but listed for clarity): data/cache/sr_index.json

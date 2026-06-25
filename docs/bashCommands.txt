@@ -1,17 +1,18 @@
 20/20 Game -- Bash / Shell Command Reference
 ============================================
-# CONTENTS:  1) Retrieve new data (network)  ·  2) Update from cache (offline)  ·  3) Puzzles  ·  4) Scheduling  ·  5) Misc/deploy/inspect      (older legacy scraper notes follow the runbook)
-
-#####################################################################
-# CURRENT RUNBOOK (canonical -- start here).  Updated 2026-06-23.
-# Supersedes the older scattered notes further down this file.
+# CONTENTS:  1) Retrieve new data (network)  ·  2) Update from cache (offline)  ·
+#            3) Puzzles  ·  4) Scheduling  ·  5) Misc / deploy / inspect
+#            ... then Setup / Local dev / Database inspect / Production.
+#
+# The canonical END-TO-END refresh SEQUENCE is RUNBOOK.md. This file is the
+# per-command reference (what each tool does and its flags). Updated 2026-06-25.
 #
 # Defaults: DB = data/nfl.db (the game DB). Pass --db data/db_all.db for the
 #   unpruned research DB. Most ETL tools take --dry-run and --limit.
-# .env carries:  SR_CF_CLEARANCE (PFR/NFL crawls only) and
-#                POSTGRES_DB_URL / DATABASE_URL (the Postgres deploy target).
+# .env carries:  SR_CF_CLEARANCE (PFR/NFL crawls only), CFBD_API_KEY (NCAAF),
+#                POSTGRES_DB_URL / DATABASE_URL (Postgres deploy target),
+#                ADMIN_PW (gates the /admin audit UI; unset = /admin disabled).
 # "cache/local" steps are 100% offline -- they read data/cache, no network.
-#####################################################################
 
 # =================================================================
 # 1) RETRIEVE NEW DATA  (NETWORKED -- pulls fresh from the web)
@@ -26,9 +27,15 @@ python run_full.py --wnba-live --skip-puzzles      # WNBA live export
 python -m data.etl.providers.nba_export --start 1996 --end 2024 --enrich --out ./nba_csv
 python run_full.py --nba-dir ./nba_csv --skip-puzzles   # ingest a pre-built export dir
 
+# NFL: current season + mid-trade teams (nflverse, no cookie):
+python -m data.etl.providers.nfl_export --out data/cache/exports/nfl
+# NFL 2025 rookies off PFR's debuts page (one page, needs SR_CF_CLEARANCE):
+python -m data.etl.nfl_debuts --year 2025
+
 # Historical pro players off the SR alpha index (NBA + WNBA), no cookie. Long,
 # resumable (caches each page). Game mode: only the coverage-gap players.
 python -m data.etl.sr_history --sport ALL          # = NBA + WNBA
+python -m data.etl.sr_history --sport NBA          # NBA gap players incl Wembanyama (full names)
 python -m data.etl.sr_history --sport NBA --limit 20 --dry-run     # preview
 
 # Awards/honors + pre-bulk legends (rings, MVP, All-Star, Heisman, ...).
@@ -38,17 +45,23 @@ python -m data.etl.sr_college --sport NCAAB        # long (~14h), resumable
 python -m data.etl.sr_college --sport NCAAW        # long (~10h), resumable
 python -m data.etl.sr_college --sport NFL          # PFR -- refresh SR_CF_CLEARANCE first
 
-# Per-player SR bio backfill (college / birth state / draft). Does a live SR
-# SEARCH per player, so slow even with pages cached. Default --limit 50.
-python -m data.etl.backfill_sr --sport NFL --limit 100000          # all rows (NFL needs cookie)
-python -m data.etl.backfill_sr --sport NFL --limit 20 --dry-run    # preview
+# Per-player SR bio backfill (college / birth state / draft). Live SR SEARCH per
+# player, so slow even when pages are cached. --cache-missing fetches only the
+# pages not already on disk (the incremental mode the runbook uses).
+python -m data.etl.backfill_sr --sport NFL --cache-missing        # modern NFL incl new rookies (cookie)
+python -m data.etl.backfill_sr --sport NBA --cache-missing        # frozen bulk stars (no cookie)
+python -m data.etl.backfill_sr --sport NFL --limit 20 --dry-run   # preview
 
-# THE UNPRUNED "everything" DB (data/db_all.db) -- full SR alpha crawls, no prune:
-python run_full.py --skip-puzzles --db data/db_all.db              # bulk: MLB + college bulk
-python -m data.etl.db_all --sport ALL                             # NBA+WNBA+NHL (no cookie)
-python -m data.etl.db_all --sport NFL                             # PFR ~28k, needs cookie, slow
-python -m data.etl.db_all --sport COLLEGE                         # NCAAF+NCAAB+NCAAW full index
-python -m data.etl.sr_college --sport ALL --db data/db_all.db     # award flags + legends
+# THE UNPRUNED "everything" DB (data/db_all.db) -- never pruned. Two ways to fill:
+# FAST, from the shared page cache (no network/cookie, minutes; incl. pruned players):
+python -m data.etl.db_all --from-cache --dry-run                  # per-sport counts first
+python -m data.etl.db_all --from-cache                            # ingest cached NBA+WNBA+NHL+NFL pages
+# EXHAUSTIVE, full network alpha crawls (slow):
+python run_full.py --skip-puzzles --db data/db_all.db             # bulk: MLB + college bulk
+python -m data.etl.db_all --sport ALL                            # NBA+WNBA+NHL (no cookie)
+python -m data.etl.db_all --sport NFL                            # PFR ~28k, needs cookie, slow
+python -m data.etl.db_all --sport COLLEGE                        # NCAAF+NCAAB+NCAAW full index
+python -m data.etl.sr_college --sport ALL --db data/db_all.db    # award flags + legends
 
 # Is SR reachable / is my cookie good?  (probes the SR hosts)
 python -m data.etl.sr_status
@@ -56,20 +69,28 @@ python -m data.etl.sr_status --sport NFL
 
 # =================================================================
 # 2) UPDATE FROM CACHED DATA  (OFFLINE -- no network, reads data/cache)
-#    The normal "apply a fix, then redeploy" path. Order matters.
+#    The normal "apply a fix, then redeploy" path. Order matters (see RUNBOOK.md).
 # =================================================================
 # 1. Re-ingest the game DB from cached exports. Applies the franchise/school maps
-#    (relocations, renames, BRK->Nets...). Wipes + rebuilds. WATCH the log for
+#    (relocations, renames, BRK->Nets...). WIPES + rebuilds. WATCH the log for
 #    "UNMAPPED team code(s)" -- that's a real gap that needs mapping.
 python run_full.py --skip-puzzles
 
-# 2. NFL bio + standardized (franchise-href) teams from the cached SR pages.
-#    --rebuild-teams overwrites teams with the corrected franchises. NFL only.
-python -m data.etl.backfill_from_cache --sport NFL --rebuild-teams
-python -m data.etl.backfill_from_cache --sport NFL --rebuild-teams --dry-run
+# (optional) Warm/inspect the persistent parse index the cache steps share. It's
+#    auto-built by the steps below; run it standalone to pre-parse or see counts.
+#    Lives at data/cache/sr_index.json (gitignored, regenerable).
+python -m data.etl.cache_index
+python -m data.etl.cache_index --rebuild           # ignore the stored index; re-parse all
+
+# 2. Apply teams + career stats from the CACHED SR pages (no network). NFL & NBA.
+#    --rebuild-teams overwrites teams with the standardized franchises (relocations
+#    + mid-season trades); --rebuild-stats un-freezes career lines past the bulk.
+python -m data.etl.backfill_from_cache --sport NFL --rebuild-teams --rebuild-stats
+python -m data.etl.backfill_from_cache --sport NBA --rebuild-teams --rebuild-stats
+python -m data.etl.backfill_from_cache --sport NFL --dry-run        # preview
 
 # 3. Fix bulk-boundary debut years from the CACHED alpha index (Malone/Iverson
-#    1999). No page fetches. ALL = NBA+WNBA+NFL (the windowed-bulk sports).
+#    showing 1999). No page fetches. ALL = NBA+WNBA+NFL (the windowed-bulk sports).
 python -m data.etl.reconcile_debut --sport ALL
 python -m data.etl.reconcile_debut --sport NBA --dry-run
 
@@ -91,6 +112,8 @@ python rebuild_puzzles.py --dry-run             # show what it'd nuke/build
 python rebuild_puzzles.py --keep                # rebuild without deleting first
 
 # Generate going forward (doesn't nuke). Default --sport NFL, --days 7.
+# Difficulty model: easy = most answers/clue AND no born-in-decade clues;
+# medium = mid answer counts + born-in-decade ok; hard = fewest answers + born-in-decade ok.
 python generate_puzzles.py --days 7
 python generate_puzzles.py --date 2026-07-04
 python generate_puzzles.py --days 7 --force                       # overwrite existing
@@ -122,19 +145,25 @@ schtasks /Create /TN "TwentyTwenty Data"    /TR "C:\doane\Personal\TwentyTwenty\
 # =================================================================
 # 5) MISC / DEPLOY / INSPECT
 # =================================================================
-# Push the corrected player DB to Postgres (prod). URL from .env, or pass it.
+# Push the corrected player DB UP to Postgres (prod). URL from .env, or pass it.
 python load_to_postgres.py                                        # uses POSTGRES_DB_URL/DATABASE_URL
 python load_to_postgres.py "postgresql://USER:PW@HOST/DB?sslmode=require"
-python load_to_postgres.py --sqlite data/nfl.db                   # explicit source DB
+
+# Pull the LIVE Postgres DB back DOWN into local SQLite (incl. /admin edits).
+python load_from_postgres.py                                      # replaces data/nfl.db
+python load_from_postgres.py --sqlite data/snapshot.db            # snapshot, don't touch nfl.db
 
 # Show which DB targets writes go to (reads .env):
 python -m data.etl.dbconfig
 
-# Trim the unpruned/raw pool to the game's notability bar (preview, then apply):
+# Trim the bulk pools to the game's notability bar (PREVIEW first, then apply).
+# Keep rule: WNBA/NHL = a real rotation season (best-season games); college
+# (NCAAB/NCAAW/NCAAF) = a notable career stat line (thresholds in prune.py's
+# PRUNE config -- sanity-check the dry-run counts before --apply).
 python -m data.etl.prune --sport ALL
 python -m data.etl.prune --sport ALL --apply
 
-# Re-apply the curated awards overlay for one sport (awards/<sport>.json):
+# Re-apply the curated awards overlay for one sport (data/etl/awards/<sport>.json):
 python -m data.etl.apply_awards --sport NFL
 
 # Ingest a single provider straight (debug one source):
@@ -144,290 +173,96 @@ python -m data.etl.run_provider --provider lahman_mlb --source-dir /path/to/csvs
 # Rebuild categories + derived fields only (no re-ingest):
 python -m data.etl.load
 
+# Dump a player's records across sports + category fit (debug a missing/odd answer).
+python -m data.etl.diagnose_player "Baker Mayfield" "Victor Wembanyama"
+python -m data.etl.diagnose_player "Karl Malone" --cache            # scan the SR cache too
+
 # Player counts per sport (quick sanity check):
 python -c "from data.etl.schema import get_conn; [print(f'  {r[0]:6} {r[1]}') for r in get_conn().execute('SELECT sport, COUNT(*) FROM players GROUP BY sport ORDER BY sport')]"
 
 # Tiny demo DB, all sports, fully offline (stand up the app without a crawl):
 python build_demo_db.py
 
+# Admin audit UI (set ADMIN_PW first): lists every category + its answers (grouped
+# by sport, last name A->Z); each player links to an editable /admin/player/<id>.
+#   local:  http://localhost:5902/admin        prod: https://<host>/admin
+
 # Start the app:
 FLASK_APP=api/app.py flask run --host 0.0.0.0 --port 5902          # Linux/Mac
 .\start-local.ps1                                                  # Windows
-
-# NOTE: the data/etl/scrape_*.py + run_all.py / run_etl.py paths near the bottom of
-# this file are the OLDER scraper pipeline. The runbook above (run_full + providers
-# + sr_history/sr_college/db_all) is the current one; prefer it.
-
+.\start-local.ps1 -Demo                                           # Windows, demo DB
 
 
 --- SETUP (first time) ---
-# Unblock web content
+# Unblock web content (Windows)
 Get-ChildItem -Path "C:\doane\Personal\TwentyTwenty" | Unblock-File
 
-# Create and activate venv
+# Create + activate venv
 python -m venv .venv
 source .venv/bin/activate          # Linux/Mac
 .venv\Scripts\activate             # Windows PowerShell
 
-# Install dependencies
+# Install dependencies (add requirements-etl.txt for the live exporters)
 pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-etl.txt           # + nba_api, nfl_data_py, ...
 
-# Seed the NFL database (run once, or after adding players)
+# Seed a minimal DB, or build the real one (see RUNBOOK.md)
 python data/seed.py
-
-# Pre-generate puzzles for the next 7 days
-python generate_puzzles.py --days 7
+python build_demo_db.py                                           # all sports, offline demo
 
 
 --- LOCAL DEV ---
+# Start the Flask API
+.\start-local.ps1                                                 # Windows
+FLASK_APP=api/app.py FLASK_ENV=development flask run --host 0.0.0.0 --port 5902   # Linux/Mac
 
-# Start the Flask API (Windows)
-.\start-local.ps1
-
-# Start the Flask API (Linux/Mac)
-FLASK_APP=api/app.py FLASK_ENV=development flask run --host 0.0.0.0 --port 5902
-
-# Game UI (served by Flask)
-http://localhost:5902
-
-# Health check
+# Game UI (served by Flask):       http://localhost:5902
+# Health check:
 curl http://localhost:5902/health
-
-# Today's puzzle (no answers)
+# Today's puzzle (no answers):
 curl http://localhost:5902/api/puzzle/today
-
-# Validate an answer
+# Validate an answer:
 curl -X POST http://localhost:5902/api/validate \
   -H "Content-Type: application/json" \
   -d '{"date":"2026-06-17","question_index":0,"player":"Brett Favre"}'
-
-# Autocomplete search
+# Autocomplete search:
 curl "http://localhost:5902/api/players/search?q=tom"
+# Data vintage ("stats as of"):
+curl http://localhost:5902/api/vintage
 
 
---- PUZZLE MANAGEMENT ---
-
-# Generate today + 7 days ahead
-python generate_puzzles.py --days 7
-
-# Generate a specific date
-python generate_puzzles.py --date 2026-07-04
-
-# Force regenerate (overwrite existing)
-python generate_puzzles.py --days 7 --force
-
-# Generate with fixed seed (reproducible)
-python generate_puzzles.py --days 7 --seed 12345
-
-# Admin batch generate via API
-curl -X POST http://localhost:5902/api/generate/batch \
-  -H "Content-Type: application/json" \
-  -d '{"days":7,"secret":"dev_secret"}'
-
-
---- DATABASE ---
-
-# Inspect the SQLite DB
+--- DATABASE (SQLite inspect) ---
 sqlite3 data/nfl.db
-
-# Useful queries
 .tables
 SELECT COUNT(*) FROM players;
+SELECT sport, COUNT(*) FROM players GROUP BY sport ORDER BY sport;
 SELECT COUNT(*) FROM categories;
 SELECT COUNT(*) FROM player_categories;
-
-# See category sizes
-SELECT c.label, COUNT(pc.player_id) as players
-FROM categories c
-JOIN player_categories pc ON c.id = pc.category_id
+# Category sizes:
+SELECT c.label, COUNT(pc.player_id) AS players
+FROM categories c JOIN player_categories pc ON c.id = pc.category_id
 GROUP BY c.id ORDER BY players DESC;
-
-# See which players are in a category
+# Who's in a category:
 SELECT p.name FROM players p
 JOIN player_categories pc ON p.id = pc.player_id
 WHERE pc.category_id = 'team_patriots';
 
-# Re-seed after adding players (destroys and rebuilds)
-python data/seed.py
-
 
 --- PRODUCTION (Render.com) ---
+# Deploy: push to the branch Render watches -- render.yaml builds + starts gunicorn.
+# The app reads Postgres when DATABASE_URL is set; populate it with load_to_postgres.py.
+# Env (render.yaml): DATABASE_URL, ADMIN_SECRET (/api/generate), ADMIN_PW (/admin UI),
+#   SPORT_MODE, PUZZLE_DIFFICULTY, SITE_URL, PYTHON_VERSION.
+# Cron (render.yaml): generate_puzzles.py daily at 3am UTC.
 
-# Deploy: push to main branch -- render.yaml handles the rest
-
-# Cron: runs daily at 3am UTC automatically (see render.yaml)
-
-# Manual trigger via admin API
-curl -X POST https://your-app.onrender.com/api/generate/batch \
+# Manual puzzle generate via the admin API (uses ADMIN_SECRET):
+curl -X POST https://<your-app>.onrender.com/api/generate/batch \
   -H "Content-Type: application/json" \
   -d '{"days":7,"secret":"YOUR_ADMIN_SECRET"}'
 
 
---- TESTING ---
-
-# Run the generator standalone (prints chain + saves chain_sample.json)
-python engine/generator.py
-
-# Check puzzle file for a date
-cat puzzles/2026-06-17.json | python -m json.tool | head -40
-
-
---- ETL PIPELINE (run from your machine, not a hosted server) ---
-
-# Full NFL scrape (first time -- takes ~10 min at 1 req/sec)
-python data/etl/run_etl.py --sport NFL
-
-# Quick test run (20 players only)
-python data/etl/run_etl.py --sport NFL --limit 20
-
-# Re-run from cached data (no HTTP requests)
-python data/etl/run_etl.py --sport NFL --from-cache
-
-# Add NBA data
-python data/etl/run_etl.py --sport NBA
-
-# Both sports
-python data/etl/run_etl.py --sport ALL
-
-# Force re-scrape (refresh cache)
-python data/etl/run_etl.py --sport NFL --refresh
-
-# After any ETL run, regenerate puzzles to pick up new players
-python generate_puzzles.py --days 7 --force
-
-# Check data vintage in the DB
-python data/etl/schema.py
-
-# Migrate from old hand-curated schema to new multi-sport schema (one time)
-python data/etl/schema.py   # creates new tables
-python data/etl/load.py     # rebuilds categories and memberships
-
-
---- DATA VINTAGE API ---
-
-# Check what date the stats are current as of
-curl http://localhost:5902/api/vintage
-
-
---- NEW SPORTS (WNBA, NCAAF, NCAAB, NCAAW) ---
-
-# WNBA  (~200 players, ~4 min)
-python data/etl/run_etl.py --sport WNBA
-
-# NCAAF  (~400 players, ~8 min)
-python data/etl/run_etl.py --sport NCAAF
-
-# NCAAB mens  (~300 players, ~6 min)
-python data/etl/scrape_ncaab.py --gender mens
-
-# NCAAW womens  (~200 players, ~4 min)
-python data/etl/scrape_ncaab.py --gender womens
-
-# After all college scrapers, reload categories
-python data/etl/load.py
-
-# Full everything
-python data/etl/run_etl.py --sport NFL
-python data/etl/run_etl.py --sport NBA
-python data/etl/run_etl.py --sport MLB
-python data/etl/run_etl.py --sport NHL
-python data/etl/run_etl.py --sport WNBA
-python data/etl/run_etl.py --sport NCAAF
-python data/etl/scrape_ncaab.py --gender mens
-python data/etl/scrape_ncaab.py --gender womens
-python data/etl/load.py
-python generate_puzzles.py --days 7 --force
-
-
---- SPORT MODES FOR PUZZLE GENERATION ---
-
-# NFL only (default)
-python generate_puzzles.py --sport NFL --difficulty medium
-
-# WNBA only
-python generate_puzzles.py --sport WNBA --difficulty medium
-
-# College basketball (mens)
-python generate_puzzles.py --sport NCAAB --difficulty medium
-
-# College basketball (both)
-python generate_puzzles.py --sport NCAAB,NCAAW --difficulty medium
-
-# Cross-sport -- NFL + NBA + college
-python generate_puzzles.py --sport NFL,NBA,NCAAF,NCAAB --difficulty easy
-
-# Everything
-python generate_puzzles.py --sport ALL --difficulty easy
-
-
---- RUN_ALL.PY (catch-all ETL -- single command for everything) ---
-
-# Full refresh of all 8 sports (~90 min, walk away)
-python data/etl/run_all.py
-
-# Test run -- 20 players per sport, ~5 minutes
-python data/etl/run_all.py --limit 20
-
-# From cache only (no HTTP, instant rebuild from saved JSON)
-python data/etl/run_all.py --from-cache
-
-# Specific sports only
-python data/etl/run_all.py --sports NFL NBA WNBA
-
-# Dry run -- show what would run without doing it
-python data/etl/run_all.py --dry-run
-
-# Be extra polite to the servers
-python data/etl/run_all.py --delay 2.0 --between-delay 10.0
-
-# After any ETL run, regenerate puzzles
-python generate_puzzles.py --days 7 --force
-
-
---- SPORT MODE IN PUZZLE GENERATION ---
-# Sport selector in the UI persists preferences to localStorage.
-# To override the server default, set env vars:
-#   SPORT_MODE=NFL,NBA    (comma-separated sport codes)
-#   PUZZLE_DIFFICULTY=medium
-
---- DEMO MODE ---
-.\start-local.ps1 -Demo
-
----Live Data Push---
-# more NBA bio (position/college/draft) — slower, per-player calls:
-.venv/bin/python -m data.etl.providers.nba_export --start 1996 --end 2024 --enrich --out ./nba_csv
-.venv/bin/python run_full.py --nba-dir ./nba_csv          # ingest the pre-export
-
-python run_full.py --ncaaf-curated          # skip CFBD, use curated NCAAF
-python run_full.py --fixtures               # real MLB+NCAA, fixtures for the 4 pro sports
-python run_full.py --cfbd-start 2000 --cfbd-end 2024     # widen NCAAF range
-python run_full.py --keep-db                # append instead of clean rebuild
-
-
----Next Items Up---
-# After we get all data loaded or after a new data load:
-python run_full.py --puzzles-only
-
-
----Final Steps---
-# a. bulk everything, clean rebuild, no puzzles  (wipes DB — run ONCE, first)
-python run_full.py --skip-puzzles
-
-# b. pro history: NBA + WNBA  (basketball-reference, no cookie; ~4–5 hr, resumable)
-python -m data.etl.sr_history --sport ALL
-
-# c. awards (run each to completion; college is long but resumable)
-python -m data.etl.sr_college --sport NHL      # ~50 min, hockey-ref, no cookie
-python -m data.etl.sr_college --sport NCAAF    # sports-ref, no cookie
-python -m data.etl.sr_college --sport NCAAB    # ~14 hr
-python -m data.etl.sr_college --sport NCAAW    # ~10 hr
-python -m data.etl.sr_college --sport NFL      # re-grab SR_CF_CLEARANCE right before this
-
-# d. preview the cut, then apply  (WNBA 25g · NHL award-or-50g · college awards-only)
-python -m data.etl.prune --sport ALL
-python -m data.etl.prune --sport ALL --apply
-
-# e. puzzles from the final pool
-python run_full.py --puzzles-only
-
-python -c 'from data.etl.schema import get_conn; [print(f"  {r[0]:6} {r[1]}") for r in get_conn().execute("SELECT sport, COUNT(*) FROM players GROUP BY sport ORDER BY sport")]'
+--- SPORT MODES ---
+# Single:    NFL  NBA  MLB  NHL  WNBA  NCAAF  NCAAB  NCAAW
+# Combined:  comma-separated, e.g. NFL,NBA,NCAAF        Everything: ALL
+# Server defaults via env:  SPORT_MODE=NFL,NBA   PUZZLE_DIFFICULTY=medium
+# (The UI sport selector persists the player's choice to localStorage.)
