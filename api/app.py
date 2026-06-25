@@ -103,6 +103,16 @@ class _PGCursor:
         self._cur.execute(_pg_sql(sql), params)
         return self
 
+    # Proxy the DB-API cursor attributes the call sites use (sqlite3.Cursor exposes
+    # these directly; the admin routes read .description for column names).
+    @property
+    def description(self):
+        return self._cur.description
+
+    @property
+    def rowcount(self):
+        return self._cur.rowcount
+
     def fetchone(self):  return self._cur.fetchone()
     def fetchall(self):  return self._cur.fetchall()
     def __iter__(self):  return iter(self._cur)
